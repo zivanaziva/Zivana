@@ -338,7 +338,6 @@
         
         <button class="btn" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
         
-        <!-- TOMBOL MIGRASI DATA LAMA -->
         <button id="btn-migrasi-kreditur" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); margin-top: 15px;" onclick="migrasiDataLama()"><i class="ph-bold ph-cloud-arrow-up"></i> MIGRASI DATA LAMA KE ONLINE</button>
       </div>
 
@@ -664,6 +663,33 @@
         <button class="btn" style="flex: 1;" onclick="simpanEditKreditur()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
         <button class="btn-close" onclick="tutupModal('modalEditKreditur')">BATAL</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL BAYAR KREDIT -->
+  <div id="modalBayarKreditur" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="color: var(--color-success); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-money"></i> BAYAR CICILAN</h3>
+      <input type="hidden" id="bayar-kreditur-id">
+      <div class="input-group">
+        <label>FOTO BUKTI PEMBAYARAN</label>
+        <input type="file" id="input-kreditur-bukti" accept="image/*" style="padding: 10px;" onchange="previewBuktiKreditur(event)">
+        <input type="hidden" id="kreditur-bukti-base64">
+      </div>
+      <div class="input-group"><label>NOMINAL BAYAR (Rp)</label><input type="text" id="bayar-kreditur-nominal" oninput="formatUangK(this)"></div>
+      <div class="modal-btns">
+        <button class="btn" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanBayarKreditur()"><i class="ph-bold ph-check"></i> KONFIRMASI BAYAR</button>
+        <button class="btn-close" onclick="tutupModal('modalBayarKreditur')">BATAL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RIWAYAT KREDIT -->
+  <div id="modalRiwayatKreditur" class="modal-overlay">
+    <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
+      <h3 style="color: var(--primary); margin-bottom: 10px; font-weight: 900;"><i class="ph-bold ph-clock-counter-clockwise"></i> RIWAYAT BAYAR</h3>
+      <div id="list-riwayat-kreditur"></div>
+      <button class="btn-close" style="width: 100%; margin-top: 15px;" onclick="tutupModal('modalRiwayatKreditur')">TUTUP</button>
     </div>
   </div>
 
@@ -1162,6 +1188,8 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div><div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); text-transform: uppercase;">${item.nama}</div><span style="background: var(--input-bg); color: ${badgeWarna}; border: 1px solid ${badgeWarna}; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 900;">${item.jenis}</span></div>
               <div style="display: flex; gap: 6px;">
+                <button onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(16, 185, 129, 0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
+                <button onclick="bukaModalBayarKreditur('${item.id}')" style="background:rgba(245, 158, 11, 0.1); color:var(--color-warning); border:1px solid var(--color-warning); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-money"></i></button>
                 <button onclick="bukaModalEditKreditur(${item.row})" style="background:rgba(59, 130, 246, 0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
                 <button onclick="hapusKreditur(${item.row})" style="background:rgba(220, 38, 38, 0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-trash"></i></button>
               </div>
@@ -1198,6 +1226,63 @@
       var data = { row: document.getElementById('edit-kreditur-id').value, nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('edit-kreditur-tenor').value), admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, '')) };
       btn.innerHTML = 'PROSES...'; btn.disabled = true;
       fetchPost('editKreditur', data, function(res) { tutupModal('modalEditKreditur'); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; muatKreditur(); });
+    }
+
+    function bukaModalBayarKreditur(id) {
+      document.getElementById('bayar-kreditur-id').value = id;
+      document.getElementById('bayar-kreditur-nominal').value = '';
+      document.getElementById('kreditur-bukti-base64').value = '';
+      document.getElementById('input-kreditur-bukti').value = '';
+      document.getElementById('modalBayarKreditur').style.display = 'flex';
+    }
+
+    function previewBuktiKreditur(event) {
+      var file = event.target.files[0]; if (!file) return; var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas'); var MAX_SIZE = 400; var width = img.width; var height = img.height;
+          if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+          canvas.width = width; canvas.height = height; var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+          document.getElementById('kreditur-bukti-base64').value = canvas.toDataURL('image/jpeg', 0.6);
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
+    }
+
+    function simpanBayarKreditur() {
+      var id = document.getElementById('bayar-kreditur-id').value;
+      var nominal = parseFloat(document.getElementById('bayar-kreditur-nominal').value.replace(/[^0-9]/g, ''));
+      var bukti = document.getElementById('kreditur-bukti-base64').value;
+      if(!nominal) { alert("Nominal harus diisi!"); return; }
+      
+      var btn = document.querySelector('#modalBayarKreditur .modal-btns .btn');
+      btn.innerHTML = 'PROSES...'; btn.disabled = true;
+      
+      fetchPost('bayarKreditur', { id: id, nominal: nominal, bukti: bukti, tgl: new Date().toISOString() }, function(res) {
+        tutupModal('modalBayarKreditur');
+        btn.innerHTML = '<i class="ph-bold ph-check"></i> KONFIRMASI BAYAR'; btn.disabled = false;
+        alert("Pembayaran berhasil dicatat!");
+      });
+    }
+
+    function bukaModalRiwayatKreditur(id) {
+      document.getElementById('modalRiwayatKreditur').style.display = 'flex';
+      var container = document.getElementById('list-riwayat-kreditur');
+      container.innerHTML = '<p style="text-align:center;"><i class="ph ph-spinner ph-spin"></i> Memuat Riwayat...</p>';
+      
+      fetchPost('getRiwayatKreditur', { id: id }, function(data) {
+        if(data.length === 0) { container.innerHTML = '<p style="text-align:center; font-weight:800; color:var(--text-muted);">Belum ada riwayat pembayaran.</p>'; return; }
+        var html = '';
+        data.forEach(function(item) {
+          var tglFormat = item.tgl.split('T')[0];
+          var imgHtml = item.bukti ? `<img src="${item.bukti}" style="width:100%; border-radius:8px; margin-top:8px;">` : `<p style="font-size:0.7rem; color:var(--text-muted);">Tidak ada foto</p>`;
+          html += `<div style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:12px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-weight:900; margin-bottom:6px;">
+               <span style="color:var(--text-main);">${tglFormat}</span><span style="color:var(--color-success);">+ Rp ${Number(item.nominal).toLocaleString('id-ID')}</span>
+            </div>${imgHtml}</div>`;
+        });
+        container.innerHTML = html;
+      });
     }
 
     // === MIGRASI DATA LOKAL KE ONLINE ===
