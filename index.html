@@ -340,17 +340,18 @@
         
         <div class="input-group">
           <label>3. NOMINAL / JUMLAH (Rp)</label>
+          <!-- Auto hitung admin dihapus dari tenor, hanya hitung saat nominal diketik -->
           <input type="text" id="kreditur-nominal" placeholder="Contoh: 1000000" oninput="formatUangK(this); hitungAdminOtomatis()">
         </div>
         
         <div class="input-group">
           <label>4. TENOR (BULAN)</label>
-          <input type="number" id="kreditur-tenor" placeholder="Contoh: 6" oninput="hitungAdminOtomatis()">
+          <input type="number" id="kreditur-tenor" placeholder="Contoh: 6">
         </div>
         
         <div class="input-group">
-          <label>5. TOTAL ADMIN (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5%/Bulan (Bisa diedit manual)</span></label>
-          <input type="text" id="kreditur-admin" placeholder="Total admin akan muncul otomatis" oninput="formatUangK(this)">
+          <label>5. ADMIN PER BULAN (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5% (Bisa diedit manual)</span></label>
+          <input type="text" id="kreditur-admin" placeholder="Admin bulanan akan muncul otomatis" oninput="formatUangK(this)">
         </div>
         
         <button class="btn" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
@@ -697,9 +698,10 @@
           <option value="Barang">Barang</option>
         </select>
       </div>
-      <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="edit-kreditur-nominal" oninput="formatUangK(this); hitungAdminEdit()"></div>
-      <div class="input-group"><label>TENOR (BULAN)</label><input type="number" id="edit-kreditur-tenor" oninput="hitungAdminEdit()"></div>
-      <div class="input-group"><label>TOTAL ADMIN (Rp)</label><input type="text" id="edit-kreditur-admin" oninput="formatUangK(this)"></div>
+      <!-- Edit nominal TIDAK LAGI memicu hitungAdminEdit() sesuai permintaan Anda agar admin kustom tidak hilang -->
+      <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="edit-kreditur-nominal" oninput="formatUangK(this)"></div>
+      <div class="input-group"><label>TENOR (BULAN)</label><input type="number" id="edit-kreditur-tenor"></div>
+      <div class="input-group"><label>ADMIN PER BULAN (Rp)</label><input type="text" id="edit-kreditur-admin" oninput="formatUangK(this)"></div>
       
       <div class="modal-btns">
         <button class="btn" style="flex: 1;" onclick="simpanEditKreditur()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
@@ -1270,16 +1272,8 @@
 
     function hitungAdminOtomatis() {
       var nom = parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0;
-      var tenor = parseFloat(document.getElementById('kreditur-tenor').value) || 0;
-      var admin = nom * 0.05 * tenor; 
+      var admin = nom * 0.05; // 5% dari nominal (per bulan)
       document.getElementById('kreditur-admin').value = admin > 0 ? admin : '';
-    }
-
-    function hitungAdminEdit() {
-      var nom = parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0;
-      var tenor = parseFloat(document.getElementById('edit-kreditur-tenor').value) || 0;
-      var admin = nom * 0.05 * tenor;
-      document.getElementById('edit-kreditur-admin').value = admin > 0 ? admin : '';
     }
 
     function renderKreditur() {
@@ -1293,8 +1287,9 @@
       }
 
       data.forEach(function(item) {
-        var totalHutang = item.nominal + item.admin;
-        var perBulan = Math.round(totalHutang / item.tenor);
+        var adminTotal = item.admin * item.tenor;
+        var totalHutang = item.nominal + adminTotal;
+        var cicilanPerBulan = Math.round(totalHutang / item.tenor);
         var badgeWarna = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
 
         var html = `
@@ -1312,11 +1307,14 @@
             
             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">
               <span>Pinjaman: Rp ${Number(item.nominal).toLocaleString('id-ID')}</span>
-              <span>Admin: Rp ${Number(item.admin).toLocaleString('id-ID')}</span>
+              <span>Admin/Bln: Rp ${Number(item.admin).toLocaleString('id-ID')}</span>
             </div>
             <hr style="border: 0; border-top: 2px dashed var(--input-border); margin: 8px 0;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">Tenor: <span style="color:var(--primary);">${item.tenor} Bulan</span></div>
+              <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">
+                Tenor: <span style="color:var(--primary);">${item.tenor} Bulan</span><br>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Cicilan: Rp ${Number(cicilanPerBulan).toLocaleString('id-ID')}/bln</span>
+              </div>
               <div style="text-align: right;">
                  <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 800;">TOTAL + ADMIN</div>
                  <div style="font-weight: 900; font-size: 1.1rem; color: var(--color-warning);">Rp ${Number(totalHutang).toLocaleString('id-ID')}</div>
@@ -1408,7 +1406,7 @@
        muatRiwayat(); 
        updateBtnMode(); 
        renderCelengan('berlangsung');
-       renderKreditur(); // <-- Memanggil data kreditur saat aplikasi dimuat
+       renderKreditur(); 
    };
   </script>
 </body>
