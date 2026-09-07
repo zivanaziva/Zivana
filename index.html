@@ -1002,6 +1002,8 @@
         return;
       }
 
+      var tglHariIni = new Date().toISOString().split('T')[0];
+
       dataDifilter.forEach(function(item) {
         var persen = Math.min(Math.floor((item.terkumpul / item.target) * 100), 100);
         var sisaNominal = item.target - item.terkumpul;
@@ -1013,6 +1015,10 @@
           `<i class="ph-fill ph-check-circle" style="color: var(--color-success); margin-right: 4px;"></i> TARGET TERCAPAI!` : 
           `<i class="ph-fill ph-calendar-check" style="color: var(--primary); margin-right: 4px;"></i> Estimasi ${estimasiHari} Kali Pengisian Lagi`;
 
+        var peringatanBelumIsi = (item.terkumpul < item.target && item.terakhirIsi !== tglHariIni) 
+          ? `<div style="background: rgba(220,38,38,0.1); color: var(--color-danger); border: 1px solid var(--color-danger); border-radius: 8px; padding: 6px; text-align: center; font-size: 0.75rem; font-weight: 900; margin-bottom: 15px;"><i class="ph-bold ph-warning-circle"></i> HARI INI BELUM DIISI!</div>` 
+          : ``;
+
         var html = `
           <div class="box-3d" style="padding: 16px; border-radius: 20px; position: relative; margin-bottom: 15px;">
             <div style="position:absolute; top: 10px; right: 10px; z-index: 10;">
@@ -1023,7 +1029,9 @@
                ${imgHtml}
             </div>
             
-            <div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); margin-bottom: 15px; text-transform: uppercase;">${item.nama}</div>
+            <div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); margin-bottom: 10px; text-transform: uppercase;">${item.nama}</div>
+            
+            ${peringatanBelumIsi}
             
             <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px dashed var(--input-border); padding-bottom: 15px; margin-bottom: 15px;">
               <div>
@@ -1071,7 +1079,8 @@
         rencana: rencana,
         nominalRencana: parseFloat(nominal.replace(/[^0-9]/g, '')),
         terkumpul: 0,
-        gambar: gambar
+        gambar: gambar,
+        terakhirIsi: ""
       });
 
       simpanDataCelengan(dataCelengan);
@@ -1096,6 +1105,7 @@
       for(var i=0; i<data.length; i++) {
         if(data[i].id == id) {
           data[i].terkumpul += nominal;
+          data[i].terakhirIsi = new Date().toISOString().split('T')[0];
           break;
         }
       }
@@ -1120,7 +1130,7 @@
        muatDataSemua(); 
        muatRiwayat(); 
        updateBtnMode(); 
-       renderCelengan('berlangsung'); 
+       renderCelengan('berlangsung');
    };
   </script>
 </body>
