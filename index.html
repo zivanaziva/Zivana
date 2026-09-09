@@ -1105,7 +1105,7 @@
       var container = document.getElementById('list-harian'); updateBtnMode();
       if (list.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--color-danger); font-weight:900;">BELUM ADA DATA.</p>'; return; }
       var th = 0; var tm = 0; list.forEach(function(item) { th += item.harga; tm += (item.modal || 0); }); var lb = th - tm;
-      var title = (modeAktif === 'hariini') ? 'REKAP HARI INI' : (modeAktif === 'semua' ? 'REKAP SELURUHNYA' : 'REKAP PENCARIAN');
+      var title = (modeAktif === 'hariini') ? 'REKAP HARI INI' : (modeAktif === 'semua' ? 'REKAP SELURUHNYA' : 'REKAP RENTANG TANGGAL');
       var html = `<div class="box-3d" style="display: flex; flex-direction: column; margin-bottom: 20px; padding: 20px; width: 100%; box-sizing: border-box; background: var(--input-bg); border: 2px solid var(--input-border);">
                     <div style="text-align:center; font-weight:900; font-size:1.1rem; margin-bottom:15px; text-transform:uppercase; letter-spacing: 0.5px;" class="text-gradient"><i class="ph-fill ph-wallet" style="margin-right: 6px;"></i> ${title}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -1240,16 +1240,61 @@
 
     function downloadFoto(canvas, btnWa, textAsli) { var link = document.createElement('a'); link.download = 'Nota_Wistara_' + new Date().getTime() + '.png'; link.href = canvas.toDataURL('image/png'); link.click(); btnWa.innerHTML = textAsli; btnWa.disabled = false; }
     function parseTanggal(str) { var parts = str.split('-'); return new Date(parts[2], parts[1] - 1, parts[0]); }
+    function parseTanggalInputLokal(str) {
+      var parts = String(str || "").split('-');
+      if (parts.length !== 3) return null;
+      var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
     
     function terapkanFilterTanggal() {
-      var mulaiVal = document.getElementById('filter-mulai').value; var akhirVal = document.getElementById('filter-akhir').value; if (!mulaiVal || !akhirVal) { alert("Pilih Dari Tanggal dan Sampai Tanggal terlebih dahulu!"); return; }
-      var tglMulai = new Date(mulaiVal); tglMulai.setHours(0, 0, 0, 0); var tglAkhir = new Date(akhirVal); tglAkhir.setHours(23, 59, 59, 999);
-      var hasilFilter = dataCacheKeseluruhan.filter(function(item) { var itemDate = parseTanggal(item.tanggal); return itemDate >= tglMulai && itemDate <= tglAkhir; });
-      modeAktif = 'custom'; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL'; document.getElementById('cari-nomor').value = ''; tampilkanListTransaksi(hasilFilter, 1);
+      var mulaiVal = document.getElementById('filter-mulai').value;
+      var akhirVal = document.getElementById('filter-akhir').value;
+      if (!mulaiVal || !akhirVal) { alert("Pilih Dari Tanggal dan Sampai Tanggal terlebih dahulu!"); return; }
+
+      var tglMulai = parseTanggalInputLokal(mulaiVal);
+      var tglAkhir = parseTanggalInputLokal(akhirVal);
+      if (!tglMulai || !tglAkhir) { alert("Format tanggal tidak valid!"); return; }
+      if (tglMulai > tglAkhir) { alert("Tanggal mulai tidak boleh lebih besar dari tanggal akhir!"); return; }
+
+      tglAkhir.setHours(23, 59, 59, 999);
+      var hasilFilter = dataCacheKeseluruhan.filter(function(item) {
+        var itemDate = parseTanggal(item.tanggal);
+        return itemDate >= tglMulai && itemDate <= tglAkhir;
+      });
+
+      modeAktif = 'custom';
+      updateBtnMode();
+      document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL';
+      document.getElementById('cari-nomor').value = '';
+      tampilkanListTransaksi(hasilFilter, 1);
     }
 
     function gantiModeTrx(mode) { modeAktif = mode; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = (mode === 'hariini') ? '<i class="ph-fill ph-clipboard-text"></i> TRANSAKSI HARI INI' : '<i class="ph-fill ph-clipboard-text"></i> SELURUH TRANSAKSI'; renderTabelAktif(); }
-    function renderTabelAktif() { var activeList = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan; tampilkanListTransaksi(activeList, 1); }
+    function renderTabelAktif() {
+      if (modeAktif === 'custom') {
+        var mulaiVal = document.getElementById('filter-mulai').value;
+        var akhirVal = document.getElementById('filter-akhir').value;
+        var tglMulai = parseTanggalInputLokal(mulaiVal);
+        var tglAkhir = parseTanggalInputLokal(akhirVal);
+
+        if (tglMulai && tglAkhir) {
+          tglAkhir.setHours(23, 59, 59, 999);
+          var hasilFilter = dataCacheKeseluruhan.filter(function(item) {
+            var itemDate = parseTanggal(item.tanggal);
+            return itemDate >= tglMulai && itemDate <= tglAkhir;
+          });
+          document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL';
+          tampilkanListTransaksi(hasilFilter, 1);
+          return;
+        }
+        modeAktif = 'semua';
+      }
+
+      var activeList = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan;
+      tampilkanListTransaksi(activeList, 1);
+    }
     
     function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
       var teksNota = "```✨ SALINAN TRANSAKSI ✨\n📅 " + tgl + " | " + jam + "\n━━━━━━━━━━━━━━━\n👤 NAMA     : " + nama + "\n📱 NOMOR    : " + nomor + "\n🏷️ CODE     : " + code + "\n📦 KUOTA    : " + kuota + "\n💰 HARGA    : Rp " + Number(harga).toLocaleString('id-ID') + "\n━━━━━━━━━━━━━━━\n✅ SILAKAN DICEK\n🙏 Terima Kasih```"; 
@@ -1463,7 +1508,7 @@
     // PERBAIKAN: Menggunakan window.location.href agar tidak 404 Vercel
     function bagikanTagihanKreditur(nama, pinjaman, total, tenor, cicilan, periode) {
       var pesan = "```✨ INFORMASI TAGIHAN CICILAN ✨\n━━━━━━━━━━━━━━━\n👤 NAMA     : " + nama + "\n💰 PINJAMAN : Rp " + Number(pinjaman).toLocaleString('id-ID') + "\n📈 TOTAL    : Rp " + Number(total).toLocaleString('id-ID') + "\n⏱️ TENOR    : " + tenor + " " + periode + "\n💵 CICILAN  : Rp " + Number(cicilan).toLocaleString('id-ID') + " / " + periode.toLowerCase() + "\n━━━━━━━━━━━━━━━\n✅ Mohon persiapkan dana sesuai jadwal.\n🙏 Terima Kasih```";
-      window.location.href = "[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(pesan);
+      window.location.href = "https://wa.me/?text=" + encodeURIComponent(pesan);
     }
 
     function simpanKrediturBaru() {
