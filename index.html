@@ -470,13 +470,18 @@
         </div>
         
         <div class="input-group">
-          <label>4. TENOR (BULAN)</label>
+          <label>4. PERIODE CICILAN</label>
+          <select id="kreditur-periode"><option value="Bulan">Bulanan</option><option value="Minggu">Mingguan</option></select>
+        </div>
+        
+        <div class="input-group">
+          <label>5. TENOR (LAMA CICILAN)</label>
           <input type="number" id="kreditur-tenor" placeholder="Contoh: 6">
         </div>
         
         <div class="input-group">
-          <label>5. ADMIN PER BULAN (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5% (Bisa diedit manual)</span></label>
-          <input type="text" id="kreditur-admin" placeholder="Admin bulanan akan muncul otomatis" oninput="formatUangK(this)">
+          <label>6. ADMIN PER PERIODE (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5% (Bisa diedit manual)</span></label>
+          <input type="text" id="kreditur-admin" placeholder="Contoh: 50000" oninput="formatUangK(this)">
         </div>
         
         <button class="btn" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
@@ -840,9 +845,13 @@
         <label>JENIS</label>
         <select id="edit-kreditur-jenis"><option value="Uang">Uang</option><option value="Barang">Barang</option></select>
       </div>
+      <div class="input-group">
+        <label>PERIODE CICILAN</label>
+        <select id="edit-kreditur-periode"><option value="Bulan">Bulanan</option><option value="Minggu">Mingguan</option></select>
+      </div>
       <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="edit-kreditur-nominal" oninput="formatUangK(this)"></div>
-      <div class="input-group"><label>TENOR (BULAN)</label><input type="number" id="edit-kreditur-tenor"></div>
-      <div class="input-group"><label>ADMIN PER BULAN (Rp)</label><input type="text" id="edit-kreditur-admin" oninput="formatUangK(this)"></div>
+      <div class="input-group"><label>TENOR</label><input type="number" id="edit-kreditur-tenor"></div>
+      <div class="input-group"><label>ADMIN PER PERIODE (Rp)</label><input type="text" id="edit-kreditur-admin" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
         <button class="btn" style="flex: 1;" onclick="simpanEditKreditur()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
         <button class="btn-close" onclick="tutupModal('modalEditKreditur')">BATAL</button>
@@ -1365,10 +1374,10 @@
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var canvas = document.createElement('canvas'); var MAX_SIZE = 400; var width = img.width; var height = img.height;
+          var canvas = document.createElement('canvas'); var MAX_SIZE = 1000; var width = img.width; var height = img.height;
           if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
           canvas.width = width; canvas.height = height; var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          document.getElementById('celengan-gambar-base64').value = canvas.toDataURL('image/jpeg', 0.6);
+          document.getElementById('celengan-gambar-base64').value = canvas.toDataURL('image/jpeg', 0.85);
         }; img.src = e.target.result;
       }; reader.readAsDataURL(file);
     }
@@ -1412,6 +1421,7 @@
       var container = document.getElementById('list-kreditur'); container.innerHTML = '';
       if (krediturCache.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted); font-weight:800;">Belum ada data kreditur.</p>'; return; }
       krediturCache.forEach(function(item) {
+        var periode = item.periode || 'Bulan';
         var adminTotal = item.admin * item.tenor; var totalHutang = item.nominal + adminTotal; var cicilanPerBulan = Math.round(totalHutang / item.tenor);
         var badgeWarna = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
         container.innerHTML += `
@@ -1419,24 +1429,30 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div><div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); text-transform: uppercase;">${item.nama}</div><span style="background: var(--input-bg); color: ${badgeWarna}; border: 1px solid ${badgeWarna}; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 900;">${item.jenis}</span></div>
               <div style="display: flex; gap: 6px;">
-                <button onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(16, 185, 129, 0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
+                <button onclick="bagikanTagihanKreditur('${item.nama}', ${item.nominal}, ${totalHutang}, ${item.tenor}, ${cicilanPerBulan}, '${periode}')" style="background:rgba(16, 185, 129, 0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-share-network"></i></button>
+                <button onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(59, 130, 246, 0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
                 <button onclick="bukaModalBayarKreditur('${item.id}')" style="background:rgba(245, 158, 11, 0.1); color:var(--color-warning); border:1px solid var(--color-warning); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-money"></i></button>
-                <button onclick="bukaModalEditKreditur(${item.row})" style="background:rgba(59, 130, 246, 0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
+                <button onclick="bukaModalEditKreditur(${item.row})" style="background:rgba(168, 85, 247, 0.1); color:#a855f7; border:1px solid #a855f7; border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
                 <button onclick="hapusKreditur(${item.row})" style="background:rgba(220, 38, 38, 0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-trash"></i></button>
               </div>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;"><span>Pinjaman: Rp ${Number(item.nominal).toLocaleString('id-ID')}</span><span>Admin/Bln: Rp ${Number(item.admin).toLocaleString('id-ID')}</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;"><span>Pinjaman: Rp ${Number(item.nominal).toLocaleString('id-ID')}</span><span>Admin/${periode}: Rp ${Number(item.admin).toLocaleString('id-ID')}</span></div>
             <hr style="border: 0; border-top: 2px dashed var(--input-border); margin: 8px 0;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">Tenor: <span style="color:var(--primary);">${item.tenor} Bulan</span><br><span style="font-size:0.75rem; color:var(--text-muted);">Cicilan: Rp ${Number(cicilanPerBulan).toLocaleString('id-ID')}/bln</span></div>
+              <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">Tenor: <span style="color:var(--primary);">${item.tenor} ${periode}</span><br><span style="font-size:0.75rem; color:var(--text-muted);">Cicilan: Rp ${Number(cicilanPerBulan).toLocaleString('id-ID')}/${periode.toLowerCase()}</span></div>
               <div style="text-align: right;"><div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 800;">TOTAL + ADMIN</div><div style="font-weight: 900; font-size: 1.1rem; color: var(--color-warning);">Rp ${Number(totalHutang).toLocaleString('id-ID')}</div></div>
             </div>
           </div>`;
       });
     }
 
+    function bagikanTagihanKreditur(nama, pinjaman, total, tenor, cicilan, periode) {
+      var pesan = "```✨ INFORMASI TAGIHAN CICILAN ✨\n━━━━━━━━━━━━━━━\n👤 NAMA     : " + nama + "\n💰 PINJAMAN : Rp " + Number(pinjaman).toLocaleString('id-ID') + "\n📈 TOTAL    : Rp " + Number(total).toLocaleString('id-ID') + "\n⏱️ TENOR    : " + tenor + " " + periode + "\n💵 CICILAN  : Rp " + Number(cicilan).toLocaleString('id-ID') + " / " + periode.toLowerCase() + "\n━━━━━━━━━━━━━━━\n✅ Mohon persiapkan dana sesuai jadwal.\n🙏 Terima Kasih```";
+      window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(pesan), '_blank');
+    }
+
     function simpanKrediturBaru() {
-      var data = { nama: document.getElementById('kreditur-nama').value, jenis: document.getElementById('kreditur-jenis').value, nominal: parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('kreditur-tenor').value), admin: parseFloat(document.getElementById('kreditur-admin').value.replace(/[^0-9]/g, '')) };
+      var data = { nama: document.getElementById('kreditur-nama').value, jenis: document.getElementById('kreditur-jenis').value, periode: document.getElementById('kreditur-periode').value, nominal: parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('kreditur-tenor').value), admin: parseFloat(document.getElementById('kreditur-admin').value.replace(/[^0-9]/g, '')) };
       if(!data.nama || !data.nominal || !data.tenor || !data.admin) { alert("Isi semua kolom!"); return; }
       fetchPost('simpanKreditur', data, function(res) {
         document.querySelectorAll('#tab-kreditur input').forEach(el => el.value = ''); muatKreditur();
@@ -1448,13 +1464,13 @@
     function bukaModalEditKreditur(row) {
       var item = krediturCache.find(d => d.row === row);
       if(item) {
-        document.getElementById('edit-kreditur-id').value = item.row; document.getElementById('edit-kreditur-nama').value = item.nama; document.getElementById('edit-kreditur-jenis').value = item.jenis; document.getElementById('edit-kreditur-nominal').value = item.nominal; document.getElementById('edit-kreditur-tenor').value = item.tenor; document.getElementById('edit-kreditur-admin').value = item.admin; document.getElementById('modalEditKreditur').style.display = 'flex';
+        document.getElementById('edit-kreditur-id').value = item.row; document.getElementById('edit-kreditur-nama').value = item.nama; document.getElementById('edit-kreditur-jenis').value = item.jenis; document.getElementById('edit-kreditur-periode').value = item.periode || 'Bulan'; document.getElementById('edit-kreditur-nominal').value = item.nominal; document.getElementById('edit-kreditur-tenor').value = item.tenor; document.getElementById('edit-kreditur-admin').value = item.admin; document.getElementById('modalEditKreditur').style.display = 'flex';
       }
     }
 
     function simpanEditKreditur() {
       var btn = document.querySelector('#modalEditKreditur .modal-btns .btn');
-      var data = { row: document.getElementById('edit-kreditur-id').value, nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('edit-kreditur-tenor').value), admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, '')) };
+      var data = { row: document.getElementById('edit-kreditur-id').value, nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, periode: document.getElementById('edit-kreditur-periode').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('edit-kreditur-tenor').value), admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, '')) };
       btn.innerHTML = 'PROSES...'; btn.disabled = true;
       fetchPost('editKreditur', data, function(res) { tutupModal('modalEditKreditur'); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; muatKreditur(); });
     }
@@ -1472,10 +1488,10 @@
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var canvas = document.createElement('canvas'); var MAX_SIZE = 400; var width = img.width; var height = img.height;
+          var canvas = document.createElement('canvas'); var MAX_SIZE = 1000; var width = img.width; var height = img.height;
           if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
           canvas.width = width; canvas.height = height; var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          document.getElementById('kreditur-bukti-base64').value = canvas.toDataURL('image/jpeg', 0.6);
+          document.getElementById('kreditur-bukti-base64').value = canvas.toDataURL('image/jpeg', 0.85);
         }; img.src = e.target.result;
       }; reader.readAsDataURL(file);
     }
