@@ -289,7 +289,7 @@
 
       <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-squares-four"></i> MENU DASHBOARD</div>
-                <div class="menu-grid">
+        <div class="menu-grid">
           <div class="menu-item" onclick="switchTab('tab-input', null)">
             <div class="menu-icon"><i class="ph-fill ph-lightning"></i></div>
             <div class="menu-text">Input Trx</div>
@@ -330,7 +330,7 @@
             <div class="menu-icon"><i class="ph-fill ph-users-three"></i></div>
             <div class="menu-text">Kreditur</div>
           </div>
-          <!-- 2 MENU TAMBAHAN -->
+          <!-- 2 MENU TAMBAHAN (12 GRID) -->
           <div class="menu-item" onclick="switchTab('tab-trx-online', null)">
             <div class="menu-icon"><i class="ph-fill ph-globe"></i></div>
             <div class="menu-text">Trx Online</div>
@@ -342,8 +342,16 @@
         </div>
       </div>
 
+      <!-- WADAH TANGGAL RAHASIA (DISEMBUNYIKAN) -->
+      <div id="wadah-tanggal-rahasia" style="display: none; justify-content: center; margin-top: 15px; margin-bottom: 10px; animation: fadeIn 0.3s ease;">
+        <div style="background: var(--input-bg); padding: 8px 12px; border-radius: 14px; border: 2px dashed var(--primary); display: flex; align-items: center; gap: 10px;">
+          <span style="font-size:0.7rem; font-weight:900; color:var(--primary);"><i class="ph-fill ph-calendar-blank"></i> TANGGAL:</span>
+          <input type="date" id="filter-tgl-dash" onchange="renderRingkasanDash()" style="padding: 6px; border-radius: 8px; border: 2px solid var(--input-border); background: var(--panel-bg); color: var(--text-main); font-weight: 800; font-family: inherit; font-size: 0.75rem; outline: none;">
+        </div>
+      </div>
 
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; margin-bottom: 20px;">
+      <!-- 4 KOTAK WIDGET (AREA KLIK 2X) -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; margin-bottom: 20px; user-select: none; cursor: pointer;" ondblclick="toggleTanggalRahasia()" title="Klik 2x untuk atur tanggal">
         <div class="glass-panel" style="padding: 12px 4px; text-align: center; border-radius: 14px;">
           <div style="font-size: 0.55rem; color: var(--text-muted); font-weight: 800; line-height: 1.1; margin-bottom: 4px;">TOTAL<br>MODAL</div>
           <div id="dash-modal" style="font-size: 0.75rem; color: var(--color-warning); font-weight: 900; word-break: break-word;">Rp 0</div>
@@ -505,7 +513,6 @@
         </p>
       </div>
     </div>
-
 
     <!-- TAB PENCARIAN KHUSUS -->
     <div id="tab-cari" class="section">
@@ -994,11 +1001,49 @@
 
     function muatRiwayat() { fetchGet('getRiwayat', function(res) { var nHTML = ''; var kHTML = ''; res.namaUnik.forEach(function(item) { nHTML += '<option value="' + item + '"></option>'; }); res.kodeUnik.forEach(function(item) { kHTML += '<option value="' + item + '"></option>'; }); document.getElementById('list-nama').innerHTML = nHTML; document.getElementById('list-kode').innerHTML = kHTML; }); }
 
+    // --- FUNGSI KLIK 2X & KOTAK WIDGET DINAMIS ---
+    function toggleTanggalRahasia() {
+      var wadah = document.getElementById('wadah-tanggal-rahasia');
+      if (wadah.style.display === 'none') {
+        wadah.style.display = 'flex';
+      } else {
+        wadah.style.display = 'none';
+      }
+    }
+
+    function renderRingkasanDash() {
+      var inputTgl = document.getElementById('filter-tgl-dash');
+      if (!inputTgl) return;
+      var tglPilih = inputTgl.value;
+      
+      if (!tglPilih) {
+        var tzOffset = (new Date()).getTimezoneOffset() * 60000;
+        tglPilih = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+        inputTgl.value = tglPilih;
+      }
+      
+      var p = tglPilih.split('-');
+      var tglDB = p[2] + '-' + p[1] + '-' + p[0]; // Format ke DD-MM-YYYY
+
+      var tMod = 0, tJual = 0, tTrx = 0;
+      dataCacheKeseluruhan.forEach(function(item) {
+        if(item.tanggal === tglDB) {
+          tMod += (item.modal || 0);
+          tJual += (item.harga || 0);
+          tTrx++;
+        }
+      });
+      var tLaba = tJual - tMod;
+
+      document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID');
+      document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID');
+      document.getElementById('dash-bersih').innerText = "Rp " + tLaba.toLocaleString('id-ID');
+      document.getElementById('dash-trx').innerText = tTrx;
+    }
+
     var currentPageDashboard = 1; var itemsPerPage = 10;
     function renderMiniTabelDashboard(list, page = 1) {
       currentPageDashboard = page; var tbody = document.getElementById('tabel-dashboard-body'); if (!tbody) return;
-      var tModal = 0, tJual = 0, tBersih = 0; list.forEach(item => { tModal += (item.modal || 0); tJual += (item.harga || 0); }); tBersih = tJual - tModal;
-      document.getElementById('dash-modal').innerText = "Rp " + Number(tModal).toLocaleString('id-ID'); document.getElementById('dash-omset').innerText = "Rp " + Number(tJual).toLocaleString('id-ID'); document.getElementById('dash-bersih').innerText = "Rp " + Number(tBersih).toLocaleString('id-ID'); document.getElementById('dash-trx').innerText = list.length;
       var sortedList = list.slice().sort(function(a, b) { var tglA = a.tanggal.split('-'); var jamA = (a.jam || "00:00:00").split(':'); var waktuA = new Date(tglA[2], tglA[1] - 1, tglA[0], jamA[0], jamA[1], jamA[2]).getTime(); var tglB = b.tanggal.split('-'); var jamB = (b.jam || "00:00:00").split(':'); var waktuB = new Date(tglB[2], tglB[1] - 1, tglB[0], jamB[0], jamB[1], jamB[2]).getTime(); return waktuB - waktuA; });
       var startIndex = (currentPageDashboard - 1) * itemsPerPage; var paginatedList = sortedList.slice(startIndex, startIndex + itemsPerPage);
       if (sortedList.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--text-main); font-weight:800;">Belum ada transaksi hari ini.</td></tr>'; return; }
@@ -1008,7 +1053,16 @@
       tbody.innerHTML = html;
     }
 
-    function muatDataSemua() { fetchGet('getSemuaTransaksiData', function(res) { dataCacheHariIni = res.hariIni.list; dataCacheKeseluruhan = res.keseluruhan.list; renderTabelAktif(); renderKurvaUsaha(res.kurva); renderMiniTabelDashboard(res.hariIni.list, 1); }); }
+    function muatDataSemua() { 
+      fetchGet('getSemuaTransaksiData', function(res) { 
+        dataCacheHariIni = res.hariIni.list; 
+        dataCacheKeseluruhan = res.keseluruhan.list; 
+        renderTabelAktif(); 
+        renderKurvaUsaha(res.kurva); 
+        renderRingkasanDash(); 
+        renderMiniTabelDashboard(res.hariIni.list, 1); 
+      }); 
+    }
 
     function jalankanPencarianKhusus() {
       var kw = document.getElementById('input-cari-khusus').value.toLowerCase().trim(); var container = document.getElementById('hasil-cari-khusus');
