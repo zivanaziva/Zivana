@@ -289,7 +289,7 @@
 
       <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-squares-four"></i> MENU DASHBOARD</div>
-        <div class="menu-grid">
+                <div class="menu-grid">
           <div class="menu-item" onclick="switchTab('tab-input', null)">
             <div class="menu-icon"><i class="ph-fill ph-lightning"></i></div>
             <div class="menu-text">Input Trx</div>
@@ -330,8 +330,18 @@
             <div class="menu-icon"><i class="ph-fill ph-users-three"></i></div>
             <div class="menu-text">Kreditur</div>
           </div>
+          <!-- 2 MENU TAMBAHAN -->
+          <div class="menu-item" onclick="switchTab('tab-trx-online', null)">
+            <div class="menu-icon"><i class="ph-fill ph-globe"></i></div>
+            <div class="menu-text">Trx Online</div>
+          </div>
+          <div class="menu-item" onclick="switchTab('tab-lainnya', null)">
+            <div class="menu-icon"><i class="ph-fill ph-dots-nine"></i></div>
+            <div class="menu-text">Lainnya</div>
+          </div>
         </div>
       </div>
+
 
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; margin-bottom: 20px;">
         <div class="glass-panel" style="padding: 12px 4px; text-align: center; border-radius: 14px;">
@@ -473,6 +483,29 @@
         <div id="list-kreditur"></div>
       </div>
     </div>
+
+    <!-- TAB TRX ONLINE -->
+    <div id="tab-trx-online" class="section">
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title"><i class="ph-fill ph-globe"></i> TRANSAKSI ONLINE</div>
+        <p style="text-align:center; color:var(--text-muted); font-weight:800; padding: 25px 10px;">
+          <i class="ph-fill ph-wrench" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i><br>
+          Fitur Transaksi Online sedang dalam tahap pengembangan.
+        </p>
+      </div>
+    </div>
+
+    <!-- TAB LAINNYA -->
+    <div id="tab-lainnya" class="section">
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title"><i class="ph-fill ph-dots-nine"></i> MENU LAINNYA</div>
+        <p style="text-align:center; color:var(--text-muted); font-weight:800; padding: 25px 10px;">
+          <i class="ph-fill ph-wrench" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i><br>
+          Fitur tambahan lainnya akan segera hadir di sini.
+        </p>
+      </div>
+    </div>
+
 
     <!-- TAB PENCARIAN KHUSUS -->
     <div id="tab-cari" class="section">
