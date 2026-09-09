@@ -446,7 +446,7 @@
               <button class="theme-btn" style="background: rgba(26,16,5,0.9); color: #f59e0b; border: 2px solid #f59e0b;" onclick="setTheme('sunset')">SUNSET GOLD</button>
             </div>
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap:6px;"><i class="ph-fill ph-sliders" style="font-size:1.2rem;"></i> TRANSPARANSI PANEL</label>
-            <input type="range" id="opacity-slider" min="0" max="1" step="0.05" value="1" style="width: 100%; cursor: pointer;" oninput="setOpacity(this.value)">
+            <input type="range" id="opacity-slider" min="0" max="1" step="0.05" value="1" style="width: 100%; cursor: pointer;" oninput="setOpacity(this.value)" onchange="simpanOpacityOnline(this.value)">
           </div>
 
           <!-- WALLPAPER -->
@@ -737,11 +737,19 @@
       setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    function setTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('wistara_theme', themeName); }
+    function setTheme(themeName) { 
+      document.documentElement.setAttribute('data-theme', themeName); 
+      localStorage.setItem('wistara_theme', themeName); 
+      fetchPost('simpanPengaturan', {'wistara_theme': themeName}, function(){}, function(){});
+    }
     
     function setOpacity(val) {
         document.documentElement.style.setProperty('--panel-opacity', val);
         localStorage.setItem('wistara_opacity', val);
+    }
+
+    function simpanOpacityOnline(val) {
+      fetchPost('simpanPengaturan', {'wistara_opacity': val}, function(){}, function(){});
     }
 
     function muatProfilToko() {
@@ -766,10 +774,19 @@
     }
 
     function simpanProfil() {
-      var namaBaru = document.getElementById('input-profile-name').value.trim() || "WISTARA-STORE"; var descBaru = document.getElementById('input-profile-desc').value.trim() || "SISTEM KASIR DIGITAL";
-      localStorage.setItem('wistara_nama', namaBaru); localStorage.setItem('wistara_desc', descBaru);
-      if(tempFotoProfilBase64) { try { localStorage.setItem('wistara_foto', tempFotoProfilBase64); } catch (e) { showToast("Ukuran foto terlalu besar untuk disimpan.", "error"); } }
-      muatProfilToko(); showToast("Profil Toko Berhasil Diperbarui!", "success");
+      var namaBaru = document.getElementById('input-profile-name').value.trim() || "WISTARA-STORE";
+      var descBaru = document.getElementById('input-profile-desc').value.trim() || "SISTEM KASIR DIGITAL";
+      
+      var payload = { 'wistara_nama': namaBaru, 'wistara_desc': descBaru };
+      if(tempFotoProfilBase64) payload['wistara_foto'] = tempFotoProfilBase64;
+
+      showToast("Sedang menyinkronkan ke server...", "info");
+      fetchPost('simpanPengaturan', payload, function(res) {
+        localStorage.setItem('wistara_nama', namaBaru); localStorage.setItem('wistara_desc', descBaru);
+        if(tempFotoProfilBase64) localStorage.setItem('wistara_foto', tempFotoProfilBase64);
+        muatProfilToko();
+        showToast("Profil Toko Berhasil Disimpan Online!", "success");
+      }, function(err) { showToast("Gagal simpan online", "error"); });
     }
 
     function muatBackgroundLokal() { var bgLokal = localStorage.getItem('wistara_bg'); if (bgLokal) { document.body.style.backgroundImage = 'url(' + bgLokal + ')'; } }
@@ -779,12 +796,20 @@
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var canvas = document.createElement('canvas'); var MAX_WIDTH = 1200; var MAX_HEIGHT = 1200; var width = img.width; var height = img.height;
+          var canvas = document.createElement('canvas'); 
+          var MAX_WIDTH = 800; var MAX_HEIGHT = 800; // Dikompres agar muat di Google Sheets
+          var width = img.width; var height = img.height;
           if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
           canvas.width = width; canvas.height = height; var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.5); // Kualitas 50%
           document.body.style.backgroundImage = 'url(' + dataUrl + ')';
-          try { localStorage.setItem('wistara_bg', dataUrl); showToast('Wallpaper berhasil diganti!', 'success'); } catch (error) { showToast('Gambar terlalu besar. Mohon pilih ukuran lebih kecil.', 'error'); }
+          localStorage.setItem('wistara_bg', dataUrl);
+          
+          showToast('Menyimpan wallpaper ke server...', 'info');
+          fetchPost('simpanPengaturan', {'wistara_bg': dataUrl}, function(){
+             showToast('Wallpaper berhasil disimpan online!', 'success');
+          }, function(err) { showToast('Wallpaper terlalu besar untuk server.', 'error'); });
         }; img.src = e.target.result;
       }; reader.readAsDataURL(file);
     }
@@ -1349,13 +1374,31 @@
       });
     }
 
+    // --- SINKRONISASI PENGATURAN ONLINE ---
+    function muatPengaturanOnline() {
+      fetchGet('getPengaturan', function(data) {
+        if(data.wistara_nama) { localStorage.setItem('wistara_nama', data.wistara_nama); }
+        if(data.wistara_desc) { localStorage.setItem('wistara_desc', data.wistara_desc); }
+        if(data.wistara_foto) { localStorage.setItem('wistara_foto', data.wistara_foto); }
+        if(data.wistara_theme) { localStorage.setItem('wistara_theme', data.wistara_theme); document.documentElement.setAttribute('data-theme', data.wistara_theme); }
+        if(data.wistara_opacity) { 
+           localStorage.setItem('wistara_opacity', data.wistara_opacity); 
+           document.documentElement.style.setProperty('--panel-opacity', data.wistara_opacity); 
+           var slider = document.getElementById('opacity-slider'); if(slider) slider.value = data.wistara_opacity; 
+        }
+        if(data.wistara_bg) { localStorage.setItem('wistara_bg', data.wistara_bg); document.body.style.backgroundImage = 'url(' + data.wistara_bg + ')'; }
+        
+        muatProfilToko(); 
+      });
+    }
+
     // --- INISIALISASI ---
     window.onload = function() {
        var slider = document.getElementById('opacity-slider'); if(slider) slider.value = savedOpacity;
        muatBackgroundLokal(); muatProfilToko(); muatDataSemua(); muatRiwayat(); updateBtnMode(); 
+       muatCelengan(); muatKreditur(); 
        
-       muatCelengan();
-       muatKreditur(); 
+       muatPengaturanOnline(); 
     };
   </script>
 </body>
