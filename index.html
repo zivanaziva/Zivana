@@ -22,9 +22,9 @@
   </script>
 
   <style>
-    :root { --panel-opacity: 1; } /* Variabel Transparansi Global */
+    :root { --panel-opacity: 1; }
 
-    /* --- TEMA 1: PROFESIONAL (BIRU & PUTIH) --- */
+    /* --- 6 TEMA DASAR --- */
     :root[data-theme="light"] {
       --bg-image: url('https://i.ibb.co/HD1wFw6g/e2b1296c2b2819d2e3595135a07b5fc9.jpg'); 
       --bg-color: #f8fafc;
@@ -37,10 +37,8 @@
       --table-header: rgba(239, 246, 255, 0.8); --table-border: #93c5fd;
       --color-success: #059669; --color-warning: #ea580c; --color-danger: #e11d48; --color-blue: #2563eb;
     }
-
-    /* --- TEMA 2: BOLD RED (MERAH & HITAM - REQ GAMBAR) --- */
     :root[data-theme="dark"] {
-      --bg-image: url('1000503965.jpg'); /* Background dari referensi */
+      --bg-image: url('1000503965.jpg');
       --bg-color: #0a0a0a;
       --panel-bg: rgba(15, 15, 15, var(--panel-opacity)); 
       --panel-border: 1px solid rgba(220, 38, 38, 0.6);
@@ -51,8 +49,6 @@
       --table-header: rgba(220, 38, 38, 0.15); --table-border: #991b1b;
       --color-success: #10b981; --color-warning: #f59e0b; --color-danger: #ef4444; --color-blue: #3b82f6;
     }
-
-    /* --- TEMA 3: NATURE EARTH (KREM & HIJAU DAUN) --- */
     :root[data-theme="dynamic"] {
       --bg-image: none; --bg-color: #fefce8;
       --panel-bg: rgba(255, 255, 255, var(--panel-opacity)); 
@@ -64,8 +60,6 @@
       --table-header: rgba(240, 253, 244, 0.8); --table-border: #4ade80;
       --color-success: #059669; --color-warning: #d97706; --color-danger: #dc2626; --color-blue: #0284c7;
     }
-
-    /* --- TEMA 4: CYBER CYAN (CYAN & HITAM) --- */
     :root[data-theme="cyber"] {
       --bg-image: none; --bg-color: #050b14;
       --panel-bg: rgba(10, 15, 25, var(--panel-opacity)); --panel-border: 1px solid rgba(6, 182, 212, 0.5);
@@ -76,8 +70,6 @@
       --table-header: rgba(6, 182, 212, 0.15); --table-border: #0891b2;
       --color-success: #10b981; --color-warning: #f59e0b; --color-danger: #ef4444; --color-blue: #3b82f6;
     }
-
-    /* --- TEMA 5: NEON PURPLE (UNGU & HITAM) --- */
     :root[data-theme="neon"] {
       --bg-image: none; --bg-color: #0f0518;
       --panel-bg: rgba(20, 10, 30, var(--panel-opacity)); --panel-border: 1px solid rgba(147, 51, 234, 0.5);
@@ -88,8 +80,6 @@
       --table-header: rgba(168, 85, 247, 0.15); --table-border: #7e22ce;
       --color-success: #10b981; --color-warning: #f59e0b; --color-danger: #ef4444; --color-blue: #3b82f6;
     }
-
-    /* --- TEMA 6: SUNSET GOLD (ORANYE/EMAS & HITAM) --- */
     :root[data-theme="sunset"] {
       --bg-image: none; --bg-color: #1a1005;
       --panel-bg: rgba(30, 20, 10, var(--panel-opacity)); --panel-border: 1px solid rgba(245, 158, 11, 0.5);
@@ -238,7 +228,6 @@
     .section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Tambahan backdrop-filter untuk efek kaca transparan */
     .glass-panel { background: var(--panel-bg); border: var(--panel-border); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); border-radius: 20px; transition: all 0.4s ease; backdrop-filter: blur(8px); }
     .card { padding: 22px; margin-bottom: 20px; }
     .card-title { font-size: 1.1rem; font-weight: 900; margin-bottom: 18px; color: var(--primary); border-bottom: 2px solid var(--input-border); padding-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
@@ -259,7 +248,7 @@
     .nav-item.active i { transform: translateY(-4px) scale(1.15); color: var(--primary); }
 
     .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 15px 0 5px; }
-    .menu-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .menu-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; }
     .menu-icon { width: 58px; height: 58px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 8px; transition: all 0.2s; background: var(--menu-icon-bg); border: 2px solid var(--input-border); box-shadow: 0 4px 8px rgba(0,0,0,0.06); color: var(--primary); }
     .menu-item:active .menu-icon { transform: scale(0.92); filter: brightness(0.9); }
     .menu-text { font-size: 0.7rem; font-weight: 800; color: var(--text-main); text-align: center; line-height: 1.2; }
@@ -336,6 +325,10 @@
           <div class="menu-item" onclick="switchTab('tab-investasi', null)">
             <div class="menu-icon"><i class="ph-fill ph-target"></i></div>
             <div class="menu-text">Celengan</div>
+          </div>
+          <div class="menu-item" onclick="switchTab('tab-kreditur', null)">
+            <div class="menu-icon"><i class="ph-fill ph-users-three"></i></div>
+            <div class="menu-text">Kreditur</div>
           </div>
         </div>
       </div>
@@ -427,14 +420,57 @@
           <button id="btn-celengan-tercapai" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--input-bg); color: var(--text-main); border: 2px solid var(--input-border); font-size: 0.8rem;" onclick="renderCelengan('tercapai')">TERCAPAI</button>
         </div>
 
-        <div id="list-celengan">
-          <!-- Data Celengan akan muncul di sini otomatis -->
-        </div>
+        <div id="list-celengan"></div>
 
-        <!-- Tombol Tambah Celengan -->
         <button class="btn" style="position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); width: 85%; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 18px;" onclick="bukaModalCelenganBaru()">
           <i class="ph-bold ph-plus"></i> TAMBAH CELENGAN BARU
         </button>
+      </div>
+    </div>
+
+    <!-- TAB KREDITUR -->
+    <div id="tab-kreditur" class="section">
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title"><i class="ph-fill ph-users-three"></i> TAMBAH KREDITUR</div>
+        
+        <div class="input-group">
+          <label>1. NAMA KREDITUR</label>
+          <input type="text" id="kreditur-nama" placeholder="Ketik nama...">
+        </div>
+        
+        <div class="input-group">
+          <label>2. JENIS (BARANG / UANG)</label>
+          <select id="kreditur-jenis">
+            <option value="Uang">Uang (Pinjaman tunai)</option>
+            <option value="Barang">Barang (Cicilan barang)</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label>3. NOMINAL / JUMLAH (Rp)</label>
+          <input type="text" id="kreditur-nominal" placeholder="Contoh: 1000000" oninput="formatUangK(this); hitungAdminOtomatis()">
+        </div>
+        
+        <div class="input-group">
+          <label>4. TENOR (BULAN)</label>
+          <input type="number" id="kreditur-tenor" placeholder="Contoh: 6">
+        </div>
+        
+        <div class="input-group">
+          <label>5. ADMIN PER BULAN (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5% (Bisa diedit manual)</span></label>
+          <input type="text" id="kreditur-admin" placeholder="Admin bulanan akan muncul otomatis" oninput="formatUangK(this)">
+        </div>
+        
+        <button class="btn" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
+        
+        <button id="btn-migrasi-kreditur" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); margin-top: 15px;" onclick="migrasiDataLama()"><i class="ph-bold ph-cloud-arrow-up"></i> MIGRASI DATA LAMA KE ONLINE</button>
+      </div>
+
+      <div class="glass-panel card">
+        <div class="card-title" style="justify-content:space-between;">
+          <span><i class="ph-fill ph-list-dashes"></i> DAFTAR KREDITUR</span>
+        </div>
+        <div id="list-kreditur"></div>
       </div>
     </div>
 
@@ -503,9 +539,10 @@
             </div>
           </div>
 
-          <!-- TEMA -->
+          <!-- TEMA SELECTIONS (18 TEMA) -->
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap:6px;"><i class="ph-fill ph-palette" style="font-size:1.2rem;"></i> TEMA APLIKASI (18 PILIHAN)</label>
+            
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 18px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
               <!-- Tema Dasar -->
               <button class="theme-btn" style="background: rgba(255,255,255,0.9); color: #1d4ed8; border: 2px solid #1d4ed8;" onclick="setTheme('light')">PROFESIONAL</button>
@@ -721,33 +758,18 @@
   <div id="modalBuatCelengan" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-target"></i> BUAT CELENGAN</h3>
-      
       <div class="input-group">
         <label>GAMBAR / QR CODE (OPSIONAL)</label>
         <input type="file" id="input-celengan-gambar" accept="image/*" style="padding: 10px;" onchange="previewGambarCelengan(event)">
         <input type="hidden" id="celengan-gambar-base64">
       </div>
-      <div class="input-group">
-        <label>NAMA TABUNGAN</label>
-        <input type="text" id="celengan-nama" placeholder="Contoh: Beli Motor">
-      </div>
-      <div class="input-group">
-        <label>TARGET TABUNGAN (Rp)</label>
-        <input type="text" id="celengan-target" placeholder="Contoh: 10.000.000" oninput="formatUangK(this)">
-      </div>
+      <div class="input-group"><label>NAMA TABUNGAN</label><input type="text" id="celengan-nama" placeholder="Contoh: Beli Motor"></div>
+      <div class="input-group"><label>TARGET TABUNGAN (Rp)</label><input type="text" id="celengan-target" placeholder="Contoh: 10.000.000" oninput="formatUangK(this)"></div>
       <div class="input-group">
         <label>RENCANA PENGISIAN</label>
-        <select id="celengan-rencana">
-          <option value="Harian">Harian</option>
-          <option value="Mingguan">Mingguan</option>
-          <option value="Bulanan">Bulanan</option>
-        </select>
+        <select id="celengan-rencana"><option value="Harian">Harian</option><option value="Mingguan">Mingguan</option><option value="Bulanan">Bulanan</option></select>
       </div>
-      <div class="input-group">
-        <label>NOMINAL PENGISIAN (Rp)</label>
-        <input type="text" id="celengan-nominal" placeholder="Contoh: 100.000" oninput="formatUangK(this)">
-      </div>
-      
+      <div class="input-group"><label>NOMINAL PENGISIAN (Rp)</label><input type="text" id="celengan-nominal" placeholder="Contoh: 100.000" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
         <button class="btn" style="flex: 1;" onclick="simpanCelenganBaru()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
         <button class="btn-close" onclick="tutupModal('modalBuatCelengan')">BATAL</button>
@@ -760,14 +782,58 @@
     <div class="modal-box">
       <h3 style="color: var(--color-success); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-wallet"></i> ISI CELENGAN</h3>
       <input type="hidden" id="isi-celengan-id">
-      <div class="input-group">
-        <label>NOMINAL YANG DITABUNG (Rp)</label>
-        <input type="text" id="isi-celengan-nominal" placeholder="Contoh: 50.000" oninput="formatUangK(this)">
-      </div>
+      <div class="input-group"><label>NOMINAL YANG DITABUNG (Rp)</label><input type="text" id="isi-celengan-nominal" placeholder="Contoh: 50.000" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
         <button class="btn" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanIsiCelengan()"><i class="ph-bold ph-plus"></i> TAMBAH SALDO</button>
         <button class="btn-close" onclick="tutupModal('modalIsiCelengan')">BATAL</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT KREDITUR -->
+  <div id="modalEditKreditur" class="modal-overlay">
+    <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
+      <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-pencil-simple"></i> EDIT KREDITUR</h3>
+      <input type="hidden" id="edit-kreditur-id">
+      <div class="input-group"><label>NAMA</label><input type="text" id="edit-kreditur-nama"></div>
+      <div class="input-group">
+        <label>JENIS</label>
+        <select id="edit-kreditur-jenis"><option value="Uang">Uang</option><option value="Barang">Barang</option></select>
+      </div>
+      <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="edit-kreditur-nominal" oninput="formatUangK(this)"></div>
+      <div class="input-group"><label>TENOR (BULAN)</label><input type="number" id="edit-kreditur-tenor"></div>
+      <div class="input-group"><label>ADMIN PER BULAN (Rp)</label><input type="text" id="edit-kreditur-admin" oninput="formatUangK(this)"></div>
+      <div class="modal-btns">
+        <button class="btn" style="flex: 1;" onclick="simpanEditKreditur()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button class="btn-close" onclick="tutupModal('modalEditKreditur')">BATAL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BAYAR KREDIT -->
+  <div id="modalBayarKreditur" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="color: var(--color-success); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-money"></i> BAYAR CICILAN</h3>
+      <input type="hidden" id="bayar-kreditur-id">
+      <div class="input-group">
+        <label>FOTO BUKTI PEMBAYARAN</label>
+        <input type="file" id="input-kreditur-bukti" accept="image/*" style="padding: 10px;" onchange="previewBuktiKreditur(event)">
+        <input type="hidden" id="kreditur-bukti-base64">
+      </div>
+      <div class="input-group"><label>NOMINAL BAYAR (Rp)</label><input type="text" id="bayar-kreditur-nominal" oninput="formatUangK(this)"></div>
+      <div class="modal-btns">
+        <button class="btn" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanBayarKreditur()"><i class="ph-bold ph-check"></i> KONFIRMASI BAYAR</button>
+        <button class="btn-close" onclick="tutupModal('modalBayarKreditur')">BATAL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RIWAYAT KREDIT -->
+  <div id="modalRiwayatKreditur" class="modal-overlay">
+    <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
+      <h3 style="color: var(--primary); margin-bottom: 10px; font-weight: 900;"><i class="ph-bold ph-clock-counter-clockwise"></i> RIWAYAT BAYAR</h3>
+      <div id="list-riwayat-kreditur"></div>
+      <button class="btn-close" style="width: 100%; margin-top: 15px;" onclick="tutupModal('modalRiwayatKreditur')">TUTUP</button>
     </div>
   </div>
 
@@ -1146,31 +1212,15 @@
     function bukaModalSetBon() { document.getElementById('set-bon-nama').value = ''; document.getElementById('set-bon-nominal').value = ''; document.getElementById('modalSetBon').style.display = 'flex'; }
     function simpanSetBon() { var btn = document.getElementById('btn-simpan-setbon'); var nama = document.getElementById('set-bon-nama').value; var nominal = document.getElementById('set-bon-nominal').value; if(!nama || !nominal) { alert("Nama dan Nominal harus diisi!"); return; } btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIMPAN...'; btn.disabled = true; fetchPost('setBon', { nama: nama, nominal: nominal }, function(res) { alert(res.pesan); tutupModal('modalSetBon'); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; muatDaftarBon(); }, function(err) { alert("ERROR: " + err); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; }); }
 
-    // --- SISTEM CELENGANKU ---
-    function muatDataCelengan() {
-      var data = localStorage.getItem('wistara_celengan');
-      return data ? JSON.parse(data) : [];
-    }
-
-    function simpanDataCelengan(data) {
-      localStorage.setItem('wistara_celengan', JSON.stringify(data));
-    }
-
-    function previewGambarCelengan(event) {
-      var file = event.target.files[0]; if (!file) return; 
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var img = new Image();
-        img.onload = function() {
-          var canvas = document.createElement('canvas'); 
-          var MAX_SIZE = 400; var width = img.width; var height = img.height;
-          if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
-          else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
-          canvas.width = width; canvas.height = height; 
-          var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          document.getElementById('celengan-gambar-base64').value = canvas.toDataURL('image/jpeg', 0.7);
-        }; img.src = e.target.result;
-      }; reader.readAsDataURL(file);
+    // === CELENGAN ONLINE ===
+    var celenganCache = [];
+    function muatCelengan(filterTab = 'berlangsung') {
+      var container = document.getElementById('list-celengan');
+      container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--primary); font-weight:900;"><i class="ph ph-spinner ph-spin"></i> MEMUAT CELENGAN...</p>';
+      fetchGet('getCelengan', function(data) {
+        celenganCache = data || [];
+        renderCelengan(filterTab);
+      });
     }
 
     function renderCelengan(filterTab = 'berlangsung') {
@@ -1185,11 +1235,9 @@
         btnBerlangsung.style.background = 'var(--input-bg)'; btnBerlangsung.style.color = 'var(--text-main)'; btnBerlangsung.style.border = '2px solid var(--input-border)';
       }
 
-      var data = muatDataCelengan();
       var container = document.getElementById('list-celengan');
       container.innerHTML = '';
-
-      var dataDifilter = data.filter(function(item) {
+      var dataDifilter = celenganCache.filter(function(item) {
         var isTercapai = item.terkumpul >= item.target;
         return filterTab === 'berlangsung' ? !isTercapai : isTercapai;
       });
@@ -1200,138 +1248,224 @@
       }
 
       var tglHariIni = new Date().toISOString().split('T')[0];
-
       dataDifilter.forEach(function(item) {
         var persen = Math.min(Math.floor((item.terkumpul / item.target) * 100), 100);
         var sisaNominal = item.target - item.terkumpul;
         var estimasiHari = sisaNominal > 0 ? Math.ceil(sisaNominal / item.nominalRencana) : 0;
-        
+        var tglFormat = item.terakhirIsi ? item.terakhirIsi.split('T')[0] : "";
         var imgHtml = item.gambar ? `<img src="${item.gambar}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i class="ph-fill ph-image" style="font-size: 3rem; color: var(--text-muted);"></i>`;
-        
-        var estimasiText = item.terkumpul >= item.target ? 
-          `<i class="ph-fill ph-check-circle" style="color: var(--color-success); margin-right: 4px;"></i> TARGET TERCAPAI!` : 
-          `<i class="ph-fill ph-calendar-check" style="color: var(--primary); margin-right: 4px;"></i> Estimasi ${estimasiHari} Kali Pengisian Lagi`;
+        var estimasiText = item.terkumpul >= item.target ? `<i class="ph-fill ph-check-circle" style="color: var(--color-success); margin-right: 4px;"></i> TARGET TERCAPAI!` : `<i class="ph-fill ph-calendar-check" style="color: var(--primary); margin-right: 4px;"></i> Estimasi ${estimasiHari} Kali Pengisian Lagi`;
+        var peringatanBelumIsi = (item.terkumpul < item.target && tglFormat !== tglHariIni) ? `<div style="background: rgba(220,38,38,0.1); color: var(--color-danger); border: 1px solid var(--color-danger); border-radius: 8px; padding: 6px; text-align: center; font-size: 0.75rem; font-weight: 900; margin-bottom: 15px;"><i class="ph-bold ph-warning-circle"></i> HARI INI BELUM DIISI!</div>` : ``;
 
-        var peringatanBelumIsi = (item.terkumpul < item.target && item.terakhirIsi !== tglHariIni) 
-          ? `<div style="background: rgba(220,38,38,0.1); color: var(--color-danger); border: 1px solid var(--color-danger); border-radius: 8px; padding: 6px; text-align: center; font-size: 0.75rem; font-weight: 900; margin-bottom: 15px;"><i class="ph-bold ph-warning-circle"></i> HARI INI BELUM DIISI!</div>` 
-          : ``;
-
-        var html = `
+        container.innerHTML += `
           <div class="box-3d" style="padding: 16px; border-radius: 20px; position: relative; margin-bottom: 15px;">
-            <div style="position:absolute; top: 10px; right: 10px; z-index: 10;">
-                <button onclick="hapusCelengan(${item.id})" style="background:rgba(220, 38, 38, 0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding: 6px 8px;"><i class="ph-bold ph-trash"></i></button>
-            </div>
-            
-            <div style="background: var(--input-bg); border-radius: 14px; height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 2px dashed var(--input-border); overflow: hidden;">
-               ${imgHtml}
-            </div>
-            
+            <div style="position:absolute; top: 10px; right: 10px; z-index: 10;"><button onclick="hapusCelengan(${item.row})" style="background:rgba(220, 38, 38, 0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding: 6px 8px;"><i class="ph-bold ph-trash"></i></button></div>
+            <div style="background: var(--input-bg); border-radius: 14px; height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 2px dashed var(--input-border); overflow: hidden;">${imgHtml}</div>
             <div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); margin-bottom: 10px; text-transform: uppercase;">${item.nama}</div>
-            
             ${peringatanBelumIsi}
-            
             <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px dashed var(--input-border); padding-bottom: 15px; margin-bottom: 15px;">
-              <div>
-                <div style="font-weight: 900; font-size: 1.3rem; color: var(--primary);">Rp ${Number(item.terkumpul).toLocaleString('id-ID')}</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800;">Target: Rp ${Number(item.target).toLocaleString('id-ID')}</div>
-              </div>
-              <div style="width: 50px; height: 50px; border-radius: 50%; background: conic-gradient(var(--primary) ${persen}%, var(--input-bg) 0); display: flex; align-items: center; justify-content: center; position: relative;">
-                <div style="width: 40px; height: 40px; background: var(--panel-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem; color: var(--text-main);">${persen}%</div>
-              </div>
+              <div><div style="font-weight: 900; font-size: 1.3rem; color: var(--primary);">Rp ${Number(item.terkumpul).toLocaleString('id-ID')}</div><div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800;">Target: Rp ${Number(item.target).toLocaleString('id-ID')}</div></div>
+              <div style="width: 50px; height: 50px; border-radius: 50%; background: conic-gradient(var(--primary) ${persen}%, var(--input-bg) 0); display: flex; align-items: center; justify-content: center;"><div style="width: 40px; height: 40px; background: var(--panel-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem;">${persen}%</div></div>
             </div>
-            
-            <div style="text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--text-main);">
-              ${estimasiText}
-            </div>
-            
-            ${item.terkumpul < item.target ? `<button class="btn" style="margin-top: 15px; padding: 12px; font-size: 0.9rem;" onclick="bukaModalIsiCelengan(${item.id})"><i class="ph-bold ph-plus"></i> ISI CELENGAN SEKARANG</button>` : ''}
+            <div style="text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--text-main);">${estimasiText}</div>
+            ${item.terkumpul < item.target ? `<button class="btn" style="margin-top: 15px; padding: 12px; font-size: 0.9rem;" onclick="bukaModalIsiCelengan(${item.row})"><i class="ph-bold ph-plus"></i> ISI CELENGAN SEKARANG</button>` : ''}
           </div>`;
-        container.innerHTML += html;
       });
     }
 
-    function bukaModalCelenganBaru() {
-      document.getElementById('celengan-nama').value = '';
-      document.getElementById('celengan-target').value = '';
-      document.getElementById('celengan-nominal').value = '';
-      document.getElementById('input-celengan-gambar').value = '';
-      document.getElementById('celengan-gambar-base64').value = '';
-      document.getElementById('modalBuatCelengan').style.display = 'flex';
+    function previewGambarCelengan(event) {
+      var file = event.target.files[0]; if (!file) return; var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas'); var MAX_SIZE = 400; var width = img.width; var height = img.height;
+          if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+          canvas.width = width; canvas.height = height; var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+          document.getElementById('celengan-gambar-base64').value = canvas.toDataURL('image/jpeg', 0.6);
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
     }
 
+    function bukaModalCelenganBaru() { document.querySelectorAll('#modalBuatCelengan input').forEach(el => el.value = ''); document.getElementById('modalBuatCelengan').style.display = 'flex'; }
+    
     function simpanCelenganBaru() {
-      var nama = document.getElementById('celengan-nama').value;
-      var target = document.getElementById('celengan-target').value;
-      var rencana = document.getElementById('celengan-rencana').value;
-      var nominal = document.getElementById('celengan-nominal').value;
-      var gambar = document.getElementById('celengan-gambar-base64').value;
-
-      if(!nama || !target || !nominal) { alert("Harap isi Nama, Target, dan Nominal!"); return; }
-
-      var dataCelengan = muatDataCelengan();
-      dataCelengan.push({
-        id: new Date().getTime(),
-        nama: nama,
-        target: parseFloat(target.replace(/[^0-9]/g, '')),
-        rencana: rencana,
-        nominalRencana: parseFloat(nominal.replace(/[^0-9]/g, '')),
-        terkumpul: 0,
-        gambar: gambar,
-        terakhirIsi: ""
-      });
-
-      simpanDataCelengan(dataCelengan);
-      tutupModal('modalBuatCelengan');
-      renderCelengan('berlangsung');
+      var btn = document.querySelector('#modalBuatCelengan .modal-btns .btn');
+      var data = { nama: document.getElementById('celengan-nama').value, target: parseFloat(document.getElementById('celengan-target').value.replace(/[^0-9]/g, '')), rencana: document.getElementById('celengan-rencana').value, nominal: parseFloat(document.getElementById('celengan-nominal').value.replace(/[^0-9]/g, '')), gambar: document.getElementById('celengan-gambar-base64').value };
+      if(!data.nama || !data.target || !data.nominal) { alert("Harap isi Nama, Target, dan Nominal!"); return; }
+      btn.innerHTML = 'PROSES...'; btn.disabled = true;
+      fetchPost('simpanCelengan', data, function(res) { tutupModal('modalBuatCelengan'); btn.innerHTML = 'SIMPAN'; btn.disabled = false; muatCelengan(); }, function(err){ alert("Gagal!"); btn.disabled = false; });
     }
 
-    function bukaModalIsiCelengan(id) {
-      document.getElementById('isi-celengan-id').value = id;
-      document.getElementById('isi-celengan-nominal').value = '';
-      document.getElementById('modalIsiCelengan').style.display = 'flex';
-    }
-
+    function bukaModalIsiCelengan(row) { document.getElementById('isi-celengan-id').value = row; document.getElementById('isi-celengan-nominal').value = ''; document.getElementById('modalIsiCelengan').style.display = 'flex'; }
+    
     function simpanIsiCelengan() {
-      var id = document.getElementById('isi-celengan-id').value;
-      var nominalInput = document.getElementById('isi-celengan-nominal').value;
-      if(!nominalInput) return;
-      
-      var nominal = parseFloat(nominalInput.replace(/[^0-9]/g, ''));
-      var data = muatDataCelengan();
-      
-      for(var i=0; i<data.length; i++) {
-        if(data[i].id == id) {
-          data[i].terkumpul += nominal;
-          data[i].terakhirIsi = new Date().toISOString().split('T')[0];
-          break;
-        }
-      }
-      
-      simpanDataCelengan(data);
-      tutupModal('modalIsiCelengan');
-      renderCelengan('berlangsung');
+      var btn = document.querySelector('#modalIsiCelengan .modal-btns .btn');
+      var data = { row: document.getElementById('isi-celengan-id').value, nominalIsi: parseFloat(document.getElementById('isi-celengan-nominal').value.replace(/[^0-9]/g, '')), tgl: new Date().toISOString() };
+      if(!data.nominalIsi) return; btn.innerHTML = 'PROSES...'; btn.disabled = true;
+      fetchPost('isiCelengan', data, function(res) { tutupModal('modalIsiCelengan'); btn.innerHTML = '<i class="ph-bold ph-plus"></i> TAMBAH SALDO'; btn.disabled = false; muatCelengan(); }, function(err){ alert("Gagal!"); btn.disabled = false; });
     }
 
-    function hapusCelengan(id) {
-      if(confirm("Yakin ingin menghapus celengan ini?")) {
-        var data = muatDataCelengan();
-        var dataBaru = data.filter(function(item) { return item.id != id; });
-        simpanDataCelengan(dataBaru);
-        renderCelengan('berlangsung');
+    function hapusCelengan(row) { if(confirm("Yakin ingin menghapus celengan ini?")) { fetchPost('hapusCelengan', {row: row}, function(res) { muatCelengan(); }); } }
+
+    // === KREDITUR ONLINE ===
+    var krediturCache = [];
+    function muatKreditur() {
+      var container = document.getElementById('list-kreditur');
+      container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--primary); font-weight:900;"><i class="ph ph-spinner ph-spin"></i> MEMUAT DATA ONLINE...</p>';
+      fetchGet('getKreditur', function(data) { krediturCache = data || []; renderKrediturOnline(); });
+    }
+
+    function hitungAdminOtomatis() {
+      var nom = parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0;
+      var admin = nom * 0.05; // 5% Per Bulan
+      document.getElementById('kreditur-admin').value = admin > 0 ? admin : '';
+    }
+
+    function renderKrediturOnline() {
+      var container = document.getElementById('list-kreditur'); container.innerHTML = '';
+      if (krediturCache.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted); font-weight:800;">Belum ada data kreditur.</p>'; return; }
+      krediturCache.forEach(function(item) {
+        var adminTotal = item.admin * item.tenor; var totalHutang = item.nominal + adminTotal; var cicilanPerBulan = Math.round(totalHutang / item.tenor);
+        var badgeWarna = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
+        container.innerHTML += `
+          <div class="box-3d" style="padding: 16px; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div><div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); text-transform: uppercase;">${item.nama}</div><span style="background: var(--input-bg); color: ${badgeWarna}; border: 1px solid ${badgeWarna}; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 900;">${item.jenis}</span></div>
+              <div style="display: flex; gap: 6px;">
+                <button onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(16, 185, 129, 0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
+                <button onclick="bukaModalBayarKreditur('${item.id}')" style="background:rgba(245, 158, 11, 0.1); color:var(--color-warning); border:1px solid var(--color-warning); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-money"></i></button>
+                <button onclick="bukaModalEditKreditur(${item.row})" style="background:rgba(59, 130, 246, 0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
+                <button onclick="hapusKreditur(${item.row})" style="background:rgba(220, 38, 38, 0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding: 6px 10px;"><i class="ph-bold ph-trash"></i></button>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;"><span>Pinjaman: Rp ${Number(item.nominal).toLocaleString('id-ID')}</span><span>Admin/Bln: Rp ${Number(item.admin).toLocaleString('id-ID')}</span></div>
+            <hr style="border: 0; border-top: 2px dashed var(--input-border); margin: 8px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">Tenor: <span style="color:var(--primary);">${item.tenor} Bulan</span><br><span style="font-size:0.75rem; color:var(--text-muted);">Cicilan: Rp ${Number(cicilanPerBulan).toLocaleString('id-ID')}/bln</span></div>
+              <div style="text-align: right;"><div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 800;">TOTAL + ADMIN</div><div style="font-weight: 900; font-size: 1.1rem; color: var(--color-warning);">Rp ${Number(totalHutang).toLocaleString('id-ID')}</div></div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function simpanKrediturBaru() {
+      var data = { nama: document.getElementById('kreditur-nama').value, jenis: document.getElementById('kreditur-jenis').value, nominal: parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('kreditur-tenor').value), admin: parseFloat(document.getElementById('kreditur-admin').value.replace(/[^0-9]/g, '')) };
+      if(!data.nama || !data.nominal || !data.tenor || !data.admin) { alert("Isi semua kolom!"); return; }
+      fetchPost('simpanKreditur', data, function(res) {
+        document.querySelectorAll('#tab-kreditur input').forEach(el => el.value = ''); muatKreditur();
+      });
+    }
+
+    function hapusKreditur(row) { if(confirm("Hapus data ini dari database?")) { fetchPost('hapusKreditur', {row: row}, function(res) { muatKreditur(); }); } }
+
+    function bukaModalEditKreditur(row) {
+      var item = krediturCache.find(d => d.row === row);
+      if(item) {
+        document.getElementById('edit-kreditur-id').value = item.row; document.getElementById('edit-kreditur-nama').value = item.nama; document.getElementById('edit-kreditur-jenis').value = item.jenis; document.getElementById('edit-kreditur-nominal').value = item.nominal; document.getElementById('edit-kreditur-tenor').value = item.tenor; document.getElementById('edit-kreditur-admin').value = item.admin; document.getElementById('modalEditKreditur').style.display = 'flex';
       }
     }
 
-   window.onload = function() {
-       var slider = document.getElementById('opacity-slider');
-       if(slider) slider.value = savedOpacity;
+    function simpanEditKreditur() {
+      var btn = document.querySelector('#modalEditKreditur .modal-btns .btn');
+      var data = { row: document.getElementById('edit-kreditur-id').value, nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('edit-kreditur-tenor').value), admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, '')) };
+      btn.innerHTML = 'PROSES...'; btn.disabled = true;
+      fetchPost('editKreditur', data, function(res) { tutupModal('modalEditKreditur'); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; muatKreditur(); });
+    }
+
+    function bukaModalBayarKreditur(id) {
+      document.getElementById('bayar-kreditur-id').value = id;
+      document.getElementById('bayar-kreditur-nominal').value = '';
+      document.getElementById('kreditur-bukti-base64').value = '';
+      document.getElementById('input-kreditur-bukti').value = '';
+      document.getElementById('modalBayarKreditur').style.display = 'flex';
+    }
+
+    function previewBuktiKreditur(event) {
+      var file = event.target.files[0]; if (!file) return; var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas'); var MAX_SIZE = 400; var width = img.width; var height = img.height;
+          if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+          canvas.width = width; canvas.height = height; var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+          document.getElementById('kreditur-bukti-base64').value = canvas.toDataURL('image/jpeg', 0.6);
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
+    }
+
+    function simpanBayarKreditur() {
+      var id = document.getElementById('bayar-kreditur-id').value;
+      var nominal = parseFloat(document.getElementById('bayar-kreditur-nominal').value.replace(/[^0-9]/g, ''));
+      var bukti = document.getElementById('kreditur-bukti-base64').value;
+      if(!nominal) { alert("Nominal harus diisi!"); return; }
+      
+      var btn = document.querySelector('#modalBayarKreditur .modal-btns .btn');
+      btn.innerHTML = 'PROSES...'; btn.disabled = true;
+      
+      fetchPost('bayarKreditur', { id: id, nominal: nominal, bukti: bukti, tgl: new Date().toISOString() }, function(res) {
+        tutupModal('modalBayarKreditur');
+        btn.innerHTML = '<i class="ph-bold ph-check"></i> KONFIRMASI BAYAR'; btn.disabled = false;
+        alert("Pembayaran berhasil dicatat!");
+      });
+    }
+
+    function bukaModalRiwayatKreditur(id) {
+      document.getElementById('modalRiwayatKreditur').style.display = 'flex';
+      var container = document.getElementById('list-riwayat-kreditur');
+      container.innerHTML = '<p style="text-align:center;"><i class="ph ph-spinner ph-spin"></i> Memuat Riwayat...</p>';
+      
+      fetchPost('getRiwayatKreditur', { id: id }, function(data) {
+        if(data.length === 0) { container.innerHTML = '<p style="text-align:center; font-weight:800; color:var(--text-muted);">Belum ada riwayat pembayaran.</p>'; return; }
+        var html = '';
+        data.forEach(function(item) {
+          var tglFormat = item.tgl.split('T')[0];
+          var imgHtml = item.bukti ? `<img src="${item.bukti}" style="width:100%; border-radius:8px; margin-top:8px;">` : `<p style="font-size:0.7rem; color:var(--text-muted);">Tidak ada foto</p>`;
+          html += `<div style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:12px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-weight:900; margin-bottom:6px;">
+               <span style="color:var(--text-main);">${tglFormat}</span><span style="color:var(--color-success);">+ Rp ${Number(item.nominal).toLocaleString('id-ID')}</span>
+            </div>${imgHtml}</div>`;
+        });
+        container.innerHTML = html;
+      });
+    }
+
+    // === MIGRASI DATA LOKAL KE ONLINE ===
+    function migrasiDataLama() {
+      var dataLama = localStorage.getItem('wistara_kreditur');
+      if (!dataLama) { alert("Tidak ada data lokal yang ditemukan di perangkat ini."); return; }
+      
+      var parsedData = JSON.parse(dataLama);
+      if (parsedData.length === 0) { alert("Data lokal sudah kosong."); return; }
+
+      var konfirmasi = confirm("Ditemukan " + parsedData.length + " data kreditur lama. Pindahkan ke Google Sheets sekarang?");
+      if (!konfirmasi) return;
+
+      var btn = document.getElementById('btn-migrasi-kreditur');
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MIGRASI BERJALAN...'; 
+      btn.disabled = true;
+
+      // Kirim satu per satu dengan jeda untuk menghindari limit Apps Script
+      parsedData.forEach(function(item, index) {
+        setTimeout(function() {
+          fetchPost('simpanKreditur', item, function(res) {
+            if (index === parsedData.length - 1) {
+              alert("Migrasi selesai! Seluruh data lama Anda sudah masuk ke Database Online.");
+              btn.style.display = 'none'; // Sembunyikan tombol setelah selesai
+              muatKreditur();
+            }
+          });
+        }, index * 1000); 
+      });
+    }
+
+    // --- INISIALISASI ---
+    window.onload = function() {
+       var slider = document.getElementById('opacity-slider'); if(slider) slider.value = savedOpacity;
+       muatBackgroundLokal(); muatProfilToko(); muatDataSemua(); muatRiwayat(); updateBtnMode(); 
        
-       muatBackgroundLokal(); 
-       muatProfilToko(); 
-       muatDataSemua(); 
-       muatRiwayat(); 
-       updateBtnMode(); 
-       renderCelengan('berlangsung');
-   };
+       muatCelengan();
+       muatKreditur(); 
+    };
   </script>
 </body>
 </html>
