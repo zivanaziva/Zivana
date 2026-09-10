@@ -236,8 +236,17 @@
     <div id="tab-trx-online" class="section">
       <div class="glass-panel card" style="margin-top: 15px;"><div class="card-title"><i class="ph-fill ph-globe"></i> TRANSAKSI ONLINE</div><p style="text-align:center; color:var(--text-muted); font-weight:800; padding: 25px 10px;"><i class="ph-fill ph-wrench" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i><br>Tahap pengembangan.</p></div>
     </div>
+    
     <div id="tab-lainnya" class="section">
-      <div class="glass-panel card" style="margin-top: 15px;"><div class="card-title"><i class="ph-fill ph-dots-nine"></i> MENU LAINNYA</div><p style="text-align:center; color:var(--text-muted); font-weight:800; padding: 25px 10px;"><i class="ph-fill ph-wrench" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i><br>Segera hadir.</p></div>
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title"><i class="ph-fill ph-database"></i> BACKUP DATA (PENGAMANAN)</div>
+        <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
+          Download seluruh data (Transaksi, Bon, Stok, Celengan, dll) ke dalam HP/Laptop Anda. Lakukan ini seminggu sekali untuk berjaga-jaga jika database Firebase bermasalah.
+        </p>
+        <button class="btn" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="backupSemuaData()" id="btn-backup">
+          <i class="ph-bold ph-download-simple"></i> DOWNLOAD BACKUP (.JSON)
+        </button>
+      </div>
     </div>
 
     <!-- TAB CARI -->
@@ -570,7 +579,7 @@
 
   <script>
     // ==========================================
-    // 1. KONFIGURASI FIREBASE MURNI
+    // 1. KONFIGURASI FIREBASE & AUTO-BACKUP
     // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyDmYmUmC5RvWex7GfLTOcTJmIZXFBL-nyw",
@@ -583,6 +592,16 @@
 
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
+
+    // AKTIFKAN AUTO-BACKUP KE MEMORI HP (OFFLINE CACHE)
+    db.enablePersistence()
+      .catch(function(err) {
+        if (err.code == 'failed-precondition') {
+          console.log("Auto-backup offline hanya bisa jalan di 1 tab/jendela.");
+        } else if (err.code == 'unimplemented') {
+          console.log("Browser ini tidak mendukung auto-backup offline.");
+        }
+      });
 
     // ==========================================
     // 2. HELPER & FORMATTING UTILS
@@ -598,15 +617,14 @@
         return { tanggal: `${d}-${m}-${y}`, jam: `${hh}:${mm}:${ss}` };
     }
     
-    // Perbaikan anti-crash format tanggal (Universal)
     function standarkanTgl(t) {
         if(!t) return getTglJam().tanggal;
         t = t.toString().trim();
         if(t.includes('/')) t = t.replace(/\//g, '-');
         let p = t.split('-');
         if(p.length === 3) {
-            if (p[0].length === 4) return `${p[2].padStart(2,'0')}-${p[1].padStart(2,'0')}-${p[0]}`; // YYYY-MM-DD -> DD-MM-YYYY
-            return `${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}-${p[2]}`; // Pastikan ada 0 di depan angka tunggal
+            if (p[0].length === 4) return `${p[2].padStart(2,'0')}-${p[1].padStart(2,'0')}-${p[0]}`; 
+            return `${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}-${p[2]}`; 
         }
         return t;
     }
@@ -677,7 +695,7 @@
           
           snapshot.forEach((doc) => {
               let d = doc.data(); d.id = doc.id; 
-              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : tglSkrg; // Pastikan format tanggal diseragamkan
+              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : tglSkrg; 
               
               listSemua.push(d);
               if (d.tanggal === tglSkrg) listHariIni.push(d);
@@ -1022,7 +1040,6 @@
     }
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
 
-    // Fungsi WA yang diperbaiki
     function kirimWaTeksSukses() { 
       let urlApp = "whatsapp://send?text=" + encodeURIComponent(tempNotaWA);
       let urlWeb = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA);
@@ -1071,6 +1088,48 @@
 
     document.getElementById('nomor').addEventListener('input', function() { if (this.value.startsWith('628') || this.value.startsWith('+628')) this.value = '08' + this.value.replace(/^(?:\+?628)/, '8'); });
     document.getElementById('edit-nomor').addEventListener('input', function() { if (this.value.startsWith('628') || this.value.startsWith('+628')) this.value = '08' + this.value.replace(/^(?:\+?628)/, '8'); });
+
+    // ==========================================
+    // FITUR BACKUP DATABASE OTOMATIS KE FILE
+    // ==========================================
+    async function backupSemuaData() {
+      let btn = document.getElementById('btn-backup');
+      let textAsli = btn.innerHTML;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIAPKAN FILE BACKUP...';
+      btn.disabled = true;
+
+      try {
+        let backupData = {};
+        const koleksi = ["transaksi", "bon", "stok", "server", "tabungan", "celengan", "kreditur"];
+        
+        for (let col of koleksi) {
+          let snap = await db.collection(col).get();
+          backupData[col] = [];
+          snap.forEach(doc => { backupData[col].push({ id: doc.id, ...doc.data() }); });
+        }
+
+        let dataStr = JSON.stringify(backupData, null, 2);
+        let blob = new Blob([dataStr], { type: "application/json" });
+        let url = URL.createObjectURL(blob);
+        
+        let a = document.createElement('a');
+        a.href = url;
+        let tglDownload = new Date().toISOString().slice(0,10);
+        a.download = `Backup_Wistara_${tglDownload}.json`;
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        alert("✅ Backup Berhasil! File tersimpan di Folder Download HP Anda.");
+      } catch (err) {
+        alert("❌ Gagal melakukan backup: " + err.message);
+      } finally {
+        btn.innerHTML = textAsli;
+        btn.disabled = false;
+      }
+    }
 
     window.onload = function() {
        let s = document.getElementById('opacity-slider'); if(s) s.value = savedOpacity;
