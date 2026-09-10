@@ -949,13 +949,79 @@
     // ==========================================
     // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
     // ==========================================
-    function renderRingkasanDash() {
-      let inputTgl = document.getElementById('filter-tgl-dash'), tglDB = inputTgl && inputTgl.value ? formatTgl(inputTgl.value) : getTglJam().tanggal;
-      if(inputTgl && !inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA');
-      let tMod = 0, tJual = 0, tTrx = 0; dataCacheKeseluruhan.forEach(item => { if(item.tanggal === tglDB) { tMod += item.modal; tJual += item.harga; tTrx++; } });
-      document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID'); document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID'); document.getElementById('dash-bersih').innerText = "Rp " + (tJual - tMod).toLocaleString('id-ID'); document.getElementById('dash-trx').innerText = tTrx;
-    }
+        // ==========================================
+    // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
+    // ==========================================
     
+    function muatDataSemua() {
+      db.collection("transaksi").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+          let listSemua = [];
+          let nUnik = new Set(), kUnik = new Set();
+          
+          snapshot.forEach((doc) => {
+              let d = doc.data(); d.id = doc.id; 
+              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
+              
+              listSemua.push(d);
+              if (d.nama) nUnik.add(d.nama); if (d.paket) kUnik.add(d.paket);
+          });
+          
+          dataCacheKeseluruhan = listSemua; 
+          
+          // Otomatis memanggil sinkronisasi tanggal
+          renderRingkasanDash(); 
+          
+          try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip."); }
+          
+          let nHTML = '', kHTML = '';
+          nUnik.forEach(v => nHTML += `<option value="${v}">`); kUnik.forEach(v => kHTML += `<option value="${v}">`);
+          document.getElementById('list-nama').innerHTML = nHTML; document.getElementById('list-kode').innerHTML = kHTML;
+      }, (error) => {
+          let tb = document.getElementById('tabel-dashboard-body');
+          if(tb) tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--color-danger); font-weight:900;">Error: ${error.message}</td></tr>`;
+      });
+    }
+
+    function renderRingkasanDash() {
+      let inputTgl = document.getElementById('filter-tgl-dash');
+      // Jika input tanggal kosong, otomatis ambil tanggal hari ini
+      let tglPilih = inputTgl && inputTgl.value ? inputTgl.value : new Date().toLocaleDateString('en-CA');
+      let tglDB = formatTgl(tglPilih);
+      
+      if(inputTgl && !inputTgl.value) inputTgl.value = tglPilih;
+      
+      let tMod = 0, tJual = 0, tTrx = 0; 
+      let listPilihan = []; // Array khusus untuk menampung data di tanggal yang dipilih
+      
+      dataCacheKeseluruhan.forEach(item => { 
+        if(item.tanggal === tglDB) { 
+          tMod += item.modal; tJual += item.harga; tTrx++; 
+          listPilihan.push(item);
+        } 
+      });
+      
+      // 1. Update 4 Kotak Ringkasan Omset
+      document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID'); 
+      document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID'); 
+      document.getElementById('dash-bersih').innerText = "Rp " + (tJual - tMod).toLocaleString('id-ID'); 
+      document.getElementById('dash-trx').innerText = tTrx;
+
+      // 2. Sinkronkan definisi "Hari Ini" menjadi "Tanggal Terpilih"
+      dataCacheHariIni = listPilihan;
+      
+      // 3. Update Tabel Mini TRX TERBARU di Dashboard
+      renderMiniTabelDashboard(dataCacheHariIni, 1);
+      
+      // 4. Update Tabel di Menu Riwayat Harian
+      if (modeAktif === 'hariini') {
+        renderTabelAktif();
+      }
+
+      // 5. Otomatis samakan tanggal di form Input Transaksi
+      let formTgl = document.getElementById('tgl-transaksi');
+      if (formTgl) formTgl.value = tglPilih;
+    }
+
     function toggleTanggalRahasia() {
       let wadah = document.getElementById('wadah-tanggal-rahasia'), inputTgl = document.getElementById('filter-tgl-dash');
       if (wadah.style.display === 'none') { wadah.style.display = 'flex'; if(!inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA'); } 
