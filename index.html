@@ -275,9 +275,59 @@
     .theme-btn:active { transform: scale(0.95); }
     
     .input-profil { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--input-border); background: var(--panel-bg); color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
+
+    /* ... (ratusan baris kode CSS Anda yang lain ada di atas sini) ... */
+
+    .input-profil { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--input-border); background: var(--panel-bg); color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
+
+        /* EFEK LAMPU BERJALAN KELILING (LEBIH JELAS) */
+    @keyframes lampuKeliling {
+      0% { 
+        box-shadow: 0 -12px 20px -5px #00f0ff; /* Cahaya di Atas */
+        border-color: #00f0ff !important;
+      }
+      25% { 
+        box-shadow: 12px 0 20px -5px #39ff14; /* Cahaya di Kanan */
+        border-color: #39ff14 !important;
+      }
+      50% { 
+        box-shadow: 0 12px 20px -5px #ff0055; /* Cahaya di Bawah */
+        border-color: #ff0055 !important;
+      }
+      75% { 
+        box-shadow: -12px 0 20px -5px #f59e0b; /* Cahaya di Kiri */
+        border-color: #f59e0b !important;
+      }
+      100% { 
+        box-shadow: 0 -12px 20px -5px #00f0ff; /* Kembali ke Atas */
+        border-color: #00f0ff !important;
+      }
+    }
+
+    .glass-panel, .box-3d {
+      animation: lampuKeliling 2.5s linear infinite !important;
+      border-width: 2px !important;
+      border-style: solid !important;
+    }
+
+    /* EFEK KEDIP RGB DI GRID MENU (TETAP SAMA) */
+    @keyframes kedipRGB {
+      0% { box-shadow: 0 0 10px #ff0055, inset 0 0 5px #ff0055; border-color: #ff0055; color: #ff0055; }
+      33% { box-shadow: 0 0 10px #00f0ff, inset 0 0 5px #00f0ff; border-color: #00f0ff; color: #00f0ff; }
+      66% { box-shadow: 0 0 10px #39ff14, inset 0 0 5px #39ff14; border-color: #39ff14; color: #39ff14; }
+      100% { box-shadow: 0 0 10px #ff0055, inset 0 0 5px #ff0055; border-color: #ff0055; color: #ff0055; }
+    }
+
+    .menu-icon {
+      animation: kedipRGB 2.5s infinite !important;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+
   </style>
 </head>
 <body>
+
 
   <div class="container">
     <!-- TAB BERANDA -->
@@ -330,6 +380,7 @@
             <div class="menu-icon"><i class="ph-fill ph-users-three"></i></div>
             <div class="menu-text">Kreditur</div>
           </div>
+          <!-- 2 MENU TAMBAHAN (12 GRID) -->
           <div class="menu-item" onclick="switchTab('tab-trx-online', null)">
             <div class="menu-icon"><i class="ph-fill ph-globe"></i></div>
             <div class="menu-text">Trx Online</div>
@@ -341,7 +392,7 @@
         </div>
       </div>
 
-      <!-- WADAH TANGGAL RAHASIA -->
+      <!-- WADAH TANGGAL RAHASIA (DISEMBUNYIKAN) -->
       <div id="wadah-tanggal-rahasia" style="display: none; justify-content: center; margin-top: 15px; margin-bottom: 10px; animation: fadeIn 0.3s ease;">
         <div style="background: var(--input-bg); padding: 8px 12px; border-radius: 14px; border: 2px dashed var(--primary); display: flex; align-items: center; gap: 10px;">
           <span style="font-size:0.7rem; font-weight:900; color:var(--primary);"><i class="ph-fill ph-calendar-blank"></i> TANGGAL:</span>
@@ -349,7 +400,7 @@
         </div>
       </div>
 
-      <!-- 4 KOTAK WIDGET -->
+      <!-- 4 KOTAK WIDGET (AREA KLIK 2X) -->
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; margin-bottom: 20px; user-select: none; cursor: pointer;" ondblclick="toggleTanggalRahasia()" title="Klik 2x untuk atur tanggal">
         <div class="glass-panel" style="padding: 12px 4px; text-align: center; border-radius: 14px;">
           <div style="font-size: 0.55rem; color: var(--text-muted); font-weight: 800; line-height: 1.1; margin-bottom: 4px;">TOTAL<br>MODAL</div>
@@ -451,17 +502,12 @@
         <div class="card-title"><i class="ph-fill ph-users-three"></i> TAMBAH KREDITUR</div>
         
         <div class="input-group">
-          <label>1. TANGGAL AKAD / TRANSAKSI</label>
-          <input type="date" id="kreditur-tanggal">
-        </div>
-
-        <div class="input-group">
-          <label>2. NAMA KREDITUR</label>
+          <label>1. NAMA KREDITUR</label>
           <input type="text" id="kreditur-nama" placeholder="Ketik nama...">
         </div>
         
         <div class="input-group">
-          <label>3. JENIS (BARANG / UANG)</label>
+          <label>2. JENIS (BARANG / UANG)</label>
           <select id="kreditur-jenis">
             <option value="Uang">Uang (Pinjaman tunai)</option>
             <option value="Barang">Barang (Cicilan barang)</option>
@@ -469,22 +515,22 @@
         </div>
         
         <div class="input-group">
-          <label>4. NOMINAL / JUMLAH (Rp)</label>
+          <label>3. NOMINAL / JUMLAH (Rp)</label>
           <input type="text" id="kreditur-nominal" placeholder="Contoh: 1000000" oninput="formatUangK(this); hitungAdminOtomatis()">
         </div>
         
         <div class="input-group">
-          <label>5. PERIODE CICILAN</label>
+          <label>4. PERIODE CICILAN</label>
           <select id="kreditur-periode"><option value="Bulan">Bulanan</option><option value="Minggu">Mingguan</option></select>
         </div>
         
         <div class="input-group">
-          <label>6. TENOR (LAMA CICILAN)</label>
+          <label>5. TENOR (LAMA CICILAN)</label>
           <input type="number" id="kreditur-tenor" placeholder="Contoh: 6">
         </div>
         
         <div class="input-group">
-          <label>7. ADMIN PER PERIODE (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5%</span></label>
+          <label>6. ADMIN PER PERIODE (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5% (Bisa diedit manual)</span></label>
           <input type="text" id="kreditur-admin" placeholder="Contoh: 50000" oninput="formatUangK(this)">
         </div>
         
@@ -588,7 +634,7 @@
             </div>
           </div>
 
-          <!-- TEMA SELECTIONS -->
+          <!-- TEMA SELECTIONS (18 TEMA) -->
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap:6px;"><i class="ph-fill ph-palette" style="font-size:1.2rem;"></i> TEMA APLIKASI (18 PILIHAN)</label>
             
@@ -844,9 +890,6 @@
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-pencil-simple"></i> EDIT KREDITUR</h3>
       <input type="hidden" id="edit-kreditur-id">
-      
-      <div class="input-group"><label>TANGGAL AKAD</label><input type="date" id="edit-kreditur-tanggal"></div>
-      
       <div class="input-group"><label>NAMA</label><input type="text" id="edit-kreditur-nama"></div>
       <div class="input-group">
         <label>JENIS</label>
@@ -964,20 +1007,10 @@
     function formatUangK(el) { var val = el.value.toLowerCase(); if (val.includes('k')) { var angka = parseFloat(val.replace('k', '')); if (!isNaN(angka)) { el.value = angka * 1000; } } }
     function tutupModal(id) { document.getElementById(id).style.display = 'none'; }
     
-    // --- FUNGSI BARU UNTUK MEMAKSA BUKA APLIKASI WA (ANTI 404 VERCEL) ---
-    function bukaWhatsApp(pesan) {
-      var url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(pesan);
-      var a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-    
+    // PERBAIKAN: Menggunakan window.location.href agar tidak 404 Vercel
     function tagihWA(nama, totalBon) { 
       var pesan = "```✨ INFORMASI TAGIHAN BON ✨\n━━━━━━━━━━━━━━━\n👤 NAMA    : " + nama + "\n💰 TOTAL   : Rp " + totalBon + "\n━━━━━━━━━━━━━━━\n✅ Mohon untuk dicek kembali ya.\n🙏 Terima Kasih```"; 
-      bukaWhatsApp(pesan); 
+      window.location.href = "https://wa.me/?text=" + encodeURIComponent(pesan); 
     }
     
     document.addEventListener('keydown', function(event) { if (event.key === 'Enter') { var e = document.activeElement; if (e.tagName === 'INPUT' && e.id !== 'cari-nomor' && e.id !== 'cari-bon') { event.preventDefault(); var t = e.closest('.section') || e.closest('.modal-box'); if (t) { var i = Array.from(t.querySelectorAll('input')); var id = i.indexOf(e); if (id > -1) { if (id < i.length - 1) i[id + 1].focus(); else { var b = t.querySelector('.btn'); if (b) b.click(); } } } } } });
@@ -1122,7 +1155,7 @@
       var container = document.getElementById('list-harian'); updateBtnMode();
       if (list.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--color-danger); font-weight:900;">BELUM ADA DATA.</p>'; return; }
       var th = 0; var tm = 0; list.forEach(function(item) { th += item.harga; tm += (item.modal || 0); }); var lb = th - tm;
-      var title = (modeAktif === 'hariini') ? 'REKAP HARI INI' : (modeAktif === 'semua' ? 'REKAP SELURUHNYA' : 'REKAP PENCARIAN');
+      var title = (modeAktif === 'hariini') ? 'REKAP HARI INI' : (modeAktif === 'semua' ? 'REKAP SELURUHNYA' : 'REKAP RENTANG TANGGAL');
       var html = `<div class="box-3d" style="display: flex; flex-direction: column; margin-bottom: 20px; padding: 20px; width: 100%; box-sizing: border-box; background: var(--input-bg); border: 2px solid var(--input-border);">
                     <div style="text-align:center; font-weight:900; font-size:1.1rem; margin-bottom:15px; text-transform:uppercase; letter-spacing: 0.5px;" class="text-gradient"><i class="ph-fill ph-wallet" style="margin-right: 6px;"></i> ${title}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -1192,7 +1225,8 @@
       }, function(err) { alert("ERROR: " + err); btn.innerHTML = '<i class="ph-fill ph-lightning"></i> EKSEKUSI TRANSAKSI'; btn.disabled = false; });
     }
     
-    function kirimWaTeksSukses() { bukaWhatsApp(tempNotaWA); }
+    // PERBAIKAN: Menggunakan window.location.href agar tidak 404 Vercel
+    function kirimWaTeksSukses() { window.location.href = "https://wa.me/?text=" + encodeURIComponent(tempNotaWA); }
     
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
     
@@ -1256,16 +1290,61 @@
 
     function downloadFoto(canvas, btnWa, textAsli) { var link = document.createElement('a'); link.download = 'Nota_Wistara_' + new Date().getTime() + '.png'; link.href = canvas.toDataURL('image/png'); link.click(); btnWa.innerHTML = textAsli; btnWa.disabled = false; }
     function parseTanggal(str) { var parts = str.split('-'); return new Date(parts[2], parts[1] - 1, parts[0]); }
+    function parseTanggalInputLokal(str) {
+      var parts = String(str || "").split('-');
+      if (parts.length !== 3) return null;
+      var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
     
     function terapkanFilterTanggal() {
-      var mulaiVal = document.getElementById('filter-mulai').value; var akhirVal = document.getElementById('filter-akhir').value; if (!mulaiVal || !akhirVal) { alert("Pilih Dari Tanggal dan Sampai Tanggal terlebih dahulu!"); return; }
-      var tglMulai = new Date(mulaiVal); tglMulai.setHours(0, 0, 0, 0); var tglAkhir = new Date(akhirVal); tglAkhir.setHours(23, 59, 59, 999);
-      var hasilFilter = dataCacheKeseluruhan.filter(function(item) { var itemDate = parseTanggal(item.tanggal); return itemDate >= tglMulai && itemDate <= tglAkhir; });
-      modeAktif = 'custom'; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL'; document.getElementById('cari-nomor').value = ''; tampilkanListTransaksi(hasilFilter, 1);
+      var mulaiVal = document.getElementById('filter-mulai').value;
+      var akhirVal = document.getElementById('filter-akhir').value;
+      if (!mulaiVal || !akhirVal) { alert("Pilih Dari Tanggal dan Sampai Tanggal terlebih dahulu!"); return; }
+
+      var tglMulai = parseTanggalInputLokal(mulaiVal);
+      var tglAkhir = parseTanggalInputLokal(akhirVal);
+      if (!tglMulai || !tglAkhir) { alert("Format tanggal tidak valid!"); return; }
+      if (tglMulai > tglAkhir) { alert("Tanggal mulai tidak boleh lebih besar dari tanggal akhir!"); return; }
+
+      tglAkhir.setHours(23, 59, 59, 999);
+      var hasilFilter = dataCacheKeseluruhan.filter(function(item) {
+        var itemDate = parseTanggal(item.tanggal);
+        return itemDate >= tglMulai && itemDate <= tglAkhir;
+      });
+
+      modeAktif = 'custom';
+      updateBtnMode();
+      document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL';
+      document.getElementById('cari-nomor').value = '';
+      tampilkanListTransaksi(hasilFilter, 1);
     }
 
     function gantiModeTrx(mode) { modeAktif = mode; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = (mode === 'hariini') ? '<i class="ph-fill ph-clipboard-text"></i> TRANSAKSI HARI INI' : '<i class="ph-fill ph-clipboard-text"></i> SELURUH TRANSAKSI'; renderTabelAktif(); }
-    function renderTabelAktif() { var activeList = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan; tampilkanListTransaksi(activeList, 1); }
+    function renderTabelAktif() {
+      if (modeAktif === 'custom') {
+        var mulaiVal = document.getElementById('filter-mulai').value;
+        var akhirVal = document.getElementById('filter-akhir').value;
+        var tglMulai = parseTanggalInputLokal(mulaiVal);
+        var tglAkhir = parseTanggalInputLokal(akhirVal);
+
+        if (tglMulai && tglAkhir) {
+          tglAkhir.setHours(23, 59, 59, 999);
+          var hasilFilter = dataCacheKeseluruhan.filter(function(item) {
+            var itemDate = parseTanggal(item.tanggal);
+            return itemDate >= tglMulai && itemDate <= tglAkhir;
+          });
+          document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL';
+          tampilkanListTransaksi(hasilFilter, 1);
+          return;
+        }
+        modeAktif = 'semua';
+      }
+
+      var activeList = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan;
+      tampilkanListTransaksi(activeList, 1);
+    }
     
     function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
       var teksNota = "```✨ SALINAN TRANSAKSI ✨\n📅 " + tgl + " | " + jam + "\n━━━━━━━━━━━━━━━\n👤 NAMA     : " + nama + "\n📱 NOMOR    : " + nomor + "\n🏷️ CODE     : " + code + "\n📦 KUOTA    : " + kuota + "\n💰 HARGA    : Rp " + Number(harga).toLocaleString('id-ID') + "\n━━━━━━━━━━━━━━━\n✅ SILAKAN DICEK\n🙏 Terima Kasih```"; 
@@ -1451,23 +1530,11 @@
         var cicilanPerBulan = Math.round(totalHutang / item.tenor);
         var badgeWarna = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
         
+        // Proteksi nama (menghindari error jika ada tanda kutip di nama seperti Jum'at)
         var safeNama = String(item.nama).replace(/'/g, "\\'"); 
-        
-        // HITUNG DURASI BERJALAN
-        var tglAkad = item.tanggal ? item.tanggal : '-';
-        var infoBerjalan = '';
-        if (item.tanggal) {
-          var d1 = new Date(item.tanggal);
-          var d2 = new Date();
-          var diff = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
-          if (diff >= 0) {
-             infoBerjalan = ` <span style="color:var(--color-warning); font-size:0.75rem;">(${diff} Hari Berlalu)</span>`;
-          }
-        }
 
         container.innerHTML += `
           <div class="box-3d" style="padding: 16px; margin-bottom: 15px;">
-            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 800; margin-bottom: 8px;"><i class="ph-fill ph-calendar-blank"></i> Tgl Akad: <span style="color:var(--text-main);">${tglAkad}</span> ${infoBerjalan}</div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div><div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main); text-transform: uppercase;">${item.nama}</div><span style="background: var(--input-bg); color: ${badgeWarna}; border: 1px solid ${badgeWarna}; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 900;">${item.jenis}</span></div>
               <div style="display: flex; gap: 6px;">
@@ -1488,22 +1555,14 @@
       });
     }
 
+    // PERBAIKAN: Menggunakan window.location.href agar tidak 404 Vercel
     function bagikanTagihanKreditur(nama, pinjaman, total, tenor, cicilan, periode) {
       var pesan = "```✨ INFORMASI TAGIHAN CICILAN ✨\n━━━━━━━━━━━━━━━\n👤 NAMA     : " + nama + "\n💰 PINJAMAN : Rp " + Number(pinjaman).toLocaleString('id-ID') + "\n📈 TOTAL    : Rp " + Number(total).toLocaleString('id-ID') + "\n⏱️ TENOR    : " + tenor + " " + periode + "\n💵 CICILAN  : Rp " + Number(cicilan).toLocaleString('id-ID') + " / " + periode.toLowerCase() + "\n━━━━━━━━━━━━━━━\n✅ Mohon persiapkan dana sesuai jadwal.\n🙏 Terima Kasih```";
-      bukaWhatsApp(pesan);
+      window.location.href = "https://wa.me/?text=" + encodeURIComponent(pesan);
     }
 
     function simpanKrediturBaru() {
-      var tgl = document.getElementById('kreditur-tanggal').value || new Date().toISOString().split('T')[0];
-      var data = { 
-        tanggal: tgl,
-        nama: document.getElementById('kreditur-nama').value, 
-        jenis: document.getElementById('kreditur-jenis').value, 
-        periode: document.getElementById('kreditur-periode').value, 
-        nominal: parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')), 
-        tenor: parseInt(document.getElementById('kreditur-tenor').value), 
-        admin: parseFloat(document.getElementById('kreditur-admin').value.replace(/[^0-9]/g, '')) 
-      };
+      var data = { nama: document.getElementById('kreditur-nama').value, jenis: document.getElementById('kreditur-jenis').value, periode: document.getElementById('kreditur-periode').value, nominal: parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('kreditur-tenor').value), admin: parseFloat(document.getElementById('kreditur-admin').value.replace(/[^0-9]/g, '')) };
       if(!data.nama || !data.nominal || !data.tenor || !data.admin) { alert("Isi semua kolom!"); return; }
       fetchPost('simpanKreditur', data, function(res) {
         document.querySelectorAll('#tab-kreditur input').forEach(el => el.value = ''); muatKreditur();
@@ -1515,30 +1574,13 @@
     function bukaModalEditKreditur(row) {
       var item = krediturCache.find(d => d.row === row);
       if(item) {
-        document.getElementById('edit-kreditur-id').value = item.row;
-        document.getElementById('edit-kreditur-tanggal').value = item.tanggal || '';
-        document.getElementById('edit-kreditur-nama').value = item.nama; 
-        document.getElementById('edit-kreditur-jenis').value = item.jenis; 
-        document.getElementById('edit-kreditur-periode').value = item.periode || 'Bulan'; 
-        document.getElementById('edit-kreditur-nominal').value = item.nominal; 
-        document.getElementById('edit-kreditur-tenor').value = item.tenor; 
-        document.getElementById('edit-kreditur-admin').value = item.admin; 
-        document.getElementById('modalEditKreditur').style.display = 'flex';
+        document.getElementById('edit-kreditur-id').value = item.row; document.getElementById('edit-kreditur-nama').value = item.nama; document.getElementById('edit-kreditur-jenis').value = item.jenis; document.getElementById('edit-kreditur-periode').value = item.periode || 'Bulan'; document.getElementById('edit-kreditur-nominal').value = item.nominal; document.getElementById('edit-kreditur-tenor').value = item.tenor; document.getElementById('edit-kreditur-admin').value = item.admin; document.getElementById('modalEditKreditur').style.display = 'flex';
       }
     }
 
     function simpanEditKreditur() {
       var btn = document.querySelector('#modalEditKreditur .modal-btns .btn');
-      var data = { 
-        row: document.getElementById('edit-kreditur-id').value, 
-        tanggal: document.getElementById('edit-kreditur-tanggal').value,
-        nama: document.getElementById('edit-kreditur-nama').value, 
-        jenis: document.getElementById('edit-kreditur-jenis').value, 
-        periode: document.getElementById('edit-kreditur-periode').value, 
-        nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')), 
-        tenor: parseInt(document.getElementById('edit-kreditur-tenor').value), 
-        admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, '')) 
-      };
+      var data = { row: document.getElementById('edit-kreditur-id').value, nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, periode: document.getElementById('edit-kreditur-periode').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, '')), tenor: parseInt(document.getElementById('edit-kreditur-tenor').value), admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, '')) };
       btn.innerHTML = 'PROSES...'; btn.disabled = true;
       fetchPost('editKreditur', data, function(res) { tutupModal('modalEditKreditur'); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; muatKreditur(); });
     }
