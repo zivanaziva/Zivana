@@ -202,18 +202,19 @@
       </div>
     </div>
 
-    <!-- TAB INVESTASI / CELENGAN -->
+        <!-- TAB INVESTASI / CELENGAN -->
     <div id="tab-investasi" class="section">
-      <div class="glass-panel card" style="margin-top: 15px; position: relative; padding-bottom: 70px;">
+      <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;"><span><i class="ph-fill ph-target"></i> TARGET CELENGAN</span></div>
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
           <button id="btn-celengan-berlangsung" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--primary-grad); color: #fff; border: none; font-size: 0.8rem;" onclick="renderCelengan('berlangsung')">BERLANGSUNG</button>
           <button id="btn-celengan-tercapai" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--input-bg); color: var(--text-main); border: 2px solid var(--input-border); font-size: 0.8rem;" onclick="renderCelengan('tercapai')">TERCAPAI</button>
         </div>
         <div id="list-celengan"></div>
-        <button class="btn" style="position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); width: 85%; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 18px;" onclick="bukaModalCelenganBaru()"><i class="ph-bold ph-plus"></i> TAMBAH CELENGAN BARU</button>
+        <button class="btn" style="width: 100%; border-radius: 16px; margin-top: 10px; padding: 16px;" onclick="bukaModalCelenganBaru()"><i class="ph-bold ph-plus"></i> TAMBAH CELENGAN BARU</button>
       </div>
     </div>
+
 
     <!-- TAB KREDITUR -->
     <div id="tab-kreditur" class="section">
@@ -910,12 +911,19 @@
     // ==========================================
     // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
     // ==========================================
-    function renderRingkasanDash() {
-      let inputTgl = document.getElementById('filter-tgl-dash'), tglDB = inputTgl && inputTgl.value ? formatTgl(inputTgl.value) : getTglJam().tanggal;
-      if(inputTgl && !inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA');
-      let tMod = 0, tJual = 0, tTrx = 0; dataCacheKeseluruhan.forEach(item => { if(item.tanggal === tglDB) { tMod += item.modal; tJual += item.harga; tTrx++; } });
-      document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID'); document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID'); document.getElementById('dash-bersih').innerText = "Rp " + (tJual - tMod).toLocaleString('id-ID'); document.getElementById('dash-trx').innerText = tTrx;
+        function toggleTanggalRahasia() {
+      let wadah = document.getElementById('wadah-tanggal-rahasia');
+      let inputTgl = document.getElementById('filter-tgl-dash');
+      if (wadah.style.display === 'none') {
+        wadah.style.display = 'flex';
+        if(!inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA');
+      } else {
+        wadah.style.display = 'none';
+        inputTgl.value = ''; // Reset kembali ke rekap Hari Ini jika ditutup
+        renderRingkasanDash();
+      }
     }
+
 
     var currentPageDashboard = 1; var itemsPerPage = 10;
     function renderMiniTabelDashboard(list, page = 1) {
