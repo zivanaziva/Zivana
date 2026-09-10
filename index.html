@@ -202,7 +202,7 @@
       </div>
     </div>
 
-        <!-- TAB INVESTASI / CELENGAN -->
+    <!-- TAB INVESTASI / CELENGAN -->
     <div id="tab-investasi" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;"><span><i class="ph-fill ph-target"></i> TARGET CELENGAN</span></div>
@@ -214,7 +214,6 @@
         <button class="btn" style="width: 100%; border-radius: 16px; margin-top: 10px; padding: 16px;" onclick="bukaModalCelenganBaru()"><i class="ph-bold ph-plus"></i> TAMBAH CELENGAN BARU</button>
       </div>
     </div>
-
 
     <!-- TAB KREDITUR -->
     <div id="tab-kreditur" class="section">
@@ -598,12 +597,21 @@
         let hh = String(now.getHours()).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0'), ss = String(now.getSeconds()).padStart(2, '0');
         return { tanggal: `${d}-${m}-${y}`, jam: `${hh}:${mm}:${ss}` };
     }
-    function formatTgl(tglStr) {
-        if(!tglStr) return "";
-        let p = tglStr.split('-');
-        if(p.length === 3 && p[0].length === 4) return `${p[2]}-${p[1]}-${p[0]}`;
-        return tglStr;
+    
+    // Perbaikan anti-crash format tanggal (Universal)
+    function standarkanTgl(t) {
+        if(!t) return getTglJam().tanggal;
+        t = t.toString().trim();
+        if(t.includes('/')) t = t.replace(/\//g, '-');
+        let p = t.split('-');
+        if(p.length === 3) {
+            if (p[0].length === 4) return `${p[2].padStart(2,'0')}-${p[1].padStart(2,'0')}-${p[0]}`; // YYYY-MM-DD -> DD-MM-YYYY
+            return `${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}-${p[2]}`; // Pastikan ada 0 di depan angka tunggal
+        }
+        return t;
     }
+    
+    function formatTgl(tglStr) { return standarkanTgl(tglStr); }
     function parseTgl(str) { let p = str.split('-'); return new Date(p[2], p[1] - 1, p[0]); }
     function formatGB(el) { let val = el.value.trim().toUpperCase(); if (val !== "" && !val.includes("GB") && !val.includes("MB") && !val.includes("HARI")) el.value = val + "GB"; }
     function formatUangK(el) { let val = el.value.toLowerCase(); if (val.includes('k')) { let num = parseFloat(val.replace('k', '')); if (!isNaN(num)) el.value = num * 1000; } }
@@ -664,17 +672,29 @@
 
     function muatDataSemua() {
       db.collection("transaksi").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
-          let listSemua = [], listHariIni = [], tglSkrg = getTglJam().tanggal, nUnik = new Set(), kUnik = new Set();
+          let listSemua = [], listHariIni = [], tglSkrg = getTglJam().tanggal;
+          let nUnik = new Set(), kUnik = new Set();
+          
           snapshot.forEach((doc) => {
-              let d = doc.data(); d.id = doc.id; listSemua.push(d);
+              let d = doc.data(); d.id = doc.id; 
+              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : tglSkrg; // Pastikan format tanggal diseragamkan
+              
+              listSemua.push(d);
               if (d.tanggal === tglSkrg) listHariIni.push(d);
               if (d.nama) nUnik.add(d.nama); if (d.paket) kUnik.add(d.paket);
           });
+          
           dataCacheKeseluruhan = listSemua; dataCacheHariIni = listHariIni;
-          renderTabelAktif(); renderRingkasanDash(); renderMiniTabelDashboard(listHariIni, 1); renderKurvaUsaha(listSemua);
+          renderTabelAktif(); renderRingkasanDash(); renderMiniTabelDashboard(listHariIni, 1); 
+          
+          try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip sementara."); }
+          
           let nHTML = '', kHTML = '';
           nUnik.forEach(v => nHTML += `<option value="${v}">`); kUnik.forEach(v => kHTML += `<option value="${v}">`);
           document.getElementById('list-nama').innerHTML = nHTML; document.getElementById('list-kode').innerHTML = kHTML;
+      }, (error) => {
+          let tb = document.getElementById('tabel-dashboard-body');
+          if(tb) tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--color-danger); font-weight:900;">Error: ${error.message}</td></tr>`;
       });
     }
 
@@ -911,26 +931,28 @@
     // ==========================================
     // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
     // ==========================================
-        function toggleTanggalRahasia() {
-      let wadah = document.getElementById('wadah-tanggal-rahasia');
-      let inputTgl = document.getElementById('filter-tgl-dash');
-      if (wadah.style.display === 'none') {
-        wadah.style.display = 'flex';
-        if(!inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA');
-      } else {
-        wadah.style.display = 'none';
-        inputTgl.value = ''; // Reset kembali ke rekap Hari Ini jika ditutup
-        renderRingkasanDash();
-      }
+    function renderRingkasanDash() {
+      let inputTgl = document.getElementById('filter-tgl-dash'), tglDB = inputTgl && inputTgl.value ? formatTgl(inputTgl.value) : getTglJam().tanggal;
+      if(inputTgl && !inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA');
+      let tMod = 0, tJual = 0, tTrx = 0; dataCacheKeseluruhan.forEach(item => { if(item.tanggal === tglDB) { tMod += item.modal; tJual += item.harga; tTrx++; } });
+      document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID'); document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID'); document.getElementById('dash-bersih').innerText = "Rp " + (tJual - tMod).toLocaleString('id-ID'); document.getElementById('dash-trx').innerText = tTrx;
     }
-
+    
+    function toggleTanggalRahasia() {
+      let wadah = document.getElementById('wadah-tanggal-rahasia'), inputTgl = document.getElementById('filter-tgl-dash');
+      if (wadah.style.display === 'none') { wadah.style.display = 'flex'; if(!inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA'); } 
+      else { wadah.style.display = 'none'; inputTgl.value = ''; renderRingkasanDash(); }
+    }
 
     var currentPageDashboard = 1; var itemsPerPage = 10;
     function renderMiniTabelDashboard(list, page = 1) {
       currentPageDashboard = page; var tbody = document.getElementById('tabel-dashboard-body'); if (!tbody) return;
       var startIndex = (currentPageDashboard - 1) * itemsPerPage, paginatedList = list.slice(startIndex, startIndex + itemsPerPage);
       if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; font-weight:800;">Belum ada transaksi hari ini.</td></tr>'; return; }
-      var html = ''; paginatedList.forEach(item => { html += `<tr><td>${item.jam}</td><td style="color:var(--primary); font-weight:900;">${item.nama}</td><td>${item.nomor}</td><td style="font-weight:800;">${item.paket}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; });
+      var html = ''; paginatedList.forEach(item => { 
+        let jam = item.jam || "-"; let nm = item.nama || "-"; let no = item.nomor || "-"; let pkt = item.paket || "-";
+        html += `<tr><td>${jam}</td><td style="color:var(--primary); font-weight:900;">${nm}</td><td>${no}</td><td style="font-weight:800;">${pkt}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; 
+      });
       var totalPages = Math.ceil(list.length / itemsPerPage);
       if (totalPages > 1) { html += `<tr><td colspan="5" style="text-align:center; padding:12px 0;"><button onclick="renderMiniTabelDashboard(dataCacheHariIni, ${currentPageDashboard - 1})" ${currentPageDashboard === 1 ? 'disabled' : ''} style="padding:6px 10px; border-radius:8px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:800;">&laquo; Prev</button><span style="margin:0 8px; font-weight:800;">Hal ${currentPageDashboard} / ${totalPages}</span><button onclick="renderMiniTabelDashboard(dataCacheHariIni, ${currentPageDashboard + 1})" ${currentPageDashboard === totalPages ? 'disabled' : ''} style="padding:6px 10px; border-radius:8px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:800;">Next &raquo;</button></td></tr>`; }
       tbody.innerHTML = html;
@@ -942,13 +964,13 @@
     function tampilkanListTransaksi(list, page = 1) {
       let container = document.getElementById('list-harian'); updateBtnMode();
       if (list.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">BELUM ADA DATA.</p>'; return; }
-      let th = 0, tm = 0; list.forEach(item => { th += item.harga; tm += item.modal; }); let lb = th - tm;
+      let th = 0, tm = 0; list.forEach(item => { th += (item.harga || 0); tm += (item.modal || 0); }); let lb = th - tm;
       let title = (modeAktif === 'hariini') ? 'REKAP HARI INI' : (modeAktif === 'semua' ? 'REKAP SELURUHNYA' : 'REKAP PENCARIAN');
       let html = `<div class="box-3d" style="display:flex; flex-direction:column; padding:20px; background:var(--input-bg); border:2px solid var(--input-border);"><div style="text-align:center; font-weight:900; font-size:1.1rem; margin-bottom:15px;" class="text-gradient"><i class="ph-fill ph-wallet"></i> ${title}</div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">TOTAL MODAL</div><div style="color:var(--color-warning); font-size:1rem; font-weight:900;">Rp ${tm.toLocaleString('id-ID')}</div></div><div style="height:30px; border-left:2px dashed var(--input-border); margin:0 8px;"></div><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">PENDAPATAN</div><div style="color:var(--primary); font-size:1rem; font-weight:900;">Rp ${th.toLocaleString('id-ID')}</div></div></div><hr style="border:0; border-top:2px dashed var(--input-border); margin:12px 0;"><div style="text-align:center;"><div style="font-size:0.85rem; font-weight:800;">LABA BERSIH</div><div style="color:var(--color-success); font-size:1.6rem; font-weight:900;">Rp ${lb.toLocaleString('id-ID')}</div></div></div>`;
       let start = (page - 1) * itemsPerPage, paginatedList = list.slice(start, start + itemsPerPage);
       paginatedList.forEach(item => {
-        let li = item.harga - item.modal, tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0', pNama = String(item.nama).replace(/'/g, "\\'"), pNomor = String(item.nomor).replace(/'/g, "\\'"), pCode = String(item.paket).replace(/'/g, "\\'"), pKuber = String(item.kuota).replace(/'/g, "\\'");
-        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; font-size:1rem;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal}', '${item.jam}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal}', '${item.harga}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">${item.paket}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal} ${item.jam}</span></div><span style="font-weight:900; font-size:0.95rem; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${item.harga.toLocaleString('id-ID')}</span></div></div>`;
+        let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0', pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
+        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; font-size:1rem;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama || "-"}</span><br><span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; font-size:0.95rem; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
       let totalPages = Math.ceil(list.length / itemsPerPage);
       if (totalPages > 1) { html += `<div style="display:flex; justify-content:center; gap:8px;"><button onclick="tampilkanListTransaksi(dataCacheKeseluruhan, ${page - 1})" ${page === 1 ? 'disabled' : ''} style="padding:8px 14px; border-radius:10px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:900;">&laquo; Prev</button><span style="font-size:0.82rem; font-weight:900; margin-top:8px;">Hal ${page} / ${totalPages}</span><button onclick="tampilkanListTransaksi(dataCacheKeseluruhan, ${page + 1})" ${page === totalPages ? 'disabled' : ''} style="padding:8px 14px; border-radius:10px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:900;">Next &raquo;</button></div>`; }
@@ -966,6 +988,7 @@
     function terapkanFilterTanggal() { let m = document.getElementById('filter-mulai').value, a = document.getElementById('filter-akhir').value; if (!m || !a) return alert("Pilih tanggal mulai & akhir!"); let tglM = new Date(m); tglM.setHours(0,0,0,0); let tglA = new Date(a); tglA.setHours(23,59,59,999); let res = dataCacheKeseluruhan.filter(i => { let dt = parseTgl(i.tanggal); return dt >= tglM && dt <= tglA; }); modeAktif = 'custom'; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL'; tampilkanListTransaksi(res, 1); }
 
     function renderKurvaUsaha(dataList) {
+       if (typeof Chart === 'undefined') return;
        let inBln = document.getElementById('filter-bulan-statistik'); if(!inBln.value) { let n = new Date(); inBln.value = n.getFullYear() + "-" + String(n.getMonth()+1).padStart(2,'0'); }
        let p = inBln.value.split('-'), targetThn = p[0], targetBln = p[1], rekap = {};
        dataList.forEach(i => { let part = i.tanggal.split('-'); if(part[1] === targetBln && part[2] === targetThn) { let tglSaja = parseInt(part[0]).toString(); if(!rekap[tglSaja]) rekap[tglSaja] = 0; rekap[tglSaja] += (i.harga - i.modal); } });
