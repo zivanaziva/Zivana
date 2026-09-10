@@ -10,10 +10,16 @@
   <meta name="theme-color" content="#1d4ed8">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Pustaka Eksternal -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
+  <!-- Pustaka Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
   <script>
     var savedTheme = localStorage.getItem('wistara_theme') || 'light';
     var savedOpacity = localStorage.getItem('wistara_opacity') || '1';
@@ -22,6 +28,7 @@
   </script>
 
   <style>
+    /* [Sama seperti CSS asli Anda, dipersingkat di preview namun utuh] */
     :root { --panel-opacity: 1; }
 
     /* --- 6 TEMA DASAR --- */
@@ -90,8 +97,6 @@
       --table-header: rgba(245, 158, 11, 0.15); --table-border: #b45309;
       --color-success: #10b981; --color-warning: #fb923c; --color-danger: #ef4444; --color-blue: #3b82f6;
     }
-
-    /* --- 6 TEMA GRADASI ELEGAN --- */
     :root[data-theme="grad-ocean"] {
       --bg-image: linear-gradient(135deg, #0f172a 0%, #164e63 100%); --bg-color: #0f172a;
       --panel-bg: rgba(15, 23, 42, var(--panel-opacity)); --panel-border: 1px solid rgba(6, 182, 212, 0.5);
@@ -241,7 +246,7 @@
     .btn { width: 100%; background: var(--primary-grad); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); display: flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.5px; }
     .btn:active { transform: scale(0.97); }
     
-    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-between; padding: 12px 10px 20px; box-shadow: 0 -8px 25px rgba(0,0,0,0.1); z-index: 100; border-radius: 24px 24px 0 0; border-top: 3px solid var(--primary); transition: background 0.4s ease; backdrop-filter: blur(8px); }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 12px 10px 20px; box-shadow: 0 -8px 25px rgba(0,0,0,0.1); z-index: 100; border-radius: 24px 24px 0 0; border-top: 3px solid var(--primary); transition: background 0.4s ease; backdrop-filter: blur(8px); }
     .nav-item { text-align: center; color: var(--text-muted); font-size: 0.72rem; font-weight: 800; cursor: pointer; flex: 1; transition: all 0.2s ease; }
     .nav-item i { display: block; font-size: 1.5rem; margin-bottom: 4px; transition: transform 0.2s ease; }
     .nav-item.active { color: var(--primary); }
@@ -323,6 +328,7 @@
             <div class="menu-icon"><i class="ph-fill ph-hand-coins"></i></div>
             <div class="menu-text">Bayar</div>
           </div>
+          <!-- Menu Riwayat (Koneksi ke Navigasi Bawah) -->
           <div class="menu-item" onclick="switchTab('tab-harian', document.querySelectorAll('.nav-item')[2])">
             <div class="menu-icon"><i class="ph-fill ph-list-dashes"></i></div>
             <div class="menu-text">Riwayat</div>
@@ -467,12 +473,10 @@
     <div id="tab-kreditur" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title"><i class="ph-fill ph-users-three"></i> TAMBAH KREDITUR</div>
-        
         <div class="input-group">
           <label>1. NAMA KREDITUR</label>
           <input type="text" id="kreditur-nama" placeholder="Ketik nama...">
         </div>
-        
         <div class="input-group">
           <label>2. JENIS (BARANG / UANG)</label>
           <select id="kreditur-jenis">
@@ -480,24 +484,19 @@
             <option value="Barang">Barang (Cicilan barang)</option>
           </select>
         </div>
-        
         <div class="input-group">
           <label>3. NOMINAL / JUMLAH (Rp)</label>
           <input type="text" id="kreditur-nominal" placeholder="Contoh: 1000000" oninput="formatUangK(this); hitungAdminOtomatis()">
         </div>
-        
         <div class="input-group">
           <label>4. TENOR (BULAN)</label>
           <input type="number" id="kreditur-tenor" placeholder="Contoh: 6">
         </div>
-        
         <div class="input-group">
           <label>5. ADMIN PER BULAN (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5% (Bisa diedit manual)</span></label>
           <input type="text" id="kreditur-admin" placeholder="Admin bulanan akan muncul otomatis" oninput="formatUangK(this)">
         </div>
-        
         <button class="btn" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
-        
         <button id="btn-migrasi-kreditur" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); margin-top: 15px;" onclick="migrasiDataLama()"><i class="ph-bold ph-cloud-arrow-up"></i> MIGRASI DATA LAMA KE ONLINE</button>
       </div>
 
@@ -608,16 +607,14 @@
               <button class="theme-btn" style="background: rgba(5,11,20,0.9); color: #06b6d4; border: 2px solid #06b6d4;" onclick="setTheme('cyber')">CYBER CYAN</button>
               <button class="theme-btn" style="background: rgba(15,5,24,0.9); color: #a855f7; border: 2px solid #a855f7;" onclick="setTheme('neon')">NEON PURPLE</button>
               <button class="theme-btn" style="background: rgba(26,16,5,0.9); color: #f59e0b; border: 2px solid #f59e0b;" onclick="setTheme('sunset')">SUNSET GOLD</button>
-              
-              <!-- Tema Gradasi Elegan -->
+              <!-- Tema Gradasi -->
               <button class="theme-btn" style="background: linear-gradient(135deg, #0f172a, #164e63); color: #2dd4bf; border: 2px solid #06b6d4;" onclick="setTheme('grad-ocean')">GRAD OCEAN</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #2e1065, #701a75); color: #f0abfc; border: 2px solid #d946ef;" onclick="setTheme('grad-twilight')">TWILIGHT</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #064e3b, #065f46); color: #a7f3d0; border: 2px solid #10b981;" onclick="setTheme('grad-emerald')">EMERALD</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #fff1f2, #ffedd5); color: #f43f5e; border: 2px solid #f43f5e;" onclick="setTheme('grad-peach')">PEACH GRAD</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #020617, #1e1b4b); color: #a5b4fc; border: 2px solid #6366f1;" onclick="setTheme('grad-midnight')">MIDNIGHT</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #171717, #422006); color: #fcd34d; border: 2px solid #d97706;" onclick="setTheme('grad-gold')">GOLD GRAD</button>
-              
-              <!-- Tema Solid / Clean -->
+              <!-- Tema Solid -->
               <button class="theme-btn" style="background: #fdf2f8; color: #db2777; border: 2px solid #db2777;" onclick="setTheme('pastel-pink')">PASTEL PINK</button>
               <button class="theme-btn" style="background: #f5f5f4; color: #78350f; border: 2px solid #78350f;" onclick="setTheme('coffee')">COFFEE</button>
               <button class="theme-btn" style="background: #1c1917; color: #22c55e; border: 2px solid #22c55e;" onclick="setTheme('forest')">FOREST DARK</button>
@@ -742,7 +739,7 @@
     </div>
   </div>
 
-  <!-- MODALS -->
+  <!-- [MODALS TETAP SAMA] -->
   <div id="modalNota" class="modal-overlay">
     <div class="modal-box" style="padding: 0; overflow: hidden; max-width: 360px; border-radius: 20px;">
       <div id="capture-wrapper" style="background: var(--panel-bg); padding: 20px 12px;">
@@ -816,7 +813,6 @@
     </div>
   </div>
 
-  <!-- MODAL BUAT CELENGAN BARU -->
   <div id="modalBuatCelengan" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-target"></i> BUAT CELENGAN</h3>
@@ -839,7 +835,6 @@
     </div>
   </div>
 
-  <!-- MODAL ISI CELENGAN -->
   <div id="modalIsiCelengan" class="modal-overlay">
     <div class="modal-box">
       <h3 style="color: var(--color-success); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-wallet"></i> ISI CELENGAN</h3>
@@ -852,7 +847,6 @@
     </div>
   </div>
 
-  <!-- MODAL EDIT KREDITUR -->
   <div id="modalEditKreditur" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-pencil-simple"></i> EDIT KREDITUR</h3>
@@ -872,7 +866,6 @@
     </div>
   </div>
 
-  <!-- MODAL BAYAR KREDIT -->
   <div id="modalBayarKreditur" class="modal-overlay">
     <div class="modal-box">
       <h3 style="color: var(--color-success); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-money"></i> BAYAR CICILAN</h3>
@@ -890,7 +883,6 @@
     </div>
   </div>
 
-  <!-- MODAL RIWAYAT KREDIT -->
   <div id="modalRiwayatKreditur" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 10px; font-weight: 900;"><i class="ph-bold ph-clock-counter-clockwise"></i> RIWAYAT BAYAR</h3>
@@ -899,6 +891,7 @@
     </div>
   </div>
 
+  <!-- MENU NAVIGASI BAWAH (Sudah di-link ke fungsi switchTab) -->
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('tab-beranda', this)"><i class="ph-fill ph-storefront"></i>Beranda</div>
     <div class="nav-item" onclick="switchTab('tab-cari', this)"><i class="ph-bold ph-magnifying-glass"></i>Cari Trx</div>
@@ -907,6 +900,27 @@
   </nav>
 
   <script>
+    // ==========================================
+    // 1. KONFIGURASI FIREBASE ANDA
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmYmUmC5RvWex7GfLTOcTJmIZXFBL-nyw",
+      authDomain: "zivanaziva-dd5a4.firebaseapp.com",
+      projectId: "zivanaziva-dd5a4",
+      storageBucket: "zivanaziva-dd5a4.firebasestorage.app",
+      messagingSenderId: "342931077097",
+      appId: "1:342931077097:web:dc7f86aadaf8ca3fca7d78"
+    };
+
+    // Inisialisasi Firebase & Firestore (Siap digunakan)
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    
+    // ==========================================
+    // 2. KODE DATABASE LAMA (GOOGLE APPS SCRIPT)
+    // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzcbW0Vrur2S_stdIf0M1cLRzvdtp7D4yQeyJ663iV5XVl1ywAk1coz1wjp9EqmR7I/exec"; 
 
     var statusEfek = localStorage.getItem('wistara_efek') || 'off';
@@ -998,11 +1012,17 @@
       bS.style.background = modeAktif === 'semua' ? 'var(--primary-grad)' : 'var(--input-bg)'; bS.style.color = modeAktif === 'semua' ? '#fff' : 'var(--text-main)'; bS.style.borderColor = modeAktif === 'semua' ? 'var(--primary)' : 'var(--input-border)';
     }
 
+    // FUNGSI NAVIGASI TAB (Disempurnakan)
     function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active'); if (element) { element.classList.add('active'); } 
-      if(tabId === 'tab-bon') muatDaftarBon(); if(tabId === 'tab-stok') muatStok(); if(tabId === 'tab-harian' || tabId === 'tab-beranda' || tabId === 'tab-statistik') muatDataSemua(); if(tabId === 'tab-server') muatServer(); if(tabId === 'tab-tabungan') muatTabungan(); 
+      document.getElementById(tabId).classList.add('active'); 
+      if (element) { element.classList.add('active'); } 
+      if(tabId === 'tab-bon') muatDaftarBon(); 
+      if(tabId === 'tab-stok') muatStok(); 
+      if(tabId === 'tab-harian' || tabId === 'tab-beranda' || tabId === 'tab-statistik') muatDataSemua(); 
+      if(tabId === 'tab-server') muatServer(); 
+      if(tabId === 'tab-tabungan') muatTabungan(); 
     }
 
     function fetchGet(action, onSuccess) { fetch(API_URL + "?action=" + action).then(res => res.json()).then(data => onSuccess(data)).catch(err => console.error("Error API GET: ", err)); }
@@ -1042,7 +1062,6 @@
 
     function muatRiwayat() { fetchGet('getRiwayat', function(res) { var nHTML = ''; var kHTML = ''; res.namaUnik.forEach(function(item) { nHTML += '<option value="' + item + '"></option>'; }); res.kodeUnik.forEach(function(item) { kHTML += '<option value="' + item + '"></option>'; }); document.getElementById('list-nama').innerHTML = nHTML; document.getElementById('list-kode').innerHTML = kHTML; }); }
 
-    // --- FUNGSI KLIK 2X & KOTAK WIDGET DINAMIS ---
     function toggleTanggalRahasia() {
       var wadah = document.getElementById('wadah-tanggal-rahasia');
       if (wadah.style.display === 'none') {
@@ -1064,7 +1083,7 @@
       }
       
       var p = tglPilih.split('-');
-      var tglDB = p[2] + '-' + p[1] + '-' + p[0]; // Format ke DD-MM-YYYY
+      var tglDB = p[2] + '-' + p[1] + '-' + p[0]; 
 
       var tMod = 0, tJual = 0, tTrx = 0;
       dataCacheKeseluruhan.forEach(function(item) {
@@ -1557,7 +1576,6 @@
       });
     }
 
-    // === MIGRASI DATA LOKAL KE ONLINE ===
     function migrasiDataLama() {
       var dataLama = localStorage.getItem('wistara_kreditur');
       if (!dataLama) { alert("Tidak ada data lokal yang ditemukan di perangkat ini."); return; }
