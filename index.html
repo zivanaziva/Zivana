@@ -672,39 +672,32 @@
 
       if(!nm || !hrg) { alert("NAMA DAN HARGA HARUS DIISI!"); return; }
 
-      // --- PERTAHANAN TERAKHIR NOMOR HP ---
       no = String(no);
       if (no.startsWith('8')) no = '0' + no;
       else if (no.startsWith('62')) no = '0' + no.substring(2);
       else if (no.startsWith('+62')) no = '0' + no.substring(3);
-      // ------------------------------------
 
       btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIMPAN...'; btn.disabled = true;
 
       let ts = getTglJam(); let tglFix = inputTgl ? formatTgl(inputTgl) : ts.tanggal;
 
-      // --- KALKULASI BON LAMA & BARU ---
       let bonLama = 0;
       let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === nm.toLowerCase());
       if (bonExist) bonLama = bonExist.total || 0;
       let bonBaru = bonLama + hrg;
-      // ---------------------------------
 
       db.collection("transaksi").add({
           tanggal: tglFix, jam: ts.jam, nama: nm, nomor: no, paket: cd, kuota: kub, modal: mod, harga: hrg,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-          // Otomatis tambahkan harga ini ke daftar Piutang Bon pelanggan
           db.collection("bon").doc(nm).set({ nama: nm, total: firebase.firestore.FieldValue.increment(hrg) }, {merge: true});
 
           document.querySelectorAll('#tab-input input').forEach(el => el.value = '');
           btn.innerHTML = '<i class="ph-fill ph-lightning"></i> EKSEKUSI TRANSAKSI'; btn.disabled = false;
           
-          // Format teks Bon Lama & Bon Baru untuk Nota
-          let teksBon = `\n📒 BON LAMA : Rp ${bonLama.toLocaleString('id-ID')}\n📈 BON BARU : Rp ${bonBaru.toLocaleString('id-ID')}`;
+          let teksBon = `\n──────────────────\n📒 BON LAMA  : Rp ${bonLama.toLocaleString('id-ID')}\n📈 BON BARU  : Rp ${bonBaru.toLocaleString('id-ID')}`;
           
-          // Format Nota WA (Persis seperti screenshot Anda)
-          tempNotaWA = `✨ BUKTI TRANSAKSI ✨\n📅 ${tglFix} | ${ts.jam}\n━━━━━━━━━━━━━━━\n👤 NAMA : ${nm}\n📱 NOMOR : ${no}\n🏷️ CODE : ${cd}\n📦 KUOTA : ${kub}\n💰 HARGA : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n━━━━━━━━━━━━━━━\n✅ SILAKAN DICEK\n🙏 Terima Kasih`;
+          tempNotaWA = `✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n──────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih`;
           tempNotaGambar = tempNotaWA;
           
           document.getElementById('modalSuksesTrx').style.display = 'flex'; muatDataSemua();
@@ -720,7 +713,6 @@
               let d = doc.data(); d.id = doc.id; 
               d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
               
-              // 1. PERBAIKI NOMOR HP YANG HILANG ANGKA 0
               if (d.nomor) {
                  d.nomor = String(d.nomor).trim();
                  if (d.nomor.startsWith('8')) d.nomor = '0' + d.nomor;
@@ -728,7 +720,6 @@
                  else if (d.nomor.startsWith('+62')) d.nomor = '0' + d.nomor.substring(3);
               }
 
-              // 2. PERBAIKI KODE PAKET YANG HILANG ANGKA 0 (Misal: 74 jadi 0074)
               if (d.paket) {
                  d.paket = String(d.paket).trim();
                  if (/^\d+$/.test(d.paket) && d.paket.length < 4) {
@@ -768,11 +759,9 @@
       let id = document.getElementById('edit-id').value, btn = document.getElementById('btn-simpan-edit');
       let noFix = String(document.getElementById('edit-nomor').value.trim());
 
-      // --- PERTAHANAN TERAKHIR NOMOR HP SAAT EDIT ---
       if (noFix.startsWith('8')) noFix = '0' + noFix;
       else if (noFix.startsWith('62')) noFix = '0' + noFix.substring(2);
       else if (noFix.startsWith('+62')) noFix = '0' + noFix.substring(3);
-      // ----------------------------------------------
 
       let data = {
           tanggal: formatTgl(document.getElementById('edit-tgl').value), 
@@ -1102,14 +1091,13 @@
     // 12. NOTA & SHARE FUNGSI (VERCEL FIX)
     // ==========================================
     function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
-      // Cek Sisa Bon Saat Ini Jika Ada
       let sisaBon = 0;
       let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === (nama || "").toLowerCase());
       if (bonExist) sisaBon = bonExist.total || 0;
       
-      let teksBon = sisaBon > 0 ? `\n📒 SISA BON SAAT INI : Rp ${sisaBon.toLocaleString('id-ID')}` : '';
+      let teksBon = sisaBon > 0 ? `\n──────────────────\n📒 SISA BON  : Rp ${sisaBon.toLocaleString('id-ID')}` : '';
 
-      let teks = `✨ SALINAN TRANSAKSI ✨\n📅 ${tgl} | ${jam}\n━━━━━━━━━━━━━━━\n👤 NAMA : ${nama}\n📱 NOMOR : ${nomor}\n🏷️ CODE : ${code}\n📦 KUOTA : ${kuota}\n💰 HARGA : Rp ${Number(harga).toLocaleString('id-ID')}${teksBon}\n━━━━━━━━━━━━━━━\n✅ SILAKAN DICEK\n🙏 Terima Kasih`; 
+      let teks = `✨ TRANSAKSI SUKSES ✨\n📅 ${tgl} | ${jam}\n──────────────────\n👤 NAMA      : ${nama}\n📱 NOMOR     : ${nomor}\n🏷️ CODE      : ${code}\n📦 KUOTA     : ${kuota}\n💰 HARGA     : Rp ${Number(harga).toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih`; 
       
       document.getElementById('textNota').innerHTML = formatNotaToHTML(teks); 
       document.getElementById('modalNota').style.display = 'flex'; 
@@ -1119,10 +1107,9 @@
       let lines = teks.replace(/```/g, '').split('\n'), html = '<div style="font-size:0.78rem; line-height:1.6; font-family:monospace, sans-serif;">';
       lines.forEach(l => {
         let txt = l.trim(); if (txt === '') return;
-        if (txt.includes('━━━━━━━━━')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">'; 
+        if (txt.includes('──────') || txt.includes('━━━━━━')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">'; 
         else if (txt.indexOf(':') > -1 && !txt.includes('📅')) {
           let idx = txt.indexOf(':'), lbl = txt.substring(0, idx).trim(), val = txt.substring(idx + 1).trim();
-          // Lebar diatur 50% supaya kata "BON LAMA" muat sempurna
           html += `<div style="display:flex; padding:4px 0;"><div style="width:50%; font-weight:800; color:var(--text-muted);">${lbl}</div><div style="width:5%; font-weight:900;">:</div><div style="width:45%; font-weight:900;">${val}</div></div>`;
         } else {
           let w = (txt.includes('SUKSES') || txt.includes('DICEK') || txt.includes('Terima Kasih')) ? 'var(--color-success)' : 'var(--text-main)';
