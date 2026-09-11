@@ -593,7 +593,6 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
-    // AKTIFKAN AUTO-BACKUP KE MEMORI HP (OFFLINE CACHE)
     db.enablePersistence()
       .catch(function(err) {
         if (err.code == 'failed-precondition') {
@@ -659,7 +658,7 @@
     }
 
     // ==========================================
-    // 4. FIREBASE CRUD TRANSAKSI
+    // 4. FIREBASE CRUD TRANSAKSI (PERTAHANAN 0)
     // ==========================================
     function kirimData() {
       var btn = document.getElementById('btn-submit');
@@ -672,6 +671,14 @@
       var hrg = parseFloat(document.getElementById('harga').value.replace(/[^0-9]/g, '')) || 0;
 
       if(!nm || !hrg) { alert("NAMA DAN HARGA HARUS DIISI!"); return; }
+
+      // --- PERTAHANAN TERAKHIR NOMOR HP ---
+      no = String(no);
+      if (no.startsWith('8')) no = '0' + no;
+      else if (no.startsWith('62')) no = '0' + no.substring(2);
+      else if (no.startsWith('+62')) no = '0' + no.substring(3);
+      // ------------------------------------
+
       btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIMPAN...'; btn.disabled = true;
 
       let ts = getTglJam(); let tglFix = inputTgl ? formatTgl(inputTgl) : ts.tanggal;
@@ -690,22 +697,29 @@
 
     function muatDataSemua() {
       db.collection("transaksi").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
-          let listSemua = [], listHariIni = [], tglSkrg = getTglJam().tanggal;
+          let listSemua = [];
           let nUnik = new Set(), kUnik = new Set();
           
           snapshot.forEach((doc) => {
               let d = doc.data(); d.id = doc.id; 
-              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : tglSkrg; 
+              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
               
+              // --- OTOMATIS PERBAIKI DATA LAMA YANG RUSAK (HILANG 0) ---
+              if(d.nomor) {
+                 d.nomor = String(d.nomor);
+                 if (d.nomor.startsWith('8')) d.nomor = '0' + d.nomor;
+                 else if (d.nomor.startsWith('62')) d.nomor = '0' + d.nomor.substring(2);
+                 else if (d.nomor.startsWith('+62')) d.nomor = '0' + d.nomor.substring(3);
+              }
+              // ---------------------------------------------------------
+
               listSemua.push(d);
-              if (d.tanggal === tglSkrg) listHariIni.push(d);
               if (d.nama) nUnik.add(d.nama); if (d.paket) kUnik.add(d.paket);
           });
           
-          dataCacheKeseluruhan = listSemua; dataCacheHariIni = listHariIni;
-          renderTabelAktif(); renderRingkasanDash(); renderMiniTabelDashboard(listHariIni, 1); 
-          
-          try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip sementara."); }
+          dataCacheKeseluruhan = listSemua; 
+          renderRingkasanDash(); 
+          try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip."); }
           
           let nHTML = '', kHTML = '';
           nUnik.forEach(v => nHTML += `<option value="${v}">`); kUnik.forEach(v => kHTML += `<option value="${v}">`);
@@ -727,14 +741,30 @@
 
     function simpanEdit() {
       let id = document.getElementById('edit-id').value, btn = document.getElementById('btn-simpan-edit');
+      let noFix = String(document.getElementById('edit-nomor').value.trim());
+
+      // --- PERTAHANAN TERAKHIR NOMOR HP SAAT EDIT ---
+      if (noFix.startsWith('8')) noFix = '0' + noFix;
+      else if (noFix.startsWith('62')) noFix = '0' + noFix.substring(2);
+      else if (noFix.startsWith('+62')) noFix = '0' + noFix.substring(3);
+      // ----------------------------------------------
+
       let data = {
-          tanggal: formatTgl(document.getElementById('edit-tgl').value), nama: document.getElementById('edit-nama').value,
-          nomor: document.getElementById('edit-nomor').value, paket: document.getElementById('edit-code').value,
-          kuota: document.getElementById('edit-kuber').value, modal: parseFloat(document.getElementById('edit-modal').value.replace(/[^0-9]/g, '')) || 0,
+          tanggal: formatTgl(document.getElementById('edit-tgl').value), 
+          nama: document.getElementById('edit-nama').value,
+          nomor: noFix, 
+          paket: document.getElementById('edit-code').value,
+          kuota: document.getElementById('edit-kuber').value, 
+          modal: parseFloat(document.getElementById('edit-modal').value.replace(/[^0-9]/g, '')) || 0,
           harga: parseFloat(document.getElementById('edit-harga').value.replace(/[^0-9]/g, '')) || 0
       };
+      
       btn.innerHTML = 'MENYIMPAN...'; btn.disabled = true;
-      db.collection("transaksi").doc(id).update(data).then(() => { tutupModal('modalEdit'); btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; });
+      db.collection("transaksi").doc(id).update(data).then(() => { 
+        tutupModal('modalEdit'); 
+        btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; 
+        btn.disabled = false; 
+      });
     }
 
     function konfirmasiHapus(id, nama) { if(confirm(`Yakin menghapus transaksi ${nama}?`)) db.collection("transaksi").doc(id).delete(); }
@@ -949,49 +979,15 @@
     // ==========================================
     // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
     // ==========================================
-        // ==========================================
-    // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
-    // ==========================================
-    
-    function muatDataSemua() {
-      db.collection("transaksi").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
-          let listSemua = [];
-          let nUnik = new Set(), kUnik = new Set();
-          
-          snapshot.forEach((doc) => {
-              let d = doc.data(); d.id = doc.id; 
-              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
-              
-              listSemua.push(d);
-              if (d.nama) nUnik.add(d.nama); if (d.paket) kUnik.add(d.paket);
-          });
-          
-          dataCacheKeseluruhan = listSemua; 
-          
-          // Otomatis memanggil sinkronisasi tanggal
-          renderRingkasanDash(); 
-          
-          try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip."); }
-          
-          let nHTML = '', kHTML = '';
-          nUnik.forEach(v => nHTML += `<option value="${v}">`); kUnik.forEach(v => kHTML += `<option value="${v}">`);
-          document.getElementById('list-nama').innerHTML = nHTML; document.getElementById('list-kode').innerHTML = kHTML;
-      }, (error) => {
-          let tb = document.getElementById('tabel-dashboard-body');
-          if(tb) tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--color-danger); font-weight:900;">Error: ${error.message}</td></tr>`;
-      });
-    }
-
     function renderRingkasanDash() {
       let inputTgl = document.getElementById('filter-tgl-dash');
-      // Jika input tanggal kosong, otomatis ambil tanggal hari ini
       let tglPilih = inputTgl && inputTgl.value ? inputTgl.value : new Date().toLocaleDateString('en-CA');
       let tglDB = formatTgl(tglPilih);
       
       if(inputTgl && !inputTgl.value) inputTgl.value = tglPilih;
       
       let tMod = 0, tJual = 0, tTrx = 0; 
-      let listPilihan = []; // Array khusus untuk menampung data di tanggal yang dipilih
+      let listPilihan = [];
       
       dataCacheKeseluruhan.forEach(item => { 
         if(item.tanggal === tglDB) { 
@@ -1000,28 +996,22 @@
         } 
       });
       
-      // 1. Update 4 Kotak Ringkasan Omset
       document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID'); 
       document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID'); 
       document.getElementById('dash-bersih').innerText = "Rp " + (tJual - tMod).toLocaleString('id-ID'); 
       document.getElementById('dash-trx').innerText = tTrx;
 
-      // 2. Sinkronkan definisi "Hari Ini" menjadi "Tanggal Terpilih"
       dataCacheHariIni = listPilihan;
-      
-      // 3. Update Tabel Mini TRX TERBARU di Dashboard
       renderMiniTabelDashboard(dataCacheHariIni, 1);
       
-      // 4. Update Tabel di Menu Riwayat Harian
       if (modeAktif === 'hariini') {
         renderTabelAktif();
       }
 
-      // 5. Otomatis samakan tanggal di form Input Transaksi
       let formTgl = document.getElementById('tgl-transaksi');
       if (formTgl) formTgl.value = tglPilih;
     }
-
+    
     function toggleTanggalRahasia() {
       let wadah = document.getElementById('wadah-tanggal-rahasia'), inputTgl = document.getElementById('filter-tgl-dash');
       if (wadah.style.display === 'none') { wadah.style.display = 'flex'; if(!inputTgl.value) inputTgl.value = new Date().toLocaleDateString('en-CA'); } 
@@ -1032,7 +1022,7 @@
     function renderMiniTabelDashboard(list, page = 1) {
       currentPageDashboard = page; var tbody = document.getElementById('tabel-dashboard-body'); if (!tbody) return;
       var startIndex = (currentPageDashboard - 1) * itemsPerPage, paginatedList = list.slice(startIndex, startIndex + itemsPerPage);
-      if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; font-weight:800;">Belum ada transaksi hari ini.</td></tr>'; return; }
+      if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; font-weight:800;">Belum ada transaksi.</td></tr>'; return; }
       var html = ''; paginatedList.forEach(item => { 
         let jam = item.jam || "-"; let nm = item.nama || "-"; let no = item.nomor || "-"; let pkt = item.paket || "-";
         html += `<tr><td>${jam}</td><td style="color:var(--primary); font-weight:900;">${nm}</td><td>${no}</td><td style="font-weight:800;">${pkt}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; 
@@ -1136,7 +1126,21 @@
     }
 
     // ==========================================
-    // 13. PROFIL, WALLPAPER & INISIALISASI
+    // 13. PELINDUNG FORM (ANTI ILANG ANGKA 0 DI HP)
+    // ==========================================
+    function formatNomorHP(el) {
+      let val = el.value.replace(/[^0-9+]/g, '');
+      if (val.startsWith('+62')) val = '0' + val.substring(3);
+      if (val.startsWith('62')) val = '0' + val.substring(2);
+      if (val.startsWith('8')) val = '0' + val;
+      el.value = val;
+    }
+
+    document.getElementById('nomor').addEventListener('input', function() { formatNomorHP(this); });
+    document.getElementById('edit-nomor').addEventListener('input', function() { formatNomorHP(this); });
+
+    // ==========================================
+    // 14. PROFIL, WALLPAPER & INISIALISASI
     // ==========================================
     function muatProfilToko() {
       let nm = localStorage.getItem('wistara_nama') || "WISTARA-STORE", ds = localStorage.getItem('wistara_desc') || "SISTEM KASIR DIGITAL", ft = localStorage.getItem('wistara_foto');
@@ -1152,60 +1156,30 @@
     function prosesGantiBackground(e) { let f = e.target.files[0]; if(!f) return; let r = new FileReader(); r.onload = ev => { let img = new Image(); img.onload = () => { let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 1200, w = img.width, h = img.height; if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); let url = cvs.toDataURL('image/jpeg', 0.7); document.body.style.backgroundImage = 'url(' + url + ')'; try{ localStorage.setItem('wistara_bg', url); alert('Wallpaper diganti!'); }catch(err){ alert('Gambar masih terlalu besar.'); } }; img.src = ev.target.result; }; r.readAsDataURL(f); }
     function resetBackground() { localStorage.removeItem('wistara_bg'); document.body.style.backgroundImage = "var(--bg-image)"; }
 
-        // ==========================================
-    // PELINDUNG NOMOR HP (ANTI HILANG ANGKA 0)
-    // ==========================================
-    function formatNomorHP(el) {
-      // 1. Hanya izinkan angka dan tanda plus, hapus karakter aneh/spasi
-      let val = el.value.replace(/[^0-9+]/g, '');
-      
-      // 2. Jika copy-paste kode negara +62 atau 62, paksa ubah jadi 0
-      if (val.startsWith('+62')) val = '0' + val.substring(3);
-      if (val.startsWith('62')) val = '0' + val.substring(2);
-      
-      // 3. JIKA ANGKA 0 DI DEPAN HILANG (Langsung angka 8), PAKSA TAMBAH 0
-      if (val.startsWith('8')) val = '0' + val;
-      
-      el.value = val;
-    }
-
-    // Terapkan ke form Input Transaksi dan Edit Transaksi
-    document.getElementById('nomor').addEventListener('input', function() { formatNomorHP(this); });
-    document.getElementById('edit-nomor').addEventListener('input', function() { formatNomorHP(this); });
-
-    // ==========================================
-    // FITUR BACKUP DATABASE OTOMATIS KE FILE
-    // ==========================================
     async function backupSemuaData() {
       let btn = document.getElementById('btn-backup');
       let textAsli = btn.innerHTML;
       btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIAPKAN FILE BACKUP...';
       btn.disabled = true;
-
       try {
         let backupData = {};
         const koleksi = ["transaksi", "bon", "stok", "server", "tabungan", "celengan", "kreditur"];
-        
         for (let col of koleksi) {
           let snap = await db.collection(col).get();
           backupData[col] = [];
           snap.forEach(doc => { backupData[col].push({ id: doc.id, ...doc.data() }); });
         }
-
         let dataStr = JSON.stringify(backupData, null, 2);
         let blob = new Blob([dataStr], { type: "application/json" });
         let url = URL.createObjectURL(blob);
-        
         let a = document.createElement('a');
         a.href = url;
         let tglDownload = new Date().toISOString().slice(0,10);
         a.download = `Backup_Wistara_${tglDownload}.json`;
         document.body.appendChild(a);
         a.click();
-        
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
         alert("✅ Backup Berhasil! File tersimpan di Folder Download HP Anda.");
       } catch (err) {
         alert("❌ Gagal melakukan backup: " + err.message);
