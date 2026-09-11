@@ -1152,8 +1152,26 @@
     function prosesGantiBackground(e) { let f = e.target.files[0]; if(!f) return; let r = new FileReader(); r.onload = ev => { let img = new Image(); img.onload = () => { let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 1200, w = img.width, h = img.height; if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); let url = cvs.toDataURL('image/jpeg', 0.7); document.body.style.backgroundImage = 'url(' + url + ')'; try{ localStorage.setItem('wistara_bg', url); alert('Wallpaper diganti!'); }catch(err){ alert('Gambar masih terlalu besar.'); } }; img.src = ev.target.result; }; r.readAsDataURL(f); }
     function resetBackground() { localStorage.removeItem('wistara_bg'); document.body.style.backgroundImage = "var(--bg-image)"; }
 
-    document.getElementById('nomor').addEventListener('input', function() { if (this.value.startsWith('628') || this.value.startsWith('+628')) this.value = '08' + this.value.replace(/^(?:\+?628)/, '8'); });
-    document.getElementById('edit-nomor').addEventListener('input', function() { if (this.value.startsWith('628') || this.value.startsWith('+628')) this.value = '08' + this.value.replace(/^(?:\+?628)/, '8'); });
+        // ==========================================
+    // PELINDUNG NOMOR HP (ANTI HILANG ANGKA 0)
+    // ==========================================
+    function formatNomorHP(el) {
+      // 1. Hanya izinkan angka dan tanda plus, hapus karakter aneh/spasi
+      let val = el.value.replace(/[^0-9+]/g, '');
+      
+      // 2. Jika copy-paste kode negara +62 atau 62, paksa ubah jadi 0
+      if (val.startsWith('+62')) val = '0' + val.substring(3);
+      if (val.startsWith('62')) val = '0' + val.substring(2);
+      
+      // 3. JIKA ANGKA 0 DI DEPAN HILANG (Langsung angka 8), PAKSA TAMBAH 0
+      if (val.startsWith('8')) val = '0' + val;
+      
+      el.value = val;
+    }
+
+    // Terapkan ke form Input Transaksi dan Edit Transaksi
+    document.getElementById('nomor').addEventListener('input', function() { formatNomorHP(this); });
+    document.getElementById('edit-nomor').addEventListener('input', function() { formatNomorHP(this); });
 
     // ==========================================
     // FITUR BACKUP DATABASE OTOMATIS KE FILE
