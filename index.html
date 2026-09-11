@@ -1120,16 +1120,27 @@
 
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
 
-        function kirimWaTeksSukses() { 
-      let urlWeb = "https://api.whatsapp.com/send?text=" + encodeURIComponent(tempNotaWA);
-      window.open(urlWeb, '_blank');
+            function kirimWaTeksSukses() { 
+      let url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(tempNotaWA);
+      let a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
 
     function tagihWA(nama, totalBon) { 
       let msg = `*INFORMASI TAGIHAN BON*\n\nNAMA : ${nama}\nTOTAL : Rp ${totalBon}\n\nMohon untuk dicek kembali ya. Terima Kasih`; 
-      let urlWeb = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
-      window.open(urlWeb, '_blank');
+      let url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
+      let a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
+
 
     function kirimKeWA() {
       let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
