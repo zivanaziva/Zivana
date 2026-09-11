@@ -1120,17 +1120,17 @@
 
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
 
-    function kirimWaTeksSukses() { 
-      let urlApp = "whatsapp://send?text=" + encodeURIComponent(tempNotaWA);
-      let urlWeb = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA);
-      window.location.href = urlApp; setTimeout(() => { window.open(urlWeb, '_blank'); }, 1000);
+        function kirimWaTeksSukses() { 
+      let urlWeb = "https://api.whatsapp.com/send?text=" + encodeURIComponent(tempNotaWA);
+      window.open(urlWeb, '_blank');
     }
+
     function tagihWA(nama, totalBon) { 
       let msg = `*INFORMASI TAGIHAN BON*\n\nNAMA : ${nama}\nTOTAL : Rp ${totalBon}\n\nMohon untuk dicek kembali ya. Terima Kasih`; 
-      let urlApp = "whatsapp://send?text=" + encodeURIComponent(msg);
-      let urlWeb = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(msg);
-      window.location.href = urlApp; setTimeout(() => { window.open(urlWeb, '_blank'); }, 1000);
+      let urlWeb = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
+      window.open(urlWeb, '_blank');
     }
+
     function kirimKeWA() {
       let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
       btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMBUAT FOTO...'; btn.disabled = true;
