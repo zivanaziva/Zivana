@@ -702,15 +702,23 @@
           
           snapshot.forEach((doc) => {
               let d = doc.data(); d.id = doc.id; 
-              d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
-              
-              // --- OTOMATIS PERBAIKI DATA LAMA YANG RUSAK (HILANG 0) ---
-              if(d.nomor) {
-                 d.nomor = String(d.nomor);
+                            // 1. PERBAIKI NOMOR HP YANG HILANG ANGKA 0
+              if (d.nomor) {
+                 d.nomor = String(d.nomor).trim();
                  if (d.nomor.startsWith('8')) d.nomor = '0' + d.nomor;
                  else if (d.nomor.startsWith('62')) d.nomor = '0' + d.nomor.substring(2);
                  else if (d.nomor.startsWith('+62')) d.nomor = '0' + d.nomor.substring(3);
               }
+
+              // 2. PERBAIKI KODE PAKET YANG HILANG ANGKA 0 (Misal: 74 jadi 0074)
+              if (d.paket) {
+                 d.paket = String(d.paket).trim();
+                 // Jika kode paket hanya berisi angka dan kurang dari 4 digit, tambahkan 0 di depan
+                 if (/^\d+$/.test(d.paket) && d.paket.length < 4) {
+                     d.paket = d.paket.padStart(4, '0');
+                 }
+              }
+
               // ---------------------------------------------------------
 
               listSemua.push(d);
