@@ -72,6 +72,8 @@
     .input-group input, .input-group select { width: 100%; padding: 14px 16px; font-size: 0.95rem; background: var(--input-bg); border: 2px solid var(--input-border); border-radius: 14px; font-family: inherit; box-sizing: border-box; transition: all 0.2s ease; color: var(--text-main); font-weight: 700; }
     .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--primary); background: var(--panel-bg); box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05); }
     .input-group input::placeholder { color: var(--text-muted); opacity: 0.7; }
+    /* AUTO UPPERCASE STYLE */
+    .input-upper { text-transform: uppercase; }
 
     .btn { width: 100%; background: var(--primary-grad); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); display: flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.5px; }
     .btn:active { transform: scale(0.97); }
@@ -193,7 +195,7 @@
         <div class="box-3d" style="padding: 18px; margin-bottom: 18px;">
           <div class="input-group"><label>TANGGAL</label><input type="date" id="tabungan-tgl"></div>
           <div class="input-group"><label>JENIS TRANSAKSI</label><select id="tabungan-jenis"><option value="SETOR">SETOR TABUNGAN (+)</option><option value="TARIK">TARIK SALDO (-)</option></select></div>
-          <div class="input-group"><label>ALOKASI / KATEGORI</label><input type="text" id="tabungan-kategori" placeholder="Contoh: Laba Usaha / Dana Darurat"></div>
+          <div class="input-group"><label>ALOKASI / KATEGORI</label><input type="text" id="tabungan-kategori" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: Laba Usaha / Dana Darurat"></div>
           <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="tabungan-nominal" placeholder="Contoh: 50k" oninput="formatUangK(this)"></div>
           <button class="btn" id="btn-simpan-tabungan" onclick="simpanTabungan()"><i class="ph-fill ph-piggy-bank"></i> SIMPAN TABUNGAN</button>
         </div>
@@ -219,7 +221,7 @@
     <div id="tab-kreditur" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title"><i class="ph-fill ph-users-three"></i> TAMBAH KREDITUR</div>
-        <div class="input-group"><label>1. NAMA KREDITUR</label><input type="text" id="kreditur-nama" placeholder="Ketik nama..."></div>
+        <div class="input-group"><label>1. NAMA KREDITUR</label><input type="text" id="kreditur-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."></div>
         <div class="input-group"><label>2. JENIS</label><select id="kreditur-jenis"><option value="Uang">Uang (Pinjaman tunai)</option><option value="Barang">Barang (Cicilan)</option></select></div>
         <div class="input-group"><label>3. NOMINAL (Rp)</label><input type="text" id="kreditur-nominal" placeholder="Contoh: 1000000" oninput="formatUangK(this); hitungAdminOtomatis()"></div>
         <div class="input-group"><label>4. TENOR (BULAN)</label><input type="number" id="kreditur-tenor" placeholder="Contoh: 6"></div>
@@ -289,7 +291,7 @@
         <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap:6px;"><i class="ph-fill ph-user-circle-gear"></i> EDIT PROFIL TOKO</label>
-            <input type="text" class="input-profil" id="input-profile-name" placeholder="Ketik Nama Toko / Username">
+            <input type="text" class="input-profil input-upper" id="input-profile-name" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik Nama Toko / Username">
             <input type="text" class="input-profil" id="input-profile-desc" placeholder="Ketik Slogan / Deskripsi">
             <input type="file" id="input-profile-foto" accept="image/*" style="display: none;" onchange="previewFotoProfil(event)">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
@@ -369,10 +371,10 @@
       <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-lightning"></i> INPUT TRANSAKSI</div>
         <div class="input-group"><label>TANGGAL TRANSAKSI</label><input type="date" id="tgl-transaksi"></div>
-        <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="nama" list="list-nama" placeholder="Ketik nama..."><datalist id="list-nama"></datalist></div>
-        <div class="input-group"><label>NOMOR HP</label><input type="tel" id="nomor" placeholder="Contoh: 081234..."></div>
-        <div class="input-group"><label>KODE PAKET</label><input type="text" id="code" list="list-kode" placeholder="Ketik kode..."><datalist id="list-kode"></datalist></div>
-        <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="kuber" placeholder="Contoh: 10" onchange="formatGB(this)"></div>
+        <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="nama" class="input-upper" list="list-nama" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."><datalist id="list-nama"></datalist></div>
+        <div class="input-group"><label>NOMOR HP (Bisa banyak, pisah spasi)</label><input type="tel" id="nomor" placeholder="Contoh: 0812... 0852..."></div>
+        <div class="input-group"><label>KODE PAKET</label><input type="text" id="code" class="input-upper" list="list-kode" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik kode..."><datalist id="list-kode"></datalist></div>
+        <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="kuber" class="input-upper" placeholder="Contoh: 10" onchange="formatGB(this)"></div>
         <div class="input-group"><label>MODAL (Rp)</label><input type="text" id="modal" placeholder="Contoh: 54k" oninput="formatUangK(this)"></div>
         <div class="input-group"><label>HARGA JUAL (Rp)</label><input type="text" id="harga" placeholder="Contoh: 55k" oninput="formatUangK(this)"></div>
         <button class="btn" onclick="kirimData()" id="btn-submit" style="margin-top: 10px;"><i class="ph-fill ph-lightning"></i> EKSEKUSI TRANSAKSI</button>
@@ -383,8 +385,8 @@
     <div id="tab-stok" class="section">
       <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-package"></i> INPUT DATA STOK</div>
-        <div class="input-group"><label>KODE PAKET</label><input type="text" id="stok-kode" placeholder="Contoh: T10"></div>
-        <div class="input-group"><label>VARIANT (OPSIONAL)</label><input type="text" id="stok-variant" placeholder="Contoh: Tsel 10GB"></div>
+        <div class="input-group"><label>KODE PAKET</label><input type="text" id="stok-kode" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: T10"></div>
+        <div class="input-group"><label>VARIANT (OPSIONAL)</label><input type="text" id="stok-variant" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: Tsel 10GB"></div>
         <div class="input-group"><label>JUMLAH TAMBAH STOK</label><input type="number" id="stok-jumlah" placeholder="Contoh: 50"></div>
         <button class="btn" onclick="simpanStok()" id="btn-stok" style="margin-top: 10px;"><i class="ph-bold ph-plus"></i> TAMBAHKAN STOK</button>
       </div>
@@ -399,7 +401,7 @@
       <div class="glass-panel card">
         <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-notebook"></i> DAFTAR PIUTANG BON</span></div>
         <button class="btn" style="background: linear-gradient(135deg, var(--color-warning), #b45309); color: #fff; margin-bottom: 18px;" onclick="bukaModalSetBon()"><i class="ph-fill ph-scales"></i> SET SALDO BON MANUAL</button>
-        <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-bon" placeholder="🔍 Cari Nama Reseller..." onkeyup="filterBon()"></div>
+        <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-bon" class="input-upper" placeholder="🔍 Cari Nama Reseller..." onkeyup="filterBon()"></div>
         <div id="list-bon"></div>
       </div>
     </div>
@@ -408,7 +410,7 @@
     <div id="tab-bayar" class="section">
       <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-hand-coins"></i> BAYAR BON</div>
-        <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="nama-bayar" list="list-nama" placeholder="Ketik nama..."></div>
+        <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="nama-bayar" class="input-upper" list="list-nama" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."></div>
         <div class="input-group"><label>JUMLAH BAYAR (Rp)</label><input type="text" id="nominal-bayar" placeholder="Contoh: 50k" oninput="formatUangK(this)"></div>
         <button class="btn" style="background: linear-gradient(135deg, var(--color-success), #047857); margin-top: 10px;" id="btn-bayar" onclick="prosesBayar()"><i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR</button>
       </div>
@@ -419,12 +421,12 @@
       <div class="glass-panel card">
         <h2 style="color: var(--primary); font-weight: 900; margin-bottom: 18px; text-transform: uppercase; text-align: center; font-size: 1.3rem; display: flex; justify-content: center; align-items: center; gap: 8px;"><i class="ph-fill ph-hard-drives"></i> MAPPING SERVER</h2>
         <div class="box-3d" style="padding: 18px; margin-bottom: 22px;">
-          <div class="input-group"><label>NAMA SERVER</label><input type="text" id="server-nama" placeholder="Contoh: SERVER TELKOMSEL"></div>
+          <div class="input-group"><label>NAMA SERVER</label><input type="text" id="server-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: SERVER TELKOMSEL"></div>
           <div class="input-group"><label>NOMOR SERVER</label><input type="text" id="server-nomor" placeholder="Contoh: 081234567890"></div>
           <button id="btn-submit-server" class="btn" onclick="simpanServer()" style="margin-top: 10px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN SERVER</button>
         </div>
         <div style="text-align: center; color: var(--primary); font-weight: 900; margin-bottom: 12px; font-size: 1.05rem; letter-spacing: 0.5px;">📋 DAFTAR SERVER</div>
-        <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-server" placeholder="🔍 Cari Nama atau 4 Angka..." onkeyup="filterServer()"></div>
+        <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-server" class="input-upper" placeholder="🔍 Cari Nama atau 4 Angka..." onkeyup="filterServer()"></div>
         <div id="list-server"></div>
       </div>
     </div>
@@ -438,7 +440,8 @@
           <div style="position: absolute; top:0; left:0; width:100%; height: 6px; background: var(--primary-grad);"></div>
           <h3 id="nota-toko-nama" style="margin-top: 8px; color: var(--primary); text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 4px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 6px;"><i class="ph-fill ph-receipt"></i> WISTARA-STORE</h3>
           <p id="nota-toko-desc" style="font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-bottom: 14px; font-weight: 800; letter-spacing: 0.5px;">BUKTI TRANSAKSI DIGITAL</p>
-          <div id="textNota" style="font-family: 'Poppins', sans-serif;"></div>
+          <!-- FORMAT MONOSPACE NOTA -->
+          <div id="textNota"></div>
         </div>
       </div>
       <div class="modal-btns" style="padding: 14px; margin-top: 0; border-top: 2px solid var(--input-border); background: var(--input-bg);">
@@ -453,10 +456,10 @@
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-pencil-simple"></i> EDIT TRANSAKSI</h3>
       <input type="hidden" id="edit-id">
       <div class="input-group"><label>TANGGAL TRANSAKSI</label><input type="date" id="edit-tgl"></div>
-      <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="edit-nama"></div>
+      <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="edit-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
       <div class="input-group"><label>NOMOR HP</label><input type="tel" id="edit-nomor"></div>
-      <div class="input-group"><label>KODE PAKET</label><input type="text" id="edit-code"></div>
-      <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="edit-kuber" onchange="formatGB(this)"></div>
+      <div class="input-group"><label>KODE PAKET</label><input type="text" id="edit-code" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
+      <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="edit-kuber" class="input-upper" onchange="formatGB(this)"></div>
       <div class="input-group"><label>MODAL (Rp)</label><input type="text" id="edit-modal" oninput="formatUangK(this)"></div>
       <div class="input-group"><label>HARGA JUAL (Rp)</label><input type="text" id="edit-harga" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
@@ -470,7 +473,7 @@
     <div class="modal-box">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-pencil-simple"></i> EDIT SERVER</h3>
       <input type="hidden" id="edit-server-id">
-      <div class="input-group"><label>NAMA SERVER</label><input type="text" id="edit-server-nama"></div>
+      <div class="input-group"><label>NAMA SERVER</label><input type="text" id="edit-server-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
       <div class="input-group"><label>NOMOR SERVER</label><input type="text" id="edit-server-nomor"></div>
       <div class="modal-btns">
         <button class="btn" style="flex: 1;" id="btn-simpan-edit-server" onclick="simpanEditServer()">SIMPAN</button>
@@ -482,7 +485,7 @@
   <div id="modalSetBon" class="modal-overlay">
     <div class="modal-box">
       <h3 style="color: var(--color-warning); margin-bottom: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-scales"></i> SET SALDO BON</h3>
-      <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="set-bon-nama" list="list-nama" placeholder="Ketik nama..."></div>
+      <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="set-bon-nama" class="input-upper" list="list-nama" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."></div>
       <div class="input-group"><label>TOTAL BON BARU (Rp)</label><input type="text" id="set-bon-nominal" placeholder="Contoh: 150000" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
         <button class="btn" style="background: linear-gradient(135deg, var(--color-warning), #b45309); flex: 1;" onclick="simpanSetBon()" id="btn-simpan-setbon"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
@@ -509,7 +512,7 @@
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-target"></i> BUAT CELENGAN</h3>
       <div class="input-group"><label>GAMBAR / QR CODE (OPSIONAL)</label><input type="file" id="input-celengan-gambar" accept="image/*" style="padding: 10px;" onchange="previewGambarCelengan(event)"><input type="hidden" id="celengan-gambar-base64"></div>
-      <div class="input-group"><label>NAMA TABUNGAN</label><input type="text" id="celengan-nama" placeholder="Contoh: Beli Motor"></div>
+      <div class="input-group"><label>NAMA TABUNGAN</label><input type="text" id="celengan-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: Beli Motor"></div>
       <div class="input-group"><label>TARGET TABUNGAN (Rp)</label><input type="text" id="celengan-target" placeholder="Contoh: 10.000.000" oninput="formatUangK(this)"></div>
       <div class="input-group"><label>RENCANA PENGISIAN</label><select id="celengan-rencana"><option value="Harian">Harian</option><option value="Mingguan">Mingguan</option><option value="Bulanan">Bulanan</option></select></div>
       <div class="input-group"><label>NOMINAL PENGISIAN (Rp)</label><input type="text" id="celengan-nominal" placeholder="Contoh: 100.000" oninput="formatUangK(this)"></div>
@@ -537,7 +540,7 @@
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-pencil-simple"></i> EDIT KREDITUR</h3>
       <input type="hidden" id="edit-kreditur-id">
-      <div class="input-group"><label>NAMA</label><input type="text" id="edit-kreditur-nama"></div>
+      <div class="input-group"><label>NAMA</label><input type="text" id="edit-kreditur-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
       <div class="input-group"><label>JENIS</label><select id="edit-kreditur-jenis"><option value="Uang">Uang</option><option value="Barang">Barang</option></select></div>
       <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="edit-kreditur-nominal" oninput="formatUangK(this)"></div>
       <div class="input-group"><label>TENOR (BULAN)</label><input type="number" id="edit-kreditur-tenor"></div>
@@ -672,10 +675,14 @@
 
       if(!nm || !hrg) { alert("NAMA DAN HARGA HARUS DIISI!"); return; }
 
-      no = String(no);
-      if (no.startsWith('8')) no = '0' + no;
-      else if (no.startsWith('62')) no = '0' + no.substring(2);
-      else if (no.startsWith('+62')) no = '0' + no.substring(3);
+      // MULTI NUMBER & SPASI FIX
+      let noParts = String(no).split(/\s+/).map(p => {
+          if (p.startsWith('8')) return '0' + p;
+          if (p.startsWith('62')) return '0' + p.substring(2);
+          if (p.startsWith('+62')) return '0' + p.substring(3);
+          return p;
+      });
+      no = noParts.join(' ');
 
       btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIMPAN...'; btn.disabled = true;
 
@@ -714,10 +721,14 @@
               d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
               
               if (d.nomor) {
-                 d.nomor = String(d.nomor).trim();
-                 if (d.nomor.startsWith('8')) d.nomor = '0' + d.nomor;
-                 else if (d.nomor.startsWith('62')) d.nomor = '0' + d.nomor.substring(2);
-                 else if (d.nomor.startsWith('+62')) d.nomor = '0' + d.nomor.substring(3);
+                 // Format multi number untuk load data lama juga
+                 let noParts = String(d.nomor).trim().split(/\s+/).map(p => {
+                    if (p.startsWith('8')) return '0' + p;
+                    if (p.startsWith('62')) return '0' + p.substring(2);
+                    if (p.startsWith('+62')) return '0' + p.substring(3);
+                    return p;
+                 });
+                 d.nomor = noParts.join(' ');
               }
 
               if (d.paket) {
@@ -757,11 +768,14 @@
 
     function simpanEdit() {
       let id = document.getElementById('edit-id').value, btn = document.getElementById('btn-simpan-edit');
-      let noFix = String(document.getElementById('edit-nomor').value.trim());
-
-      if (noFix.startsWith('8')) noFix = '0' + noFix;
-      else if (noFix.startsWith('62')) noFix = '0' + noFix.substring(2);
-      else if (noFix.startsWith('+62')) noFix = '0' + noFix.substring(3);
+      
+      let noFixRaw = String(document.getElementById('edit-nomor').value.trim());
+      let noFix = noFixRaw.split(/\s+/).map(p => {
+          if (p.startsWith('8')) return '0' + p;
+          if (p.startsWith('62')) return '0' + p.substring(2);
+          if (p.startsWith('+62')) return '0' + p.substring(3);
+          return p;
+      }).join(' ');
 
       let data = {
           tanggal: formatTgl(document.getElementById('edit-tgl').value), 
@@ -826,7 +840,7 @@
       dataFilter.forEach(item => {
         totalSemua += item.total;
         html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
-                  <div style="font-weight:900; font-size:1rem;"><i class="ph-fill ph-lightning" style="color:var(--color-warning);"></i> ${item.nama}</div>
+                  <div style="font-weight:900; font-size:1rem; text-transform:uppercase;"><i class="ph-fill ph-lightning" style="color:var(--color-warning);"></i> ${item.nama}</div>
                   <div style="display:flex; align-items:center; gap:10px;"><div style="font-weight:900; font-size:1.05rem; color:var(--color-danger);">Rp ${item.total.toLocaleString('id-ID')}</div>
                   <button onclick="tagihWA('${item.nama}', '${item.total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button></div>
                 </div>`;
@@ -900,7 +914,7 @@
           snap.forEach(doc => {
               let item = doc.data(), id = doc.id, w = item.stok <= 5 ? 'var(--color-danger)' : 'var(--color-success)';
               html += `<div class="box-3d" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px;">
-                        <div><div style="font-weight:900; font-size:1.05rem;"><i class="ph-bold ph-barcode" style="color:var(--primary);"></i> ${item.kode}</div><div style="font-size:0.85rem; color:var(--text-muted);">${item.variant || 'Tanpa Variant'}</div></div>
+                        <div><div style="font-weight:900; font-size:1.05rem;"><i class="ph-bold ph-barcode" style="color:var(--primary);"></i> ${item.kode}</div><div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">${item.variant || 'Tanpa Variant'}</div></div>
                         <div style="display: flex; align-items: center; gap: 12px;"><div style="font-weight:900; font-size:1.6rem; color:${w};">${item.stok}</div><button onclick="hapusStokItem('${id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div>
                       </div>`;
           }); document.getElementById('list-stok').innerHTML = html;
@@ -926,7 +940,7 @@
       list.forEach(item => {
         let pNama = String(item.nama).replace(/'/g, "\\'"), pNomor = String(item.nomor).replace(/'/g, "\\'");
         html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
-                  <div><div style="font-weight:900; font-size:1.05rem;"><i class="ph-fill ph-hard-drive" style="color:var(--primary);"></i> ${item.nama}</div><div style="color:var(--color-success); font-weight:800; font-size:0.92rem;">${item.nomor}</div></div>
+                  <div><div style="font-weight:900; font-size:1.05rem; text-transform:uppercase;"><i class="ph-fill ph-hard-drive" style="color:var(--primary);"></i> ${item.nama}</div><div style="color:var(--color-success); font-weight:800; font-size:0.92rem;">${item.nomor}</div></div>
                   <div style="display:flex; gap:6px;"><button onclick="bukaEditServer('${item.id}', '${pNama}', '${pNomor}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); padding:8px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="hapusServer('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
       }); container.innerHTML = html;
     }
@@ -949,7 +963,7 @@
           let p = item.tanggal.split('-'); if (p[1] === blnIni && p[2] === thnIni && item.jenis === 'SETOR') bulanIni += item.nominal;
           let w = item.jenis === 'SETOR' ? 'var(--color-success)' : 'var(--color-danger)', pref = item.jenis === 'SETOR' ? '+' : '-';
           html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:14px; margin-bottom:10px;">
-                    <div><div style="font-weight:900; font-size:0.9rem;">${item.kategori}</div><div style="font-size:0.75rem; color:var(--text-muted);">${item.tanggal} • <b style="color:${w};">${item.jenis}</b></div></div>
+                    <div><div style="font-weight:900; font-size:0.9rem; text-transform:uppercase;">${item.kategori}</div><div style="font-size:0.75rem; color:var(--text-muted);">${item.tanggal} • <b style="color:${w};">${item.jenis}</b></div></div>
                     <div style="display:flex; align-items:center; gap:10px;"><div style="font-weight:900; font-size:0.95rem; color:${w};">${pref}Rp ${item.nominal.toLocaleString('id-ID')}</div><button onclick="hapusTabungan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
         });
         document.getElementById('tabungan-total').innerText = "Rp " + totalSaldo.toLocaleString('id-ID'); document.getElementById('tabungan-hariini').innerText = "Rp " + hariIni.toLocaleString('id-ID'); document.getElementById('tabungan-bulanini').innerText = "Rp " + bulanIni.toLocaleString('id-ID');
@@ -1104,7 +1118,7 @@
       if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; font-weight:800;">Belum ada transaksi.</td></tr>'; return; }
       var html = ''; paginatedList.forEach(item => { 
         let jam = item.jam || "-"; let nm = item.nama || "-"; let no = item.nomor || "-"; let pkt = item.paket || "-";
-        html += `<tr><td>${jam}</td><td style="color:var(--primary); font-weight:900;">${nm}</td><td>${no}</td><td style="font-weight:800;">${pkt}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; 
+        html += `<tr><td>${jam}</td><td style="color:var(--primary); font-weight:900; text-transform:uppercase;">${nm}</td><td>${no}</td><td style="font-weight:800; text-transform:uppercase;">${pkt}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; 
       });
       var totalPages = Math.ceil(list.length / itemsPerPage);
       if (totalPages > 1) { html += `<tr><td colspan="5" style="text-align:center; padding:12px 0;"><button onclick="renderMiniTabelDashboard(dataCacheHariIni, ${currentPageDashboard - 1})" ${currentPageDashboard === 1 ? 'disabled' : ''} style="padding:6px 10px; border-radius:8px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:800;">&laquo; Prev</button><span style="margin:0 8px; font-weight:800;">Hal ${currentPageDashboard} / ${totalPages}</span><button onclick="renderMiniTabelDashboard(dataCacheHariIni, ${currentPageDashboard + 1})" ${currentPageDashboard === totalPages ? 'disabled' : ''} style="padding:6px 10px; border-radius:8px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:800;">Next &raquo;</button></td></tr>`; }
@@ -1123,7 +1137,7 @@
       let start = (page - 1) * itemsPerPage, paginatedList = list.slice(start, start + itemsPerPage);
       paginatedList.forEach(item => {
         let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0', pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
-        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; font-size:1rem;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama || "-"}</span><br><span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; font-size:0.95rem; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
+        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; font-size:1rem; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama || "-"}</span><br><span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; font-size:0.95rem; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
       let totalPages = Math.ceil(list.length / itemsPerPage);
       if (totalPages > 1) { html += `<div style="display:flex; justify-content:center; gap:8px;"><button onclick="tampilkanListTransaksi(dataCacheKeseluruhan, ${page - 1})" ${page === 1 ? 'disabled' : ''} style="padding:8px 14px; border-radius:10px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:900;">&laquo; Prev</button><span style="font-size:0.82rem; font-weight:900; margin-top:8px;">Hal ${page} / ${totalPages}</span><button onclick="tampilkanListTransaksi(dataCacheKeseluruhan, ${page + 1})" ${page === totalPages ? 'disabled' : ''} style="padding:8px 14px; border-radius:10px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:900;">Next &raquo;</button></div>`; }
@@ -1136,7 +1150,7 @@
       if (!kw) { container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:25px 10px;"><i class="ph-fill ph-folder-open" style="font-size:3.5rem; opacity:0.5;"></i><br><b>Hasil di sini</b></div>'; return; }
       let hasil = dataCacheKeseluruhan.filter(i => (i.nama||"").toLowerCase().includes(kw) || (i.nomor||"").includes(kw) || (i.paket||"").toLowerCase().includes(kw));
       if (hasil.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900; color:var(--color-danger);">TIDAK DITEMUKAN.</p>'; return; }
-      let html = ''; hasil.forEach(item => { html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><div><span style="font-weight:900;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal}', '${item.jam}', '${item.nama}', '${item.nomor}', '${item.paket}', '${item.kuota}', '${item.harga}')"><i class="ph-fill ph-receipt"></i></button></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">${item.paket}</span><span style="font-size:0.78rem; color:var(--text-muted);">${item.tanggal}</span><span style="font-weight:900; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${item.harga.toLocaleString('id-ID')}</span></div></div>`; }); container.innerHTML = html;
+      let html = ''; hasil.forEach(item => { html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><div><span style="font-weight:900; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal}', '${item.jam}', '${item.nama}', '${item.nomor}', '${item.paket}', '${item.kuota}', '${item.harga}')"><i class="ph-fill ph-receipt"></i></button></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket}</span><span style="font-size:0.78rem; color:var(--text-muted);">${item.tanggal}</span><span style="font-weight:900; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${item.harga.toLocaleString('id-ID')}</span></div></div>`; }); container.innerHTML = html;
     }
     function terapkanFilterTanggal() { let m = document.getElementById('filter-mulai').value, a = document.getElementById('filter-akhir').value; if (!m || !a) return alert("Pilih tanggal mulai & akhir!"); let tglM = new Date(m); tglM.setHours(0,0,0,0); let tglA = new Date(a); tglA.setHours(23,59,59,999); let res = dataCacheKeseluruhan.filter(i => { let dt = parseTgl(i.tanggal); return dt >= tglM && dt <= tglA; }); modeAktif = 'custom'; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL'; tampilkanListTransaksi(res, 1); }
 
@@ -1169,16 +1183,18 @@
     }
 
     function formatNotaToHTML(teks) {
-      let lines = teks.replace(/```/g, '').split('\n'), html = '<div style="font-size:0.78rem; line-height:1.6; font-family:monospace, sans-serif;">';
+      let lines = teks.replace(/```/g, '').split('\n');
+      // Menerapkan font Monospace dengan padding/format rapi
+      let html = '<div style="font-size:0.75rem; line-height:1.6; font-family: \'Courier New\', Courier, monospace; font-weight: bold; color: var(--text-main);">';
       lines.forEach(l => {
         let txt = l.trim(); if (txt === '') return;
         if (txt.includes('──────') || txt.includes('━━━━━━')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">'; 
         else if (txt.indexOf(':') > -1 && !txt.includes('📅')) {
           let idx = txt.indexOf(':'), lbl = txt.substring(0, idx).trim(), val = txt.substring(idx + 1).trim();
-          html += `<div style="display:flex; padding:4px 0;"><div style="width:50%; font-weight:800; color:var(--text-muted);">${lbl}</div><div style="width:5%; font-weight:900;">:</div><div style="width:45%; font-weight:900;">${val}</div></div>`;
+          html += `<div style="display:flex; padding:4px 0;"><div style="width:40%; color:var(--text-muted);">${lbl}</div><div style="width:5%;">:</div><div style="width:55%; text-transform:uppercase;">${val}</div></div>`;
         } else {
-          let w = (txt.includes('SUKSES') || txt.includes('DICEK') || txt.includes('Terima Kasih')) ? 'var(--color-success)' : 'var(--text-main)';
-          html += `<div style="text-align:center; font-weight:900; color:${w}; margin:4px 0;">${txt}</div>`;
+          let w = (txt.includes('SUKSES') || txt.includes('DICEK') || txt.includes('Terima Kasih')) ? 'var(--color-success)' : 'inherit';
+          html += `<div style="text-align:center; color:${w}; margin:4px 0; text-transform:uppercase;">${txt}</div>`;
         }
       }); return html + '</div>';
     }
@@ -1227,15 +1243,39 @@
     // 13. PELINDUNG FORM (ANTI ILANG ANGKA 0 DI HP)
     // ==========================================
     function formatNomorHP(el) {
-      let val = el.value.replace(/[^0-9+]/g, '');
-      if (val.startsWith('+62')) val = '0' + val.substring(3);
-      if (val.startsWith('62')) val = '0' + val.substring(2);
-      if (val.startsWith('8')) val = '0' + val;
-      el.value = val;
+      let val = el.value.replace(/[^0-9+\s]/g, '');
+      let parts = val.split(/\s+/);
+      let formatted = parts.map(p => {
+         if (p.startsWith('+62')) return '0' + p.substring(3);
+         if (p.startsWith('62')) return '0' + p.substring(2);
+         if (p.startsWith('8')) return '0' + p;
+         return p;
+      });
+      el.value = formatted.join(' ');
     }
 
     document.getElementById('nomor').addEventListener('input', function() { formatNomorHP(this); });
     document.getElementById('edit-nomor').addEventListener('input', function() { formatNomorHP(this); });
+
+    // ==========================================
+    // 13.B NAVIGASI ENTER UNTUK INPUT TRANSAKSI
+    // ==========================================
+    const inputIds = ['tgl-transaksi', 'nama', 'nomor', 'code', 'kuber', 'modal', 'harga'];
+    inputIds.forEach((id, index) => {
+        let el = document.getElementById(id);
+        if(el) {
+            el.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    if (index < inputIds.length - 1) {
+                        document.getElementById(inputIds[index + 1]).focus(); // Pindah ke kolom berikutnya
+                    } else {
+                        document.getElementById('btn-submit').click(); // Eksekusi jika di kolom terakhir
+                    }
+                }
+            });
+        }
+    });
 
     // ==========================================
     // 14. PROFIL, WALLPAPER & INISIALISASI
