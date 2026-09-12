@@ -871,9 +871,12 @@
               let ts = getTglJam();
               let msg = `✨ PEMBAYARAN BON BERHASIL ✨\n📅 ${ts.tanggal} | ${ts.jam}\n──────────────────\n👤 NAMA       : ${bonExist.nama}\n💸 JML BAYAR  : Rp ${bayar.toLocaleString('id-ID')}\n──────────────────\n📒 SISA BON   : Rp ${sisaBon.toLocaleString('id-ID')}\n──────────────────\nTerima kasih atas pembayarannya 🙏`;
               
-              let url = "https://wa.me/?text=" + encodeURIComponent(msg);
-              let bukaTab = window.open(url, '_blank');
-              if (!bukaTab) window.location.href = url;
+              let pesan = encodeURIComponent(msg);
+              if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                  window.location.href = "whatsapp://send?text=" + pesan;
+              } else {
+                  window.open("https://api.whatsapp.com/send?text=" + pesan, "_blank");
+              }
 
           }).catch(err => {
               alert("Gagal memproses pembayaran: " + err.message);
@@ -1184,20 +1187,20 @@
 
     function kirimWaTeksSukses() { 
       let pesan = encodeURIComponent(tempNotaWA);
-      let url = "[https://wa.me/?text=](https://wa.me/?text=)" + pesan;
-      let bukaTab = window.open(url, '_blank');
-      if (!bukaTab) {
-          window.location.href = url;
+      if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          window.location.href = "whatsapp://send?text=" + pesan;
+      } else {
+          window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + pesan, "_blank");
       }
     }
 
     function tagihWA(nama, totalBon) { 
       let msg = `*INFORMASI TAGIHAN BON*\n\nNAMA : ${nama}\nTOTAL : Rp ${totalBon}\n\nMohon untuk dicek kembali ya. Terima Kasih`; 
-      let url = "[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(msg);
-      
-      let bukaTab = window.open(url, '_blank');
-      if (!bukaTab) {
-          window.location.href = url;
+      let pesan = encodeURIComponent(msg);
+      if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          window.location.href = "whatsapp://send?text=" + pesan;
+      } else {
+          window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + pesan, "_blank");
       }
     }
     
