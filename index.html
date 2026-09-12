@@ -834,6 +834,7 @@
     }
     
     function renderListBon(data) {
+           function renderListBon(data) {
       let container = document.getElementById('list-bon'); let dataFilter = data.filter(d => d.total > 0);
       if (dataFilter.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">TIDAK ADA PIUTANG!</p>'; return; }
       let html = '', totalSemua = 0;
@@ -841,8 +842,11 @@
         totalSemua += item.total;
         html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
                   <div style="font-weight:900; font-size:1rem; text-transform:uppercase;"><i class="ph-fill ph-lightning" style="color:var(--color-warning);"></i> ${item.nama}</div>
-                  <div style="display:flex; align-items:center; gap:10px;"><div style="font-weight:900; font-size:1.05rem; color:var(--color-danger);">Rp ${item.total.toLocaleString('id-ID')}</div>
-                  <button onclick="tagihWA('${item.nama}', '${item.total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button></div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <div style="font-weight:900; font-size:1.05rem; color:var(--color-danger); margin-right:4px;">Rp ${item.total.toLocaleString('id-ID')}</div>
+                    <button onclick="tagihWA('${item.nama}', '${item.total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button>
+                    <button onclick="hapusBon('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:10px;"><i class="ph-bold ph-trash"></i></button>
+                  </div>
                 </div>`;
       });
       html += `<div class="box-3d" style="display:flex; justify-content:space-between; padding:18px; background:rgba(220,38,38,0.1); border:2px solid var(--color-danger); margin-top:12px;">
@@ -850,6 +854,16 @@
       container.innerHTML = html;
     }
     
+    function hapusBon(id) { 
+      if(confirm("Yakin ingin menghapus data bon ini secara permanen?")) {
+        db.collection("bon").doc(id).delete().then(() => {
+          alert("Data Bon berhasil dihapus!");
+        }).catch(err => {
+          alert("Gagal menghapus: " + err.message);
+        });
+      }
+    }
+
     function filterBon() { let kw = document.getElementById('cari-bon').value.toLowerCase().trim(); let res = bonCache.filter(i => (i.nama||"").toLowerCase().includes(kw)); renderListBon(res); }
     function bukaModalSetBon() { document.getElementById('set-bon-nama').value=''; document.getElementById('set-bon-nominal').value=''; document.getElementById('modalSetBon').style.display='flex'; }
     function simpanSetBon() {
@@ -1174,7 +1188,7 @@
 
     function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
       var teksNota = 
-        "```" + 
+        "```\n" + 
         "✨ SALINAN TRANSAKSI ✨\n" +
         "📅 " + tgl + " | " + jam + "\n" +
         "──────────────────\n" +
@@ -1183,7 +1197,7 @@
         "🏷️ CODE      : " + code + "\n" +
         "📦 KUOTA     : " + kuota + "\n" +
         "💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + 
-        "```" + 
+        "```\n" + 
         "\n──────────────────\n" +
         "✅ `SILAHKAN DI CEK`\n" +
         "🤝 `DITUNGGU ORDERAN BERIKUTNYA`"; 
