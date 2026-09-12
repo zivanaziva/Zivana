@@ -748,7 +748,7 @@
           
           let teksBon = `\n──────────────────\n📒 BON LAMA  : Rp ${bonLama.toLocaleString('id-ID')}\n📈 BON BARU  : Rp ${bonBaru.toLocaleString('id-ID')}`;
           
-          tempNotaWA = `\`\`\`\n✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n────────────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n────────────────────────\n✅ STATUS    : SUKSES\n🙏 TERIMA KASIH\n\`\`\``;
+          tempNotaWA = `\`\`\`\n✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n────────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n────────────────────\n✅ STATUS    : SUKSES\n🙏 TERIMA KASIH\n\`\`\``;
           tempNotaGambar = tempNotaWA;
           
           document.getElementById('modalSuksesTrx').style.display = 'flex'; muatDataSemua();
@@ -1231,7 +1231,7 @@
       
       let teksBon = sisaBon > 0 ? `\n──────────────────\n📒 SISA BON  : Rp ${sisaBon.toLocaleString('id-ID')}` : '';
 
-      let teks = `\`\`\`\n✨ TRANSAKSI SUKSES ✨\n📅 ${tgl} | ${jam}\n────────────────────────\n👤 NAMA      : ${nama}\n📱 NOMOR     : ${nomor}\n🏷️ CODE      : ${code}\n📦 KUOTA     : ${kuota}\n💰 HARGA     : Rp ${Number(harga).toLocaleString('id-ID')}${teksBon}\n────────────────────────\n✅ STATUS    : SUKSES\n🙏 TERIMA KASIH\n\`\`\``; 
+      let teks = `\`\`\`\n✨ TRANSAKSI SUKSES ✨\n📅 ${tgl} | ${jam}\n────────────────────\n👤 NAMA      : ${nama}\n📱 NOMOR     : ${nomor}\n🏷️ CODE      : ${code}\n📦 KUOTA     : ${kuota}\n💰 HARGA     : Rp ${Number(harga).toLocaleString('id-ID')}${teksBon}\n────────────────────\n✅ STATUS    : SUKSES\n🙏 TERIMA KASIH\n\`\`\``; 
       
       document.getElementById('textNota').innerHTML = formatNotaToHTML(teks); 
       document.getElementById('modalNota').style.display = 'flex'; 
