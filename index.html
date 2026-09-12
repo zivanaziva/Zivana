@@ -1169,18 +1169,25 @@
     // ==========================================
     // 12. NOTA & SHARE FUNGSI (VERCEL FIX)
     // ==========================================
-    function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
-      let sisaBon = 0;
-      let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === (nama || "").toLowerCase());
-      if (bonExist) sisaBon = bonExist.total || 0;
-      
-      let teksBon = sisaBon > 0 ? `\n──────────────────\n📒 SISA BON  : Rp ${sisaBon.toLocaleString('id-ID')}` : '';
-
-      let teks = `✨ TRANSAKSI SUKSES ✨\n📅 ${tgl} | ${jam}\n──────────────────\n👤 NAMA      : ${nama}\n📱 NOMOR     : ${nomor}\n🏷️ CODE      : ${code}\n📦 KUOTA     : ${kuota}\n💰 HARGA     : Rp ${Number(harga).toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih`; 
-      
-      document.getElementById('textNota').innerHTML = formatNotaToHTML(teks); 
+        function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
+      // Spasi diatur secara spesifik agar titik dua (:) sejajar rapi di format monospace WA
+      var teksNota = 
+        "```✨ SALINAN TRANSAKSI ✨\n" +
+        "📅 " + tgl + " | " + jam + "\n" +
+        "──────────────────\n" +
+        "👤 NAMA      : " + nama + "\n" +
+        "📱 NOMOR     : " + nomor + "\n" +
+        "🏷️ CODE      : " + code + "\n" +
+        "📦 KUOTA     : " + kuota + "\n" +
+        "💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + "\n" +
+        "──────────────────\n" +
+        "✅ `SILAHKAN DI CEK`\n" +
+        "🤝 `DITUNGGU ORDERAN BERIKUTNYA````"; 
+        
+      document.getElementById('textNota').innerHTML = formatNotaToHTML(teksNota); 
       document.getElementById('modalNota').style.display = 'flex'; 
     }
+
 
     function formatNotaToHTML(teks) {
       let lines = teks.replace(/```/g, '').split('\n');
