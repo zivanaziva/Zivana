@@ -832,11 +832,15 @@
         if(document.getElementById('list-bon')) renderListBon(bonCache); 
       });
     }
-    
+
     function renderListBon(data) {
-           function renderListBon(data) {
-      let container = document.getElementById('list-bon'); let dataFilter = data.filter(d => d.total > 0);
-      if (dataFilter.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">TIDAK ADA PIUTANG!</p>'; return; }
+      let container = document.getElementById('list-bon'); 
+      let dataFilter = data.filter(d => d.total > 0);
+      if (dataFilter.length === 0) { 
+        container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">TIDAK ADA PIUTANG!</p>'; 
+        return; 
+      }
+      
       let html = '', totalSemua = 0;
       dataFilter.forEach(item => {
         totalSemua += item.total;
@@ -864,12 +868,27 @@
       }
     }
 
-    function filterBon() { let kw = document.getElementById('cari-bon').value.toLowerCase().trim(); let res = bonCache.filter(i => (i.nama||"").toLowerCase().includes(kw)); renderListBon(res); }
-    function bukaModalSetBon() { document.getElementById('set-bon-nama').value=''; document.getElementById('set-bon-nominal').value=''; document.getElementById('modalSetBon').style.display='flex'; }
+    function filterBon() { 
+      let kw = document.getElementById('cari-bon').value.toLowerCase().trim(); 
+      let res = bonCache.filter(i => (i.nama||"").toLowerCase().includes(kw)); 
+      renderListBon(res); 
+    }
+    
+    function bukaModalSetBon() { 
+      document.getElementById('set-bon-nama').value=''; 
+      document.getElementById('set-bon-nominal').value=''; 
+      document.getElementById('modalSetBon').style.display='flex'; 
+    }
+    
     function simpanSetBon() {
-      let nama = document.getElementById('set-bon-nama').value.trim(), total = parseFloat(document.getElementById('set-bon-nominal').value.replace(/[^0-9]/g, '')) || 0;
-      if(!nama) return; document.getElementById('btn-simpan-setbon').disabled = true;
-      db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => { tutupModal('modalSetBon'); document.getElementById('btn-simpan-setbon').disabled = false; });
+      let nama = document.getElementById('set-bon-nama').value.trim(), 
+          total = parseFloat(document.getElementById('set-bon-nominal').value.replace(/[^0-9]/g, '')) || 0;
+      if(!nama) return; 
+      document.getElementById('btn-simpan-setbon').disabled = true;
+      db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => { 
+        tutupModal('modalSetBon'); 
+        document.getElementById('btn-simpan-setbon').disabled = false; 
+      });
     }
     
     function prosesBayar() {
@@ -917,6 +936,7 @@
           btn.innerHTML = '<i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR';
       }
     }
+
 
     // ==========================================
     // 6. FIREBASE CRUD STOK
