@@ -781,14 +781,42 @@
       });
     }
 
-    function konfirmasiHapus(id, nama) { if(confirm(`Yakin menghapus transaksi ${nama}?`)) db.collection("transaksi").doc(id).delete(); }
+    function konfirmasiHapus(id, nama) {
+      if(confirm(`Yakin menghapus transaksi ${nama}?`)) {
+        let trxRef = db.collection("transaksi").doc(id);
+        
+        trxRef.get().then(doc => {
+          if (doc.exists) {
+            let hargaTrx = doc.data().harga || 0;
+            
+            trxRef.delete().then(() => {
+              let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === (nama || "").toLowerCase());
+              
+              if (bonExist && hargaTrx > 0) {
+                let sisaBon = bonExist.total - hargaTrx;
+                if (sisaBon < 0) sisaBon = 0; 
+                db.collection("bon").doc(bonExist.id).update({ total: sisaBon });
+              }
+            });
+          }
+        }).catch(err => {
+            alert("Terjadi kesalahan: " + err.message);
+        });
+      }
+    }
 
     // ==========================================
-    // 5. FIREBASE CRUD BON & BAYAR BON
+    // 5. FIREBASE CRUD BON
     // ==========================================
     function muatDaftarBon() {
-      let container = document.getElementById('list-bon'); container.innerHTML = '<p style="text-align:center; font-weight:900;"><i class="ph ph-spinner ph-spin"></i> MEMUAT PIUTANG...</p>';
-      db.collection("bon").onSnapshot((snap) => { bonCache = []; snap.forEach(doc => { bonCache.push({ id: doc.id, ...doc.data() }); }); renderListBon(bonCache); });
+      let container = document.getElementById('list-bon'); 
+      if(container) container.innerHTML = '<p style="text-align:center; font-weight:900;"><i class="ph ph-spinner ph-spin"></i> MEMUAT PIUTANG...</p>';
+      
+      db.collection("bon").onSnapshot((snap) => { 
+        bonCache = []; 
+        snap.forEach(doc => { bonCache.push({ id: doc.id, ...doc.data() }); }); 
+        if(document.getElementById('list-bon')) renderListBon(bonCache); 
+      });
     }
     
     function renderListBon(data) {
@@ -816,15 +844,11 @@
       db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => { tutupModal('modalSetBon'); document.getElementById('btn-simpan-setbon').disabled = false; });
     }
     
-    // FUNGSI BAYAR BON (ANTI ERROR & ADA NOTA WA)
     function prosesBayar() {
       let nama = document.getElementById('nama-bayar').value.trim();
       let bayar = parseFloat(document.getElementById('nominal-bayar').value.replace(/[^0-9]/g, '')) || 0;
       
-      if(!nama || !bayar) {
-          alert("Nama dan Nominal Bayar harus diisi!");
-          return; 
-      }
+      if(!nama || !bayar) { alert("Nama dan Nominal Bayar harus diisi!"); return; }
       
       let btn = document.getElementById('btn-bayar'); 
       btn.disabled = true;
@@ -847,13 +871,9 @@
               let ts = getTglJam();
               let msg = `✨ PEMBAYARAN BON BERHASIL ✨\n📅 ${ts.tanggal} | ${ts.jam}\n──────────────────\n👤 NAMA       : ${bonExist.nama}\n💸 JML BAYAR  : Rp ${bayar.toLocaleString('id-ID')}\n──────────────────\n📒 SISA BON   : Rp ${sisaBon.toLocaleString('id-ID')}\n──────────────────\nTerima kasih atas pembayarannya 🙏`;
               
-              let url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
-              let a = document.createElement('a');
-              a.href = url;
-              a.target = '_blank';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
+              let url = "https://wa.me/?text=" + encodeURIComponent(msg);
+              let bukaTab = window.open(url, '_blank');
+              if (!bukaTab) window.location.href = url;
 
           }).catch(err => {
               alert("Gagal memproses pembayaran: " + err.message);
@@ -1117,6 +1137,18 @@
     }
     function terapkanFilterTanggal() { let m = document.getElementById('filter-mulai').value, a = document.getElementById('filter-akhir').value; if (!m || !a) return alert("Pilih tanggal mulai & akhir!"); let tglM = new Date(m); tglM.setHours(0,0,0,0); let tglA = new Date(a); tglA.setHours(23,59,59,999); let res = dataCacheKeseluruhan.filter(i => { let dt = parseTgl(i.tanggal); return dt >= tglM && dt <= tglA; }); modeAktif = 'custom'; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL'; tampilkanListTransaksi(res, 1); }
 
+    function renderKurvaUsaha(dataList) {
+       if (typeof Chart === 'undefined') return;
+       let inBln = document.getElementById('filter-bulan-statistik'); if(!inBln.value) { let n = new Date(); inBln.value = n.getFullYear() + "-" + String(n.getMonth()+1).padStart(2,'0'); }
+       let p = inBln.value.split('-'), targetThn = p[0], targetBln = p[1], rekap = {};
+       dataList.forEach(i => { let part = i.tanggal.split('-'); if(part[1] === targetBln && part[2] === targetThn) { let tglSaja = parseInt(part[0]).toString(); if(!rekap[tglSaja]) rekap[tglSaja] = 0; rekap[tglSaja] += (i.harga - i.modal); } });
+       let sorted = Object.keys(rekap).sort((a,b) => parseInt(a)-parseInt(b)), lbl = [], dt = [], total = 0; sorted.forEach(t => { lbl.push(t); dt.push(rekap[t]); total += rekap[t]; }); let rata = dt.length > 0 ? (total / dt.length) : 0, rataArr = lbl.map(()=>rata);
+       let titleEl = document.querySelector('#kurvaUsahaChart').previousElementSibling; if(titleEl) titleEl.innerHTML = "🎯 RATA-RATA LABA: Rp " + Math.round(rata).toLocaleString('id-ID') + " / HARI";
+       let ctx = document.getElementById('kurvaUsahaChart').getContext('2d'); if(window.myChart) window.myChart.destroy(); let prim = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(), txt = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+       window.myChart = new Chart(ctx, { type:'line', data:{ labels:lbl, datasets:[ {label:'Laba', data:dt, backgroundColor:'rgba(2,132,199,0.1)', borderColor:prim, borderWidth:3, fill:true, order:2}, {label:'Rata-rata', data:rataArr, borderColor:'#3b82f6', borderWidth:2, borderDash:[5,5], fill:false, pointRadius:0, order:1} ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{color:txt}}, x:{title:{display:true, text:'TANGGAL', color:txt}, ticks:{color:txt}}}}});
+    }
+    function renderKurvaBulanIni() { renderKurvaUsaha(dataCacheKeseluruhan); }
+
     // ==========================================
     // 12. NOTA & SHARE FUNGSI (VERCEL FIX)
     // ==========================================
@@ -1150,28 +1182,25 @@
 
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
 
-    // FUNGSI SHARE TEKS KE WA TANPA BLOKIR POPUP DAN TANPA ERROR 404
     function kirimWaTeksSukses() { 
-      let url = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA);
-      let a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-    
-    function tagihWA(nama, totalBon) { 
-      let msg = `*INFORMASI TAGIHAN BON*\n\nNAMA : ${nama}\nTOTAL : Rp ${totalBon}\n\nMohon untuk dicek kembali ya. Terima Kasih`; 
-      let url = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(msg);
-      let a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      let pesan = encodeURIComponent(tempNotaWA);
+      let url = "[https://wa.me/?text=](https://wa.me/?text=)" + pesan;
+      let bukaTab = window.open(url, '_blank');
+      if (!bukaTab) {
+          window.location.href = url;
+      }
     }
 
+    function tagihWA(nama, totalBon) { 
+      let msg = `*INFORMASI TAGIHAN BON*\n\nNAMA : ${nama}\nTOTAL : Rp ${totalBon}\n\nMohon untuk dicek kembali ya. Terima Kasih`; 
+      let url = "[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(msg);
+      
+      let bukaTab = window.open(url, '_blank');
+      if (!bukaTab) {
+          window.location.href = url;
+      }
+    }
+    
     function kirimKeWA() {
       let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
       btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMBUAT FOTO...'; btn.disabled = true;
@@ -1184,23 +1213,12 @@
         });
       });
     }
+    
     function dlFoto(c, b, t) { 
       let dataUrl = c.toDataURL('image/png');
       document.getElementById('area-nota-foto').innerHTML = `<img src="${dataUrl}" style="width:100%; border-radius:16px; border:2px solid var(--primary);"><p style="font-size:0.8rem; color:var(--color-warning); font-weight:800; text-align:center; margin-top:15px; line-height:1.4;"><i class="ph-fill ph-warning-circle"></i> TEKAN & TAHAN GAMBAR DI ATAS LALU PILIH "BAGIKAN GAMBAR" ATAU "SIMPAN".</p>`;
       b.innerHTML = '<i class="ph-fill ph-check-circle"></i> FOTO SIAP'; b.disabled = true;
     }
-
-    function renderKurvaUsaha(dataList) {
-       if (typeof Chart === 'undefined') return;
-       let inBln = document.getElementById('filter-bulan-statistik'); if(!inBln.value) { let n = new Date(); inBln.value = n.getFullYear() + "-" + String(n.getMonth()+1).padStart(2,'0'); }
-       let p = inBln.value.split('-'), targetThn = p[0], targetBln = p[1], rekap = {};
-       dataList.forEach(i => { let part = i.tanggal.split('-'); if(part[1] === targetBln && part[2] === targetThn) { let tglSaja = parseInt(part[0]).toString(); if(!rekap[tglSaja]) rekap[tglSaja] = 0; rekap[tglSaja] += (i.harga - i.modal); } });
-       let sorted = Object.keys(rekap).sort((a,b) => parseInt(a)-parseInt(b)), lbl = [], dt = [], total = 0; sorted.forEach(t => { lbl.push(t); dt.push(rekap[t]); total += rekap[t]; }); let rata = dt.length > 0 ? (total / dt.length) : 0, rataArr = lbl.map(()=>rata);
-       let titleEl = document.querySelector('#kurvaUsahaChart').previousElementSibling; if(titleEl) titleEl.innerHTML = "🎯 RATA-RATA LABA: Rp " + Math.round(rata).toLocaleString('id-ID') + " / HARI";
-       let ctx = document.getElementById('kurvaUsahaChart').getContext('2d'); if(window.myChart) window.myChart.destroy(); let prim = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(), txt = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
-       window.myChart = new Chart(ctx, { type:'line', data:{ labels:lbl, datasets:[ {label:'Laba', data:dt, backgroundColor:'rgba(2,132,199,0.1)', borderColor:prim, borderWidth:3, fill:true, order:2}, {label:'Rata-rata', data:rataArr, borderColor:'#3b82f6', borderWidth:2, borderDash:[5,5], fill:false, pointRadius:0, order:1} ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{color:txt}}, x:{title:{display:true, text:'TANGGAL', color:txt}, ticks:{color:txt}}}}});
-    }
-    function renderKurvaBulanIni() { renderKurvaUsaha(dataCacheKeseluruhan); }
 
     // ==========================================
     // 13. PELINDUNG FORM (ANTI ILANG ANGKA 0 DI HP)
