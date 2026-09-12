@@ -1169,24 +1169,31 @@
     // ==========================================
     // 12. NOTA & SHARE FUNGSI (VERCEL FIX)
     // ==========================================
-        function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
-      // Spasi diatur secara spesifik agar titik dua (:) sejajar rapi di format monospace WA
+            // Pastikan variabel ini ada di luar/atas fungsi agar bisa dipanggil tombol WA
+    var tempNotaLamaText = ""; 
+
+    function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
       var teksNota = 
-        "```✨ SALINAN TRANSAKSI ✨\n" +
+        "```" + 
+        "✨ SALINAN TRANSAKSI ✨\n" +
         "📅 " + tgl + " | " + jam + "\n" +
         "──────────────────\n" +
         "👤 NAMA      : " + nama + "\n" +
         "📱 NOMOR     : " + nomor + "\n" +
         "🏷️ CODE      : " + code + "\n" +
         "📦 KUOTA     : " + kuota + "\n" +
-        "💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + "\n" +
-        "──────────────────\n" +
-        "✅ SILAHKAN DI CEK\n" +
-        "🤝 DITUNGGU ORDERAN BERIKUTNYA```"; 
-        
+        "💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + 
+        "```" + 
+        "\n──────────────────\n" +
+        "✅ `SILAHKAN DI CEK`\n" +
+        "🤝 `DITUNGGU ORDERAN BERIKUTNYA`"; 
+      
+      tempNotaLamaText = teksNota; // Menyimpan format mentah untuk dikirim ke WA
+      
       document.getElementById('textNota').innerHTML = formatNotaToHTML(teksNota); 
       document.getElementById('modalNota').style.display = 'flex'; 
     }
+
 
 
     function formatNotaToHTML(teks) {
