@@ -235,12 +235,33 @@
     </div>
 
     <!-- TAB LAINNYA -->
-    <div id="tab-trx-online" class="section">
-      <div class="glass-panel card" style="margin-top: 15px;"><div class="card-title"><i class="ph-fill ph-globe"></i> TRANSAKSI ONLINE</div><p style="text-align:center; color:var(--text-muted); font-weight:800; padding: 25px 10px;"><i class="ph-fill ph-wrench" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i><br>Tahap pengembangan.</p></div>
+    <div id="tab-lainnya" class="section">
+      <!-- FITUR CATATAN -->
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title"><i class="ph-fill ph-notepad"></i> BUAT CATATAN</div>
+        <div class="input-group">
+          <textarea id="input-catatan" rows="4" placeholder="Ketik catatan di sini..." style="width: 100%; padding: 14px 16px; border-radius: 14px; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
+        </div>
+        <button class="btn" onclick="simpanCatatan()" id="btn-simpan-catatan" style="margin-top: 5px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN CATATAN</button>
+      </div>
+      
+      <div class="glass-panel card">
+        <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-list-bullets"></i> DAFTAR CATATAN</span></div>
+        <div id="list-catatan"></div>
+      </div>
+
+      <!-- FITUR BACKUP (ASLI) -->
+      <div class="glass-panel card">
+        <div class="card-title"><i class="ph-fill ph-database"></i> BACKUP DATA (PENGAMANAN)</div>
+        <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
+          Download seluruh data (Transaksi, Bon, Stok, Celengan, dll) ke dalam HP/Laptop Anda. Lakukan ini seminggu sekali untuk berjaga-jaga jika database Firebase bermasalah.
+        </p>
+        <button class="btn" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="backupSemuaData()" id="btn-backup">
+          <i class="ph-bold ph-download-simple"></i> DOWNLOAD BACKUP (.JSON)
+        </button>
+      </div>
     </div>
     
-    <div id="tab-lainnya" class="section">
-    <div id="tab-lainnya" class="section">
       <!-- FITUR CATATAN BARU -->
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title"><i class="ph-fill ph-notepad"></i> BUAT CATATAN</div>
@@ -667,13 +688,15 @@
       else { document.body.classList.remove('efek-nyala'); if (btn) btn.innerHTML = '<i class="ph-fill ph-toggle-left"></i> AKTIFKAN EFEK'; }
     }
     function toggleEfekCahaya() { statusEfek = (statusEfek === 'on') ? 'off' : 'on'; localStorage.setItem('wistara_efek', statusEfek); initEfekCahaya(); }
-    function switchTab(tabId, element) {
+
+        function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active'); if (element) element.classList.add('active');
       if(tabId === 'tab-harian' || tabId === 'tab-beranda' || tabId === 'tab-statistik') muatDataSemua();
       if(tabId === 'tab-bon') muatDaftarBon(); if(tabId === 'tab-stok') muatStok(); if(tabId === 'tab-server') muatServer(); if(tabId === 'tab-tabungan') muatTabungan(); if(tabId === 'tab-kreditur') muatKreditur();
       if(tabId === 'tab-lainnya') muatCatatan();
     }
+
     function updateBtnMode() {
       var bH = document.getElementById('btn-mode-hariini'), bS = document.getElementById('btn-mode-semua');
       bH.style.background = modeAktif === 'hariini' ? 'var(--primary-grad)' : 'var(--input-bg)'; bH.style.color = modeAktif === 'hariini' ? '#fff' : 'var(--text-main)'; bH.style.borderColor = modeAktif === 'hariini' ? 'var(--primary)' : 'var(--input-border)';
