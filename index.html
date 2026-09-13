@@ -372,7 +372,7 @@
         <div class="card-title"><i class="ph-fill ph-lightning"></i> INPUT TRANSAKSI</div>
         <div class="input-group"><label>TANGGAL TRANSAKSI</label><input type="date" id="tgl-transaksi"></div>
         <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="nama" class="input-upper" list="list-nama" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."><datalist id="list-nama"></datalist></div>
-        <div class="input-group"><label>NOMOR HP (Bisa banyak, pisah spasi)</label><input type="tel" id="nomor" placeholder="Contoh: 0812... 0852..."></div>
+        <div class="input-group"><label>NOMOR HP (Bisa banyak, pisah spasi)</label><input type="tel" id="nomor" autocomplete="off" placeholder="Contoh: 0812... 0852..."></div>
         <div class="input-group"><label>KODE PAKET</label><input type="text" id="code" class="input-upper" list="list-kode" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik kode..."><datalist id="list-kode"></datalist></div>
         <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="kuber" class="input-upper" placeholder="Contoh: 10" onchange="formatGB(this)"></div>
         <div class="input-group"><label>MODAL (Rp)</label><input type="text" id="modal" placeholder="Contoh: 54k" oninput="formatUangK(this)"></div>
@@ -457,7 +457,7 @@
       <input type="hidden" id="edit-id">
       <div class="input-group"><label>TANGGAL TRANSAKSI</label><input type="date" id="edit-tgl"></div>
       <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="edit-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
-      <div class="input-group"><label>NOMOR HP</label><input type="tel" id="edit-nomor"></div>
+      <div class="input-group"><label>NOMOR HP</label><input type="tel" id="edit-nomor" autocomplete="off"></div>
       <div class="input-group"><label>KODE PAKET</label><input type="text" id="edit-code" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
       <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="edit-kuber" class="input-upper" onchange="formatGB(this)"></div>
       <div class="input-group"><label>MODAL (Rp)</label><input type="text" id="edit-modal" oninput="formatUangK(this)"></div>
