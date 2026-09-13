@@ -234,7 +234,7 @@
       </div>
     </div>
 
-        <!-- TAB LAINNYA -->
+    <!-- TAB LAINNYA (DENGAN CATATAN & BACKUP TERSEDIA) -->
     <div id="tab-lainnya" class="section">
       <!-- FITUR CATATAN -->
       <div class="glass-panel card" style="margin-top: 15px;">
@@ -250,40 +250,8 @@
         <div id="list-catatan"></div>
       </div>
 
-      <!-- FITUR BACKUP ASLI (KEMBALI LENGKAP) -->
+      <!-- FITUR BACKUP ASLI -->
       <div class="glass-panel card">
-        <div class="card-title"><i class="ph-fill ph-database"></i> BACKUP DATA (PENGAMANAN)</div>
-        <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
-          Download seluruh data (Transaksi, Bon, Stok, Celengan, dll) ke dalam HP/Laptop Anda. Lakukan ini seminggu sekali untuk berjaga-jaga jika database Firebase bermasalah.
-        </p>
-        <button class="btn" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="backupSemuaData()" id="btn-backup">
-          <i class="ph-bold ph-download-simple"></i> DOWNLOAD BACKUP (.JSON)
-        </button>
-      </div>
-    </div>
-
-
-    
-    
-      <!-- FITUR CATATAN BARU -->
-      <div class="glass-panel card" style="margin-top: 15px;">
-        <div class="card-title"><i class="ph-fill ph-notepad"></i> BUAT CATATAN</div>
-        <div class="input-group">
-          <textarea id="input-catatan" rows="4" placeholder="Ketik catatan di sini..." style="width: 100%; padding: 14px 16px; border-radius: 14px; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
-        </div>
-        <button class="btn" onclick="simpanCatatan()" id="btn-simpan-catatan" style="margin-top: 5px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN CATATAN</button>
-      </div>
-      
-      <div class="glass-panel card">
-        <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-list-bullets"></i> DAFTAR CATATAN</span></div>
-        <div id="list-catatan"></div>
-      </div>
-      
-      <!-- FITUR BACKUP DATA (ASLI) -->
-      <div class="glass-panel card">
-      ...
-
-      <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title"><i class="ph-fill ph-database"></i> BACKUP DATA (PENGAMANAN)</div>
         <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
           Download seluruh data (Transaksi, Bon, Stok, Celengan, dll) ke dalam HP/Laptop Anda. Lakukan ini seminggu sekali untuk berjaga-jaga jika database Firebase bermasalah.
@@ -692,7 +660,7 @@
     }
     function toggleEfekCahaya() { statusEfek = (statusEfek === 'on') ? 'off' : 'on'; localStorage.setItem('wistara_efek', statusEfek); initEfekCahaya(); }
 
-        function switchTab(tabId, element) {
+    function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active'); if (element) element.classList.add('active');
       if(tabId === 'tab-harian' || tabId === 'tab-beranda' || tabId === 'tab-statistik') muatDataSemua();
@@ -750,7 +718,7 @@
           
           let teksBon = `\n──────────────────\n📒 BON LAMA  : Rp ${bonLama.toLocaleString('id-ID')}\n📈 BON BARU  : Rp ${bonBaru.toLocaleString('id-ID')}`;
           
-           tempNotaWA = `\`\`\`✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n──────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih\`\`\``;
+          tempNotaWA = `\`\`\`✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n──────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih\`\`\``;
 
           tempNotaGambar = tempNotaWA;
           
@@ -768,7 +736,6 @@
               d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
               
               if (d.nomor) {
-                 // Format multi number untuk load data lama juga
                  let noParts = String(d.nomor).trim().split(/\s+/).map(p => {
                     if (p.startsWith('8')) return '0' + p;
                     if (p.startsWith('62')) return '0' + p.substring(2);
@@ -790,9 +757,7 @@
           });
           
           dataCacheKeseluruhan = listSemua; 
-          
           renderRingkasanDash(); 
-          
           try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip."); }
           
           let nHTML = '', kHTML = '';
@@ -845,14 +810,11 @@
     function konfirmasiHapus(id, nama) {
       if(confirm(`Yakin menghapus transaksi ${nama}?`)) {
         let trxRef = db.collection("transaksi").doc(id);
-        
         trxRef.get().then(doc => {
           if (doc.exists) {
             let hargaTrx = doc.data().harga || 0;
-            
             trxRef.delete().then(() => {
               let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === (nama || "").toLowerCase());
-              
               if (bonExist && hargaTrx > 0) {
                 let sisaBon = bonExist.total - hargaTrx;
                 if (sisaBon < 0) sisaBon = 0; 
@@ -984,7 +946,6 @@
       }
     }
 
-
     // ==========================================
     // 6. FIREBASE CRUD STOK
     // ==========================================
@@ -1021,7 +982,7 @@
       list.forEach(item => {
         let pNama = String(item.nama).replace(/'/g, "\\'"), pNomor = String(item.nomor).replace(/'/g, "\\'");
         html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
-                  <div><div style="font-weight:900; font-size:1.05rem; text-transform:uppercase;"><i class="ph-fill ph-hard-drive" style="color:var(--primary);"></i> ${item.nama}</div><div style="color:var(--color-success); font-weight:800; font-size:0.92rem;">${item.nomor}</div></div>
+                  <div><div style="font-weight:900; font-size:1.05rem; text-transform:uppercase;"><i class="ph-fill ph-hard-drives" style="color:var(--primary);"></i> ${item.nama}</div><div style="color:var(--color-success); font-weight:800; font-size:0.92rem;">${item.nomor}</div></div>
                   <div style="display:flex; gap:6px;"><button onclick="bukaEditServer('${item.id}', '${pNama}', '${pNomor}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); padding:8px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="hapusServer('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
       }); container.innerHTML = html;
     }
@@ -1250,7 +1211,6 @@
     // ==========================================
     // 12. NOTA & SHARE FUNGSI (VERCEL FIX)
     // ==========================================
-            // Pastikan variabel ini ada di luar/atas fungsi agar bisa dipanggil tombol WA
     var tempNotaLamaText = ""; 
 
     function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
@@ -1269,17 +1229,13 @@
         "✅ `SILAHKAN DI CEK`\n" +
         "🤝 `DITUNGGU ORDERAN BERIKUTNYA`"; 
       
-      tempNotaLamaText = teksNota; // Menyimpan format mentah untuk dikirim ke WA
-      
+      tempNotaLamaText = teksNota; 
       document.getElementById('textNota').innerHTML = formatNotaToHTML(teksNota); 
       document.getElementById('modalNota').style.display = 'flex'; 
     }
 
-
-
     function formatNotaToHTML(teks) {
       let lines = teks.replace(/```/g, '').split('\n');
-      // Menerapkan font Monospace dengan padding/format rapi
       let html = '<div style="font-size:0.75rem; line-height:1.6; font-family: \'Courier New\', Courier, monospace; font-weight: bold; color: var(--text-main);">';
       lines.forEach(l => {
         let txt = l.trim(); if (txt === '') return;
@@ -1363,9 +1319,9 @@
                 if (e.key === 'Enter') {
                     e.preventDefault(); 
                     if (index < inputIds.length - 1) {
-                        document.getElementById(inputIds[index + 1]).focus(); // Pindah ke kolom berikutnya
+                        document.getElementById(inputIds[index + 1]).focus();
                     } else {
-                        document.getElementById('btn-submit').click(); // Eksekusi jika di kolom terakhir
+                        document.getElementById('btn-submit').click();
                     }
                 }
             });
@@ -1421,17 +1377,19 @@
         btn.disabled = false;
       }
     }
+
     // ==========================================
-    // FITUR CATATAN
+    // 15. FITUR CATATAN
     // ==========================================
     function muatCatatan() {
       db.collection("catatan").orderBy("timestamp", "desc").onSnapshot(snap => {
         let container = document.getElementById('list-catatan');
+        if(!container) return;
         if(snap.empty) { container.innerHTML = '<p style="text-align:center; font-weight:800;">Belum ada catatan.</p>'; return; }
         let html = '';
         snap.forEach(doc => {
           let item = doc.data();
-          let isiText = item.isi.replace(/\n/g, '<br>');
+          let isiText = (item.isi || "").replace(/\n/g, '<br>');
           html += `<div class="box-3d" style="padding:16px; margin-bottom:12px; position:relative;">
                     <button onclick="hapusCatatan('${doc.id}')" style="position:absolute; top:12px; right:12px; background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button>
                     <div style="font-size:0.75rem; color:var(--text-muted); font-weight:800; margin-bottom:10px;"><i class="ph-fill ph-clock"></i> ${item.tanggal}</div>
@@ -1462,7 +1420,6 @@
     function hapusCatatan(id) {
       if(confirm("Hapus catatan ini secara permanen?")) db.collection("catatan").doc(id).delete();
     }
-
 
     window.onload = function() {
        let s = document.getElementById('opacity-slider'); if(s) s.value = savedOpacity;
