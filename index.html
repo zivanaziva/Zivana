@@ -240,6 +240,25 @@
     </div>
     
     <div id="tab-lainnya" class="section">
+    <div id="tab-lainnya" class="section">
+      <!-- FITUR CATATAN BARU -->
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title"><i class="ph-fill ph-notepad"></i> BUAT CATATAN</div>
+        <div class="input-group">
+          <textarea id="input-catatan" rows="4" placeholder="Ketik catatan di sini..." style="width: 100%; padding: 14px 16px; border-radius: 14px; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
+        </div>
+        <button class="btn" onclick="simpanCatatan()" id="btn-simpan-catatan" style="margin-top: 5px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN CATATAN</button>
+      </div>
+      
+      <div class="glass-panel card">
+        <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-list-bullets"></i> DAFTAR CATATAN</span></div>
+        <div id="list-catatan"></div>
+      </div>
+      
+      <!-- FITUR BACKUP DATA (ASLI) -->
+      <div class="glass-panel card">
+      ...
+
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title"><i class="ph-fill ph-database"></i> BACKUP DATA (PENGAMANAN)</div>
         <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
@@ -653,6 +672,7 @@
       document.getElementById(tabId).classList.add('active'); if (element) element.classList.add('active');
       if(tabId === 'tab-harian' || tabId === 'tab-beranda' || tabId === 'tab-statistik') muatDataSemua();
       if(tabId === 'tab-bon') muatDaftarBon(); if(tabId === 'tab-stok') muatStok(); if(tabId === 'tab-server') muatServer(); if(tabId === 'tab-tabungan') muatTabungan(); if(tabId === 'tab-kreditur') muatKreditur();
+      if(tabId === 'tab-lainnya') muatCatatan();
     }
     function updateBtnMode() {
       var bH = document.getElementById('btn-mode-hariini'), bS = document.getElementById('btn-mode-semua');
@@ -1375,6 +1395,48 @@
         btn.disabled = false;
       }
     }
+    // ==========================================
+    // FITUR CATATAN
+    // ==========================================
+    function muatCatatan() {
+      db.collection("catatan").orderBy("timestamp", "desc").onSnapshot(snap => {
+        let container = document.getElementById('list-catatan');
+        if(snap.empty) { container.innerHTML = '<p style="text-align:center; font-weight:800;">Belum ada catatan.</p>'; return; }
+        let html = '';
+        snap.forEach(doc => {
+          let item = doc.data();
+          let isiText = item.isi.replace(/\n/g, '<br>');
+          html += `<div class="box-3d" style="padding:16px; margin-bottom:12px; position:relative;">
+                    <button onclick="hapusCatatan('${doc.id}')" style="position:absolute; top:12px; right:12px; background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button>
+                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:800; margin-bottom:10px;"><i class="ph-fill ph-clock"></i> ${item.tanggal}</div>
+                    <div style="font-size:0.9rem; font-weight:700; line-height:1.5;">${isiText}</div>
+                  </div>`;
+        });
+        container.innerHTML = html;
+      });
+    }
+
+    function simpanCatatan() {
+      let isi = document.getElementById('input-catatan').value.trim();
+      if(!isi) return;
+      let btn = document.getElementById('btn-simpan-catatan');
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIMPAN...'; btn.disabled = true;
+      let ts = getTglJam();
+      db.collection("catatan").add({
+        isi: isi,
+        tanggal: ts.tanggal + ' ' + ts.jam,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        document.getElementById('input-catatan').value = '';
+        btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN CATATAN';
+        btn.disabled = false;
+      });
+    }
+
+    function hapusCatatan(id) {
+      if(confirm("Hapus catatan ini secara permanen?")) db.collection("catatan").doc(id).delete();
+    }
+
 
     window.onload = function() {
        let s = document.getElementById('opacity-slider'); if(s) s.value = savedOpacity;
