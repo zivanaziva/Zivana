@@ -72,7 +72,6 @@
     .input-group input, .input-group select { width: 100%; padding: 14px 16px; font-size: 0.95rem; background: var(--input-bg); border: 2px solid var(--input-border); border-radius: 14px; font-family: inherit; box-sizing: border-box; transition: all 0.2s ease; color: var(--text-main); font-weight: 700; }
     .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--primary); background: var(--panel-bg); box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05); }
     .input-group input::placeholder { color: var(--text-muted); opacity: 0.7; }
-    /* AUTO UPPERCASE STYLE */
     .input-upper { text-transform: uppercase; }
 
     .btn { width: 100%; background: var(--primary-grad); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); display: flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.5px; }
@@ -112,20 +111,6 @@
     .theme-btn { flex: 1; padding: 12px 2px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 0.70rem; transition: 0.2s; }
     .theme-btn:active { transform: scale(0.95); }
     .input-profil { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--input-border); background: var(--panel-bg); color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
-
-    @keyframes muterKanan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes muterKiri { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
-    @keyframes kobarApi { 0% { opacity: 0.8; filter: blur(3px) brightness(1); } 50% { opacity: 1; filter: blur(6px) brightness(1.3); } 100% { opacity: 0.9; filter: blur(4px) brightness(1.1); } }
-    @keyframes kedipRGB { 0% { box-shadow: 0 0 10px #ff0055, inset 0 0 5px #ff0055; border-color: #ff0055; color: #ff0055; } 33% { box-shadow: 0 0 10px #00f0ff, inset 0 0 5px #00f0ff; border-color: #00f0ff; color: #00f0ff; } 66% { box-shadow: 0 0 10px #39ff14, inset 0 0 5px #39ff14; border-color: #39ff14; color: #39ff14; } 100% { box-shadow: 0 0 10px #ff0055, inset 0 0 5px #ff0055; border-color: #ff0055; color: #ff0055; } }
-
-    body.efek-nyala .glass-panel, body.efek-nyala .box-3d { position: relative !important; overflow: hidden !important; border: none !important; z-index: 1; }
-    body.efek-nyala .glass-panel::before, body.efek-nyala .box-3d::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent 60%, #8b0000 70%, #ff0000 80%, #ff8c00 90%, #ffd700 100%); z-index: -2; }
-    body.efek-nyala .glass-panel:nth-child(odd)::before, body.efek-nyala .box-3d:nth-child(odd)::before { animation: muterKanan 4s linear infinite, kobarApi 0.5s ease-in-out infinite alternate; }
-    body.efek-nyala .glass-panel:nth-child(even)::before, body.efek-nyala .box-3d:nth-child(even)::before { animation: muterKiri 5s linear infinite, kobarApi 0.7s ease-in-out infinite alternate; }
-    body.efek-nyala .glass-panel:nth-child(3n)::before, body.efek-nyala .box-3d:nth-child(3n)::before { animation: muterKanan 3.5s linear infinite, kobarApi 0.4s ease-in-out infinite alternate; }
-    body.efek-nyala .glass-panel:nth-child(4n)::before, body.efek-nyala .box-3d:nth-child(4n)::before { animation: muterKiri 6s linear infinite, kobarApi 0.8s ease-in-out infinite alternate; }
-    body.efek-nyala .glass-panel::after, body.efek-nyala .box-3d::after { content: ''; position: absolute; inset: 4px; background: var(--panel-bg); border-radius: inherit; z-index: -1; backdrop-filter: blur(8px); }
-    body.efek-nyala .menu-icon { animation: kedipRGB 2.5s infinite !important; background: rgba(0, 0, 0, 0.05); }
   </style>
 </head>
 <body>
@@ -234,7 +219,7 @@
       </div>
     </div>
 
-    <!-- TAB LAINNYA (DENGAN CATATAN & BACKUP TERSEDIA) -->
+    <!-- TAB LAINNYA -->
     <div id="tab-lainnya" class="section">
       <!-- FITUR CATATAN -->
       <div class="glass-panel card" style="margin-top: 15px;">
@@ -250,7 +235,7 @@
         <div id="list-catatan"></div>
       </div>
 
-      <!-- FITUR BACKUP ASLI -->
+      <!-- FITUR BACKUP -->
       <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-database"></i> BACKUP DATA (PENGAMANAN)</div>
         <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
@@ -314,7 +299,6 @@
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-palette"></i> 24 PILIHAN TEMA APLIKASI</label>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 18px; max-height: 250px; overflow-y: auto;">
-              <!-- Solid & Basic -->
               <button class="theme-btn" style="background: rgba(255,255,255,0.9); color: #1d4ed8; border: 2px solid #1d4ed8;" onclick="setTheme('light')">PROFESIONAL</button>
               <button class="theme-btn" style="background: rgba(10,10,10,0.9); color: #dc2626; border: 2px solid #dc2626;" onclick="setTheme('dark')">RED DARK</button>
               <button class="theme-btn" style="background: rgba(28,25,23,0.9); color: #22c55e; border: 2px solid #22c55e;" onclick="setTheme('forest')">FOREST GREEN</button>
@@ -323,12 +307,10 @@
               <button class="theme-btn" style="background: rgba(250,245,255,0.9); color: #8b5cf6; border: 2px solid #8b5cf6;" onclick="setTheme('lavender')">LAVENDER</button>
               <button class="theme-btn" style="background: rgba(253,242,248,0.9); color: #db2777; border: 2px solid #db2777;" onclick="setTheme('pastel-pink')">PASTEL PINK</button>
               <button class="theme-btn" style="background: rgba(15,23,42,0.9); color: #38bdf8; border: 2px solid #38bdf8;" onclick="setTheme('ocean-dark')">OCEAN DARK</button>
-              <!-- Glowing / Neon -->
               <button class="theme-btn" style="background: rgba(5,11,20,0.9); color: #06b6d4; border: 2px solid #06b6d4;" onclick="setTheme('cyber')">CYBER CYAN</button>
               <button class="theme-btn" style="background: rgba(15,5,24,0.9); color: #a855f7; border: 2px solid #a855f7;" onclick="setTheme('neon')">NEON PURPLE</button>
               <button class="theme-btn" style="background: rgba(26,16,5,0.9); color: #f59e0b; border: 2px solid #f59e0b;" onclick="setTheme('sunset')">SUNSET GOLD</button>
               <button class="theme-btn" style="background: rgba(254,252,232,0.9); color: #15803d; border: 2px solid #15803d;" onclick="setTheme('dynamic')">NATURE GLOW</button>
-              <!-- Beautiful Gradients -->
               <button class="theme-btn" style="background: linear-gradient(135deg, #0f172a, #164e63); color: #2dd4bf; border: 2px solid #06b6d4;" onclick="setTheme('grad-ocean')">GRAD OCEAN</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #2e1065, #701a75); color: #f0abfc; border: 2px solid #d946ef;" onclick="setTheme('grad-twilight')">TWILIGHT</button>
               <button class="theme-btn" style="background: linear-gradient(135deg, #064e3b, #065f46); color: #a7f3d0; border: 2px solid #10b981;" onclick="setTheme('grad-emerald')">EMERALD</button>
@@ -345,8 +327,6 @@
             
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 8px;"><i class="ph-fill ph-sliders"></i> TRANSPARANSI PANEL</label>
             <input type="range" id="opacity-slider" min="0" max="1" step="0.05" value="1" style="width: 100%; cursor: pointer;" oninput="setOpacity(this.value)">
-            <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-top: 20px; margin-bottom: 8px;"><i class="ph-fill ph-magic-wand"></i> EFEK CAHAYA ANIMASI</label>
-            <button class="btn" id="btn-efek-cahaya" style="padding: 12px; font-size: 0.8rem; background: var(--panel-bg); color: var(--text-main); border: 2px solid var(--input-border); box-shadow: none;" onclick="toggleEfekCahaya()"><i class="ph-fill ph-toggle-left"></i> AKTIFKAN EFEK</button>
           </div>
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-image"></i> GANTI WALLPAPER KUSTOM</label>
@@ -451,13 +431,28 @@
           <div style="position: absolute; top:0; left:0; width:100%; height: 6px; background: var(--primary-grad);"></div>
           <h3 id="nota-toko-nama" style="margin-top: 8px; color: var(--primary); text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 4px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 6px;"><i class="ph-fill ph-receipt"></i> WISTARA-STORE</h3>
           <p id="nota-toko-desc" style="font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-bottom: 14px; font-weight: 800; letter-spacing: 0.5px;">BUKTI TRANSAKSI DIGITAL</p>
-          <!-- FORMAT MONOSPACE NOTA -->
           <div id="textNota"></div>
         </div>
       </div>
       <div class="modal-btns" style="padding: 14px; margin-top: 0; border-top: 2px solid var(--input-border); background: var(--input-bg);">
         <button class="btn-wa" onclick="kirimKeWA()"><i class="ph-fill ph-whatsapp-logo" style="font-size:1.2rem;"></i> BAGIKAN FOTO</button>
         <button class="btn-close" onclick="tutupModal('modalNota')">TUTUP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT CATATAN -->
+  <div id="modalEditCatatan" class="modal-overlay">
+    <div class="modal-box" style="max-width: 450px;">
+      <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-pencil-simple"></i> EDIT CATATAN</h3>
+      <input type="hidden" id="edit-catatan-id">
+      <div class="input-group">
+        <label>ISI CATATAN</label>
+        <textarea id="edit-catatan-isi" rows="5" style="width: 100%; padding: 14px 16px; border-radius: 14px; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
+      </div>
+      <div class="modal-btns">
+        <button class="btn" style="flex: 1;" onclick="simpanEditCatatan()" id="btn-simpan-edit-catatan"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button class="btn-close" onclick="tutupModal('modalEditCatatan')">BATAL</button>
       </div>
     </div>
   </div>
@@ -518,7 +513,6 @@
     </div>
   </div>
 
-  <!-- MODAL CELENGAN -->
   <div id="modalBuatCelengan" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-target"></i> BUAT CELENGAN</h3>
@@ -546,7 +540,6 @@
     </div>
   </div>
 
-  <!-- MODAL KREDITUR -->
   <div id="modalEditKreditur" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-pencil-simple"></i> EDIT KREDITUR</h3>
@@ -592,9 +585,6 @@
   </nav>
 
   <script>
-    // ==========================================
-    // 1. KONFIGURASI FIREBASE & AUTO-BACKUP
-    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyDmYmUmC5RvWex7GfLTOcTJmIZXFBL-nyw",
       authDomain: "zivanaziva-dd5a4.firebaseapp.com",
@@ -607,21 +597,11 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
-    db.enablePersistence()
-      .catch(function(err) {
-        if (err.code == 'failed-precondition') {
-          console.log("Auto-backup offline hanya bisa jalan di 1 tab/jendela.");
-        } else if (err.code == 'unimplemented') {
-          console.log("Browser ini tidak mendukung auto-backup offline.");
-        }
-      });
+    db.enablePersistence().catch(() => {});
 
-    // ==========================================
-    // 2. HELPER & FORMATTING UTILS
-    // ==========================================
     var statusEfek = localStorage.getItem('wistara_efek') || 'off';
     var globalNota = "", dataCacheHariIni = [], dataCacheKeseluruhan = [], stokCache = [], bonCache = [], celenganCache = [], krediturCache = [], serverCache = [];
-    var modeAktif = 'hariini', myChart = null, tempFotoProfilBase64 = "", tempNotaWA = "", tempNotaGambar = "", tempNomorWA = "";
+    var modeAktif = 'hariini', myChart = null, tempFotoProfilBase64 = "", tempNotaWA = "", tempNotaGambar = "";
 
     function getTglJam() {
         let now = new Date();
@@ -648,17 +628,8 @@
     function formatUangK(el) { let val = el.value.toLowerCase(); if (val.includes('k')) { let num = parseFloat(val.replace('k', '')); if (!isNaN(num)) el.value = num * 1000; } }
     function tutupModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // ==========================================
-    // 3. PENGATURAN UI & TEMA
-    // ==========================================
     function setTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('wistara_theme', themeName); }
     function setOpacity(val) { document.documentElement.style.setProperty('--panel-opacity', val); localStorage.setItem('wistara_opacity', val); }
-    function initEfekCahaya() {
-      var btn = document.getElementById('btn-efek-cahaya');
-      if (statusEfek === 'on') { document.body.classList.add('efek-nyala'); if (btn) btn.innerHTML = '<i class="ph-fill ph-toggle-right"></i> MATIKAN EFEK'; } 
-      else { document.body.classList.remove('efek-nyala'); if (btn) btn.innerHTML = '<i class="ph-fill ph-toggle-left"></i> AKTIFKAN EFEK'; }
-    }
-    function toggleEfekCahaya() { statusEfek = (statusEfek === 'on') ? 'off' : 'on'; localStorage.setItem('wistara_efek', statusEfek); initEfekCahaya(); }
 
     function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -670,13 +641,11 @@
 
     function updateBtnMode() {
       var bH = document.getElementById('btn-mode-hariini'), bS = document.getElementById('btn-mode-semua');
+      if(!bH || !bS) return;
       bH.style.background = modeAktif === 'hariini' ? 'var(--primary-grad)' : 'var(--input-bg)'; bH.style.color = modeAktif === 'hariini' ? '#fff' : 'var(--text-main)'; bH.style.borderColor = modeAktif === 'hariini' ? 'var(--primary)' : 'var(--input-border)';
       bS.style.background = modeAktif === 'semua' ? 'var(--primary-grad)' : 'var(--input-bg)'; bS.style.color = modeAktif === 'semua' ? '#fff' : 'var(--text-main)'; bS.style.borderColor = modeAktif === 'semua' ? 'var(--primary)' : 'var(--input-border)';
     }
 
-    // ==========================================
-    // 4. FIREBASE CRUD TRANSAKSI (PERTAHANAN 0)
-    // ==========================================
     function kirimData() {
       var btn = document.getElementById('btn-submit');
       var inputTgl = document.getElementById('tgl-transaksi').value;
@@ -689,7 +658,6 @@
 
       if(!nm || !hrg) { alert("NAMA DAN HARGA HARUS DIISI!"); return; }
 
-      // MULTI NUMBER & SPASI FIX
       let noParts = String(no).split(/\s+/).map(p => {
           if (p.startsWith('8')) return '0' + p;
           if (p.startsWith('62')) return '0' + p.substring(2);
@@ -721,7 +689,6 @@
           tempNotaWA = `\`\`\`✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n──────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih\`\`\``;
 
           tempNotaGambar = tempNotaWA;
-          
           document.getElementById('modalSuksesTrx').style.display = 'flex'; muatDataSemua();
       }).catch(err => { alert("Gagal menyimpan: " + err.message); btn.disabled = false; });
     }
@@ -734,38 +701,18 @@
           snapshot.forEach((doc) => {
               let d = doc.data(); d.id = doc.id; 
               d.tanggal = d.tanggal ? standarkanTgl(d.tanggal) : getTglJam().tanggal; 
-              
-              if (d.nomor) {
-                 let noParts = String(d.nomor).trim().split(/\s+/).map(p => {
-                    if (p.startsWith('8')) return '0' + p;
-                    if (p.startsWith('62')) return '0' + p.substring(2);
-                    if (p.startsWith('+62')) return '0' + p.substring(3);
-                    return p;
-                 });
-                 d.nomor = noParts.join(' ');
-              }
-
-              if (d.paket) {
-                 d.paket = String(d.paket).trim();
-                 if (/^\d+$/.test(d.paket) && d.paket.length < 4) {
-                     d.paket = d.paket.padStart(4, '0');
-                 }
-              }
-
               listSemua.push(d);
               if (d.nama) nUnik.add(d.nama); if (d.paket) kUnik.add(d.paket);
           });
           
           dataCacheKeseluruhan = listSemua; 
           renderRingkasanDash(); 
-          try { renderKurvaUsaha(listSemua); } catch(err) { console.warn("Grafik diskip."); }
+          try { renderKurvaUsaha(listSemua); } catch(err) {}
           
           let nHTML = '', kHTML = '';
           nUnik.forEach(v => nHTML += `<option value="${v}">`); kUnik.forEach(v => kHTML += `<option value="${v}">`);
-          document.getElementById('list-nama').innerHTML = nHTML; document.getElementById('list-kode').innerHTML = kHTML;
-      }, (error) => {
-          let tb = document.getElementById('tabel-dashboard-body');
-          if(tb) tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--color-danger); font-weight:900;">Error: ${error.message}</td></tr>`;
+          let lNama = document.getElementById('list-nama'); let lKode = document.getElementById('list-kode');
+          if(lNama) lNama.innerHTML = nHTML; if(lKode) lKode.innerHTML = kHTML;
       });
     }
 
@@ -780,25 +727,15 @@
 
     function simpanEdit() {
       let id = document.getElementById('edit-id').value, btn = document.getElementById('btn-simpan-edit');
-      
-      let noFixRaw = String(document.getElementById('edit-nomor').value.trim());
-      let noFix = noFixRaw.split(/\s+/).map(p => {
-          if (p.startsWith('8')) return '0' + p;
-          if (p.startsWith('62')) return '0' + p.substring(2);
-          if (p.startsWith('+62')) return '0' + p.substring(3);
-          return p;
-      }).join(' ');
-
       let data = {
           tanggal: formatTgl(document.getElementById('edit-tgl').value), 
           nama: document.getElementById('edit-nama').value,
-          nomor: noFix, 
+          nomor: document.getElementById('edit-nomor').value, 
           paket: document.getElementById('edit-code').value,
           kuota: document.getElementById('edit-kuber').value, 
           modal: parseFloat(document.getElementById('edit-modal').value.replace(/[^0-9]/g, '')) || 0,
           harga: parseFloat(document.getElementById('edit-harga').value.replace(/[^0-9]/g, '')) || 0
       };
-      
       btn.innerHTML = 'MENYIMPAN...'; btn.disabled = true;
       db.collection("transaksi").doc(id).update(data).then(() => { 
         tutupModal('modalEdit'); 
@@ -822,19 +759,11 @@
               }
             });
           }
-        }).catch(err => {
-            alert("Terjadi kesalahan: " + err.message);
         });
       }
     }
 
-    // ==========================================
-    // 5. FIREBASE CRUD BON
-    // ==========================================
     function muatDaftarBon() {
-      let container = document.getElementById('list-bon'); 
-      if(container) container.innerHTML = '<p style="text-align:center; font-weight:900;"><i class="ph ph-spinner ph-spin"></i> MEMUAT PIUTANG...</p>';
-      
       db.collection("bon").onSnapshot((snap) => { 
         bonCache = []; 
         snap.forEach(doc => { bonCache.push({ id: doc.id, ...doc.data() }); }); 
@@ -844,12 +773,9 @@
 
     function renderListBon(data) {
       let container = document.getElementById('list-bon'); 
+      if(!container) return;
       let dataFilter = data.filter(d => d.total > 0);
-      if (dataFilter.length === 0) { 
-        container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">TIDAK ADA PIUTANG!</p>'; 
-        return; 
-      }
-      
+      if (dataFilter.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">TIDAK ADA PIUTANG!</p>'; return; }
       let html = '', totalSemua = 0;
       dataFilter.forEach(item => {
         totalSemua += item.total;
@@ -867,117 +793,55 @@
       container.innerHTML = html;
     }
     
-    function hapusBon(id) { 
-      if(confirm("Yakin ingin menghapus data bon ini secara permanen?")) {
-        db.collection("bon").doc(id).delete().then(() => {
-          alert("Data Bon berhasil dihapus!");
-        }).catch(err => {
-          alert("Gagal menghapus: " + err.message);
-        });
-      }
-    }
-
-    function filterBon() { 
-      let kw = document.getElementById('cari-bon').value.toLowerCase().trim(); 
-      let res = bonCache.filter(i => (i.nama||"").toLowerCase().includes(kw)); 
-      renderListBon(res); 
-    }
-    
-    function bukaModalSetBon() { 
-      document.getElementById('set-bon-nama').value=''; 
-      document.getElementById('set-bon-nominal').value=''; 
-      document.getElementById('modalSetBon').style.display='flex'; 
-    }
-    
+    function hapusBon(id) { if(confirm("Yakin ingin menghapus data bon ini?")) db.collection("bon").doc(id).delete(); }
+    function filterBon() { let kw = document.getElementById('cari-bon').value.toLowerCase().trim(); renderListBon(bonCache.filter(i => (i.nama||"").toLowerCase().includes(kw))); }
+    function bukaModalSetBon() { document.getElementById('set-bon-nama').value=''; document.getElementById('set-bon-nominal').value=''; document.getElementById('modalSetBon').style.display='flex'; }
     function simpanSetBon() {
-      let nama = document.getElementById('set-bon-nama').value.trim(), 
-          total = parseFloat(document.getElementById('set-bon-nominal').value.replace(/[^0-9]/g, '')) || 0;
-      if(!nama) return; 
-      document.getElementById('btn-simpan-setbon').disabled = true;
-      db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => { 
-        tutupModal('modalSetBon'); 
-        document.getElementById('btn-simpan-setbon').disabled = false; 
-      });
+      let nama = document.getElementById('set-bon-nama').value.trim(), total = parseFloat(document.getElementById('set-bon-nominal').value.replace(/[^0-9]/g, '')) || 0;
+      if(!nama) return; db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => tutupModal('modalSetBon'));
     }
     
     function prosesBayar() {
-      let nama = document.getElementById('nama-bayar').value.trim();
-      let bayar = parseFloat(document.getElementById('nominal-bayar').value.replace(/[^0-9]/g, '')) || 0;
-      
+      let nama = document.getElementById('nama-bayar').value.trim(), bayar = parseFloat(document.getElementById('nominal-bayar').value.replace(/[^0-9]/g, '')) || 0;
       if(!nama || !bayar) { alert("Nama dan Nominal Bayar harus diisi!"); return; }
-      
-      let btn = document.getElementById('btn-bayar'); 
-      btn.disabled = true;
-      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMPROSES...';
-      
       let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === nama.toLowerCase());
-      
       if (bonExist) {
-          let namaDoc = bonExist.id; 
-          let sisaBon = bonExist.total - bayar;
-          if (sisaBon < 0) sisaBon = 0; 
-
-          let docRef = db.collection("bon").doc(namaDoc);
-          docRef.update({ total: firebase.firestore.FieldValue.increment(-bayar) }).then(() => { 
-              document.getElementById('nama-bayar').value = ''; 
-              document.getElementById('nominal-bayar').value = ''; 
-              btn.disabled = false; 
-              btn.innerHTML = '<i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR';
-              
-              let ts = getTglJam();
-              let msg = `✨ PEMBAYARAN BON BERHASIL ✨\n📅 ${ts.tanggal} | ${ts.jam}\n──────────────────\n👤 NAMA       : ${bonExist.nama}\n💸 JML BAYAR  : Rp ${bayar.toLocaleString('id-ID')}\n──────────────────\n📒 SISA BON   : Rp ${sisaBon.toLocaleString('id-ID')}\n──────────────────\nTerima kasih atas pembayarannya 🙏`;
-              
-              let pesan = encodeURIComponent(msg);
-              if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                  window.location.href = "whatsapp://send?text=" + pesan;
-              } else {
-                  window.open("https://api.whatsapp.com/send?text=" + pesan, "_blank");
-              }
-
-          }).catch(err => {
-              alert("Gagal memproses pembayaran: " + err.message);
-              btn.disabled = false;
-              btn.innerHTML = '<i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR';
+          db.collection("bon").doc(bonExist.id).update({ total: firebase.firestore.FieldValue.increment(-bayar) }).then(() => { 
+              document.getElementById('nama-bayar').value = ''; document.getElementById('nominal-bayar').value = '';
+              alert("Pembayaran Bon berhasil dicatat!");
           });
-      } else { 
-          alert("Data bon tidak ditemukan! Pastikan nama sesuai dengan yang ada di daftar Piutang Bon."); 
-          btn.disabled = false; 
-          btn.innerHTML = '<i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR';
-      }
+      } else { alert("Data bon tidak ditemukan!"); }
     }
 
-    // ==========================================
-    // 6. FIREBASE CRUD STOK
-    // ==========================================
     function muatStok() {
       db.collection("stok").onSnapshot((snap) => {
           let html = '';
-          if(snap.empty) { document.getElementById('list-stok').innerHTML = '<p style="text-align:center; font-weight:900;">STOK KOSONG!</p>'; return; }
+          let lStok = document.getElementById('list-stok');
+          if(!lStok) return;
+          if(snap.empty) { lStok.innerHTML = '<p style="text-align:center; font-weight:900;">STOK KOSONG!</p>'; return; }
           snap.forEach(doc => {
               let item = doc.data(), id = doc.id, w = item.stok <= 5 ? 'var(--color-danger)' : 'var(--color-success)';
               html += `<div class="box-3d" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px;">
                         <div><div style="font-weight:900; font-size:1.05rem;"><i class="ph-bold ph-barcode" style="color:var(--primary);"></i> ${item.kode}</div><div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">${item.variant || 'Tanpa Variant'}</div></div>
                         <div style="display: flex; align-items: center; gap: 12px;"><div style="font-weight:900; font-size:1.6rem; color:${w};">${item.stok}</div><button onclick="hapusStokItem('${id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div>
                       </div>`;
-          }); document.getElementById('list-stok').innerHTML = html;
+          }); lStok.innerHTML = html;
       });
     }
     function simpanStok() {
       let kd = document.getElementById('stok-kode').value.trim(), vr = document.getElementById('stok-variant').value.trim(), jml = parseInt(document.getElementById('stok-jumlah').value) || 0;
-      if(!kd || !jml) { alert("Kode dan Jumlah Wajib Isi!"); return; }
-      let docId = (kd + "_" + vr).replace(/\s/g, '_').toUpperCase(); document.getElementById('btn-stok').disabled = true;
+      if(!kd || !jml) return;
+      let docId = (kd + "_" + vr).replace(/\s/g, '_').toUpperCase();
       db.collection("stok").doc(docId).set({ kode: kd, variant: vr, stok: firebase.firestore.FieldValue.increment(jml) }, {merge: true}).then(() => {
-          document.getElementById('stok-kode').value = ''; document.getElementById('stok-variant').value = ''; document.getElementById('stok-jumlah').value = ''; document.getElementById('btn-stok').disabled = false;
+          document.getElementById('stok-kode').value = ''; document.getElementById('stok-variant').value = ''; document.getElementById('stok-jumlah').value = '';
       });
     }
     function hapusStokItem(id) { if(confirm("Hapus stok ini?")) db.collection("stok").doc(id).delete(); }
 
-    // ==========================================
-    // 7. FIREBASE CRUD SERVER
-    // ==========================================
     function muatServer() { db.collection("server").onSnapshot((snap) => { serverCache = []; snap.forEach(doc => serverCache.push({ id: doc.id, ...doc.data() })); renderListServer(serverCache); }); }
     function renderListServer(list) {
-      let container = document.getElementById('list-server'); if (list.length === 0) { container.innerHTML = '<p style="text-align:center; font-weight:900;">BELUM ADA DATA.</p>'; return; }
+      let container = document.getElementById('list-server'); if (!container) return;
+      if (list.length === 0) { container.innerHTML = '<p style="text-align:center; font-weight:900;">BELUM ADA DATA.</p>'; return; }
       let html = '';
       list.forEach(item => {
         let pNama = String(item.nama).replace(/'/g, "\\'"), pNomor = String(item.nomor).replace(/'/g, "\\'");
@@ -992,13 +856,12 @@
     function simpanEditServer() { let id = document.getElementById('edit-server-id').value; db.collection("server").doc(id).update({ nama: document.getElementById('edit-server-nama').value, nomor: document.getElementById('edit-server-nomor').value }).then(() => tutupModal('modalEditServer')); }
     function hapusServer(id) { if(confirm("Hapus server?")) db.collection("server").doc(id).delete(); }
 
-    // ==========================================
-    // 8. FIREBASE CRUD TABUNGAN
-    // ==========================================
     function muatTabungan() {
       db.collection("tabungan").orderBy("timestamp", "desc").onSnapshot(snap => {
         let totalSaldo = 0, hariIni = 0, bulanIni = 0, html = '', now = new Date(), tglHariIni = getTglJam().tanggal, blnIni = String(now.getMonth()+1).padStart(2,'0'), thnIni = now.getFullYear().toString();
-        if(snap.empty) document.getElementById('list-tabungan').innerHTML = '<p style="text-align:center; font-weight:800;">Belum ada catatan.</p>';
+        let lTab = document.getElementById('list-tabungan');
+        if(!lTab) return;
+        if(snap.empty) lTab.innerHTML = '<p style="text-align:center; font-weight:800;">Belum ada catatan.</p>';
         snap.forEach(doc => {
           let item = doc.data(), val = item.jenis === 'SETOR' ? item.nominal : -item.nominal; totalSaldo += val;
           if (item.tanggal === tglHariIni && item.jenis === 'SETOR') hariIni += item.nominal;
@@ -1008,8 +871,10 @@
                     <div><div style="font-weight:900; font-size:0.9rem; text-transform:uppercase;">${item.kategori}</div><div style="font-size:0.75rem; color:var(--text-muted);">${item.tanggal} • <b style="color:${w};">${item.jenis}</b></div></div>
                     <div style="display:flex; align-items:center; gap:10px;"><div style="font-weight:900; font-size:0.95rem; color:${w};">${pref}Rp ${item.nominal.toLocaleString('id-ID')}</div><button onclick="hapusTabungan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
         });
-        document.getElementById('tabungan-total').innerText = "Rp " + totalSaldo.toLocaleString('id-ID'); document.getElementById('tabungan-hariini').innerText = "Rp " + hariIni.toLocaleString('id-ID'); document.getElementById('tabungan-bulanini').innerText = "Rp " + bulanIni.toLocaleString('id-ID');
-        if(!snap.empty) document.getElementById('list-tabungan').innerHTML = html;
+        document.getElementById('tabungan-total').innerText = "Rp " + totalSaldo.toLocaleString('id-ID'); 
+        document.getElementById('tabungan-hariini').innerText = "Rp " + hariIni.toLocaleString('id-ID'); 
+        document.getElementById('tabungan-bulanini').innerText = "Rp " + bulanIni.toLocaleString('id-ID');
+        if(!snap.empty) lTab.innerHTML = html;
       });
     }
     function simpanTabungan() {
@@ -1018,12 +883,10 @@
     }
     function hapusTabungan(id) { if(confirm("Hapus catatan?")) db.collection("tabungan").doc(id).delete(); }
 
-    // ==========================================
-    // 9. FIREBASE CRUD CELENGAN
-    // ==========================================
     function muatCelengan(filter = 'berlangsung') { db.collection("celengan").onSnapshot(snap => { celenganCache = []; snap.forEach(doc => celenganCache.push({id: doc.id, ...doc.data()})); renderCelengan(filter); }); }
     function renderCelengan(filterTab = 'berlangsung') {
       let bB = document.getElementById('btn-celengan-berlangsung'), bT = document.getElementById('btn-celengan-tercapai');
+      if(!bB || !bT) return;
       bB.style.background = filterTab === 'berlangsung' ? 'var(--primary-grad)' : 'var(--input-bg)'; bB.style.color = filterTab === 'berlangsung' ? '#fff' : 'var(--text-main)';
       bT.style.background = filterTab === 'tercapai' ? 'var(--primary-grad)' : 'var(--input-bg)'; bT.style.color = filterTab === 'tercapai' ? '#fff' : 'var(--text-main)';
       let container = document.getElementById('list-celengan'); container.innerHTML = '';
@@ -1048,7 +911,21 @@
         </div>`;
       });
     }
-    function previewGambarCelengan(e) { let f = e.target.files[0]; if(!f) return; let r = new FileReader(); r.onload = ev => { let img = new Image(); img.onload = () => { let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 400, w = img.width, h = img.height; if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); document.getElementById('celengan-gambar-base64').value = cvs.toDataURL('image/jpeg', 0.6); }; img.src = ev.target.result; }; r.readAsDataURL(f); }
+    function previewGambarCelengan(e) { 
+      let f = e.target.files[0]; if(!f) return; 
+      let r = new FileReader(); 
+      r.onload = ev => { 
+        let img = new Image(); 
+        img.onload = () => { 
+          let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 400, w = img.width, h = img.height; 
+          if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } 
+          cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); 
+          document.getElementById('celengan-gambar-base64').value = cvs.toDataURL('image/jpeg', 0.6); 
+        }; 
+        img.src = ev.target.result; 
+      }; 
+      r.readAsDataURL(f); 
+    }
     function bukaModalCelenganBaru() { document.querySelectorAll('#modalBuatCelengan input').forEach(el=>el.value=''); document.getElementById('modalBuatCelengan').style.display='flex'; }
     function simpanCelenganBaru() {
       let data = { nama: document.getElementById('celengan-nama').value, target: parseFloat(document.getElementById('celengan-target').value.replace(/[^0-9]/g, '')) || 0, rencana: document.getElementById('celengan-rencana').value, nominalRencana: parseFloat(document.getElementById('celengan-nominal').value.replace(/[^0-9]/g, '')) || 0, gambar: document.getElementById('celengan-gambar-base64').value, terkumpul: 0, terakhirIsi: "" };
@@ -1058,12 +935,9 @@
     function simpanIsiCelengan() { let id = document.getElementById('isi-celengan-id').value, nom = parseFloat(document.getElementById('isi-celengan-nominal').value.replace(/[^0-9]/g, '')) || 0; if(!nom) return; db.collection("celengan").doc(id).update({ terkumpul: firebase.firestore.FieldValue.increment(nom), terakhirIsi: getTglJam().tanggal }).then(() => tutupModal('modalIsiCelengan')); }
     function hapusCelengan(id) { if(confirm("Hapus celengan?")) db.collection("celengan").doc(id).delete(); }
 
-    // ==========================================
-    // 10. FIREBASE CRUD KREDITUR
-    // ==========================================
     function muatKreditur() { db.collection("kreditur").onSnapshot(snap => { krediturCache = []; snap.forEach(doc => krediturCache.push({id: doc.id, ...doc.data()})); renderKrediturOnline(); }); }
     function renderKrediturOnline() {
-      let container = document.getElementById('list-kreditur'); container.innerHTML = '';
+      let container = document.getElementById('list-kreditur'); if(!container) return; container.innerHTML = '';
       if(krediturCache.length === 0) { container.innerHTML = '<p style="text-align:center; font-weight:800;">Belum ada kreditur.</p>'; return; }
       krediturCache.forEach(item => {
         let total = item.nominal + (item.admin * item.tenor), cicilan = Math.round(total / item.tenor), w = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
@@ -1100,7 +974,21 @@
       let id = document.getElementById('edit-kreditur-id').value, data = { nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, ''))||0, tenor: parseInt(document.getElementById('edit-kreditur-tenor').value)||0, admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, ''))||0 };
       db.collection("kreditur").doc(id).update(data).then(() => tutupModal('modalEditKreditur'));
     }
-    function previewBuktiKreditur(e) { let f = e.target.files[0]; if(!f) return; let r = new FileReader(); r.onload = ev => { let img = new Image(); img.onload = () => { let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 400, w = img.width, h = img.height; if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); document.getElementById('kreditur-bukti-base64').value = cvs.toDataURL('image/jpeg', 0.6); }; img.src = ev.target.result; }; r.readAsDataURL(f); }
+    function previewBuktiKreditur(e) { 
+      let f = e.target.files[0]; if(!f) return; 
+      let r = new FileReader(); 
+      r.onload = ev => { 
+        let img = new Image(); 
+        img.onload = () => { 
+          let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 400, w = img.width, h = img.height; 
+          if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } 
+          cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); 
+          document.getElementById('kreditur-bukti-base64').value = cvs.toDataURL('image/jpeg', 0.6); 
+        }; 
+        img.src = ev.target.result; 
+      }; 
+      r.readAsDataURL(f); 
+    }
     function bukaModalBayarKreditur(id) { document.getElementById('bayar-kreditur-id').value = id; document.getElementById('bayar-kreditur-nominal').value=''; document.getElementById('kreditur-bukti-base64').value=''; document.getElementById('modalBayarKreditur').style.display='flex'; }
     function simpanBayarKreditur() { let id = document.getElementById('bayar-kreditur-id').value, nom = parseFloat(document.getElementById('bayar-kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0, bkt = document.getElementById('kreditur-bukti-base64').value; if(!nom) return; db.collection("kreditur").doc(id).collection("riwayat").add({ nominal: nom, bukti: bkt, tgl: getTglJam().tanggal, timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { tutupModal('modalBayarKreditur'); alert("Pembayaran dicatat!"); }); }
     function bukaModalRiwayatKreditur(id) {
@@ -1111,40 +999,22 @@
       });
     }
 
-    // ==========================================
-    // 11. FUNGSI PELENGKAP DASHBOARD & TABEL
-    // ==========================================
     function renderRingkasanDash() {
       let inputTgl = document.getElementById('filter-tgl-dash');
       let tglPilih = inputTgl && inputTgl.value ? inputTgl.value : new Date().toLocaleDateString('en-CA');
       let tglDB = formatTgl(tglPilih);
-      
       if(inputTgl && !inputTgl.value) inputTgl.value = tglPilih;
-      
-      let tMod = 0, tJual = 0, tTrx = 0; 
-      let listPilihan = [];
-      
+      let tMod = 0, tJual = 0, tTrx = 0; let listPilihan = [];
       dataCacheKeseluruhan.forEach(item => { 
-        if(item.tanggal === tglDB) { 
-          tMod += item.modal; tJual += item.harga; tTrx++; 
-          listPilihan.push(item);
-        } 
+        if(item.tanggal === tglDB) { tMod += item.modal; tJual += item.harga; tTrx++; listPilihan.push(item); } 
       });
-      
       document.getElementById('dash-modal').innerText = "Rp " + tMod.toLocaleString('id-ID'); 
       document.getElementById('dash-omset').innerText = "Rp " + tJual.toLocaleString('id-ID'); 
       document.getElementById('dash-bersih').innerText = "Rp " + (tJual - tMod).toLocaleString('id-ID'); 
       document.getElementById('dash-trx').innerText = tTrx;
-
       dataCacheHariIni = listPilihan;
       renderMiniTabelDashboard(dataCacheHariIni, 1);
-      
-      if (modeAktif === 'hariini') {
-        renderTabelAktif();
-      }
-
-      let formTgl = document.getElementById('tgl-transaksi');
-      if (formTgl) formTgl.value = tglPilih;
+      if (modeAktif === 'hariini') renderTabelAktif();
     }
     
     function toggleTanggalRahasia() {
@@ -1159,76 +1029,70 @@
       var startIndex = (currentPageDashboard - 1) * itemsPerPage, paginatedList = list.slice(startIndex, startIndex + itemsPerPage);
       if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; font-weight:800;">Belum ada transaksi.</td></tr>'; return; }
       var html = ''; paginatedList.forEach(item => { 
-        let jam = item.jam || "-"; let nm = item.nama || "-"; let no = item.nomor || "-"; let pkt = item.paket || "-";
-        html += `<tr><td>${jam}</td><td style="color:var(--primary); font-weight:900; text-transform:uppercase;">${nm}</td><td>${no}</td><td style="font-weight:800; text-transform:uppercase;">${pkt}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; 
+        html += `<tr><td>${item.jam || "-"}</td><td style="color:var(--primary); font-weight:900; text-transform:uppercase;">${item.nama || "-"}</td><td>${item.nomor || "-"}</td><td style="font-weight:800; text-transform:uppercase;">${item.paket || "-"}</td><td><span class="badge-sukses">SUKSES</span></td></tr>`; 
       });
-      var totalPages = Math.ceil(list.length / itemsPerPage);
-      if (totalPages > 1) { html += `<tr><td colspan="5" style="text-align:center; padding:12px 0;"><button onclick="renderMiniTabelDashboard(dataCacheHariIni, ${currentPageDashboard - 1})" ${currentPageDashboard === 1 ? 'disabled' : ''} style="padding:6px 10px; border-radius:8px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:800;">&laquo; Prev</button><span style="margin:0 8px; font-weight:800;">Hal ${currentPageDashboard} / ${totalPages}</span><button onclick="renderMiniTabelDashboard(dataCacheHariIni, ${currentPageDashboard + 1})" ${currentPageDashboard === totalPages ? 'disabled' : ''} style="padding:6px 10px; border-radius:8px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:800;">Next &raquo;</button></td></tr>`; }
       tbody.innerHTML = html;
     }
 
-    function gantiModeTrx(mode) { modeAktif = mode; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = (mode === 'hariini') ? '<i class="ph-fill ph-clipboard-text"></i> TRANSAKSI HARI INI' : '<i class="ph-fill ph-clipboard-text"></i> SELURUH TRANSAKSI'; renderTabelAktif(); }
+    function gantiModeTrx(mode) { modeAktif = mode; updateBtnMode(); renderTabelAktif(); }
     function renderTabelAktif() { tampilkanListTransaksi((modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan, 1); }
     
     function tampilkanListTransaksi(list, page = 1) {
-      let container = document.getElementById('list-harian'); updateBtnMode();
+      let container = document.getElementById('list-harian'); if(!container) return; updateBtnMode();
       if (list.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">BELUM ADA DATA.</p>'; return; }
       let th = 0, tm = 0; list.forEach(item => { th += (item.harga || 0); tm += (item.modal || 0); }); let lb = th - tm;
-      let title = (modeAktif === 'hariini') ? 'REKAP HARI INI' : (modeAktif === 'semua' ? 'REKAP SELURUHNYA' : 'REKAP PENCARIAN');
-      let html = `<div class="box-3d" style="display:flex; flex-direction:column; padding:20px; background:var(--input-bg); border:2px solid var(--input-border);"><div style="text-align:center; font-weight:900; font-size:1.1rem; margin-bottom:15px;" class="text-gradient"><i class="ph-fill ph-wallet"></i> ${title}</div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">TOTAL MODAL</div><div style="color:var(--color-warning); font-size:1rem; font-weight:900;">Rp ${tm.toLocaleString('id-ID')}</div></div><div style="height:30px; border-left:2px dashed var(--input-border); margin:0 8px;"></div><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">PENDAPATAN</div><div style="color:var(--primary); font-size:1rem; font-weight:900;">Rp ${th.toLocaleString('id-ID')}</div></div></div><hr style="border:0; border-top:2px dashed var(--input-border); margin:12px 0;"><div style="text-align:center;"><div style="font-size:0.85rem; font-weight:800;">LABA BERSIH</div><div style="color:var(--color-success); font-size:1.6rem; font-weight:900;">Rp ${lb.toLocaleString('id-ID')}</div></div></div>`;
-      let start = (page - 1) * itemsPerPage, paginatedList = list.slice(start, start + itemsPerPage);
-      paginatedList.forEach(item => {
-        let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0', pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
-        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; font-size:1rem; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama || "-"}</span><br><span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; font-size:0.95rem; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
+      let html = `<div class="box-3d" style="display:flex; flex-direction:column; padding:20px; background:var(--input-bg); border:2px solid var(--input-border);"><div style="text-align:center; font-weight:900; font-size:1.1rem; margin-bottom:15px;" class="text-gradient"><i class="ph-fill ph-wallet"></i> REKAP</div><div style="display:flex; justify-content:space-between;"><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">MODAL</div><div style="color:var(--color-warning); font-weight:900;">Rp ${tm.toLocaleString('id-ID')}</div></div><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">PENDAPATAN</div><div style="color:var(--primary); font-weight:900;">Rp ${th.toLocaleString('id-ID')}</div></div></div><hr style="border:0; border-top:2px dashed var(--input-border); margin:12px 0;"><div style="text-align:center;"><div style="font-size:0.85rem; font-weight:800;">LABA BERSIH</div><div style="color:var(--color-success); font-size:1.4rem; font-weight:900;">Rp ${lb.toLocaleString('id-ID')}</div></div></div>`;
+      
+      list.slice(0, 15).forEach(item => {
+        let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0';
+        let pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
+        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
-      let totalPages = Math.ceil(list.length / itemsPerPage);
-      if (totalPages > 1) { html += `<div style="display:flex; justify-content:center; gap:8px;"><button onclick="tampilkanListTransaksi(dataCacheKeseluruhan, ${page - 1})" ${page === 1 ? 'disabled' : ''} style="padding:8px 14px; border-radius:10px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:900;">&laquo; Prev</button><span style="font-size:0.82rem; font-weight:900; margin-top:8px;">Hal ${page} / ${totalPages}</span><button onclick="tampilkanListTransaksi(dataCacheKeseluruhan, ${page + 1})" ${page === totalPages ? 'disabled' : ''} style="padding:8px 14px; border-radius:10px; border:2px solid var(--input-border); background:var(--input-bg); font-weight:900;">Next &raquo;</button></div>`; }
       container.innerHTML = html;
     }
 
-    function filterTransaksi() { let kw = document.getElementById('cari-nomor').value.toLowerCase().trim().replace(/\s+/g, ''), target = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan; if(!kw) return tampilkanListTransaksi(target, 1); let res = target.filter(i => (i.nama||"").toLowerCase().includes(kw) || (i.paket||"").toLowerCase().includes(kw) || (i.nomor||"").replace(/\s+/g, '').includes(kw)); tampilkanListTransaksi(res, 1); }
+    function filterTransaksi() { 
+      let kw = document.getElementById('cari-nomor').value.toLowerCase().trim(); 
+      let target = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan; 
+      if(!kw) return tampilkanListTransaksi(target, 1); 
+      let res = target.filter(i => (i.nama||"").toLowerCase().includes(kw) || (i.paket||"").toLowerCase().includes(kw) || (i.nomor||"").includes(kw)); 
+      tampilkanListTransaksi(res, 1); 
+    }
+
     function jalankanPencarianKhusus() {
       let kw = document.getElementById('input-cari-khusus').value.toLowerCase().trim(), container = document.getElementById('hasil-cari-khusus');
       if (!kw) { container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:25px 10px;"><i class="ph-fill ph-folder-open" style="font-size:3.5rem; opacity:0.5;"></i><br><b>Hasil di sini</b></div>'; return; }
       let hasil = dataCacheKeseluruhan.filter(i => (i.nama||"").toLowerCase().includes(kw) || (i.nomor||"").includes(kw) || (i.paket||"").toLowerCase().includes(kw));
       if (hasil.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900; color:var(--color-danger);">TIDAK DITEMUKAN.</p>'; return; }
-      let html = ''; hasil.forEach(item => { html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><div><span style="font-weight:900; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal}', '${item.jam}', '${item.nama}', '${item.nomor}', '${item.paket}', '${item.kuota}', '${item.harga}')"><i class="ph-fill ph-receipt"></i></button></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket}</span><span style="font-size:0.78rem; color:var(--text-muted);">${item.tanggal}</span><span style="font-weight:900; color:var(--primary); background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px;">Rp ${item.harga.toLocaleString('id-ID')}</span></div></div>`; }); container.innerHTML = html;
+      let html = ''; hasil.forEach(item => { html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><div><span style="font-weight:900; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket}</span><span style="font-size:0.78rem; color:var(--text-muted);">${item.tanggal}</span><span style="font-weight:900; color:var(--primary);">Rp ${item.harga.toLocaleString('id-ID')}</span></div></div>`; }); container.innerHTML = html;
     }
-    function terapkanFilterTanggal() { let m = document.getElementById('filter-mulai').value, a = document.getElementById('filter-akhir').value; if (!m || !a) return alert("Pilih tanggal mulai & akhir!"); let tglM = new Date(m); tglM.setHours(0,0,0,0); let tglA = new Date(a); tglA.setHours(23,59,59,999); let res = dataCacheKeseluruhan.filter(i => { let dt = parseTgl(i.tanggal); return dt >= tglM && dt <= tglA; }); modeAktif = 'custom'; updateBtnMode(); document.getElementById('judul-tabel-trx').innerHTML = '<i class="ph-fill ph-calendar-check"></i> RENTANG TANGGAL'; tampilkanListTransaksi(res, 1); }
+    
+    function terapkanFilterTanggal() { 
+      let m = document.getElementById('filter-mulai').value, a = document.getElementById('filter-akhir').value; 
+      if (!m || !a) return alert("Pilih tanggal mulai & akhir!"); 
+      let tglM = new Date(m); tglM.setHours(0,0,0,0); let tglA = new Date(a); tglA.setHours(23,59,59,999); 
+      let res = dataCacheKeseluruhan.filter(i => { let dt = parseTgl(i.tanggal); return dt >= tglM && dt <= tglA; }); 
+      modeAktif = 'custom'; updateBtnMode(); tampilkanListTransaksi(res, 1); 
+    }
 
     function renderKurvaUsaha(dataList) {
        if (typeof Chart === 'undefined') return;
-       let inBln = document.getElementById('filter-bulan-statistik'); if(!inBln.value) { let n = new Date(); inBln.value = n.getFullYear() + "-" + String(n.getMonth()+1).padStart(2,'0'); }
+       let inBln = document.getElementById('filter-bulan-statistik'); if(!inBln || !inBln.value) return;
        let p = inBln.value.split('-'), targetThn = p[0], targetBln = p[1], rekap = {};
        dataList.forEach(i => { let part = i.tanggal.split('-'); if(part[1] === targetBln && part[2] === targetThn) { let tglSaja = parseInt(part[0]).toString(); if(!rekap[tglSaja]) rekap[tglSaja] = 0; rekap[tglSaja] += (i.harga - i.modal); } });
-       let sorted = Object.keys(rekap).sort((a,b) => parseInt(a)-parseInt(b)), lbl = [], dt = [], total = 0; sorted.forEach(t => { lbl.push(t); dt.push(rekap[t]); total += rekap[t]; }); let rata = dt.length > 0 ? (total / dt.length) : 0, rataArr = lbl.map(()=>rata);
+       let sorted = Object.keys(rekap).sort((a,b) => parseInt(a)-parseInt(b)), lbl = [], dt = [], total = 0; 
+       sorted.forEach(t => { lbl.push(t); dt.push(rekap[t]); total += rekap[t]; }); 
+       let rata = dt.length > 0 ? (total / dt.length) : 0, rataArr = lbl.map(()=>rata);
        let titleEl = document.querySelector('#kurvaUsahaChart').previousElementSibling; if(titleEl) titleEl.innerHTML = "🎯 RATA-RATA LABA: Rp " + Math.round(rata).toLocaleString('id-ID') + " / HARI";
-       let ctx = document.getElementById('kurvaUsahaChart').getContext('2d'); if(window.myChart) window.myChart.destroy(); let prim = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(), txt = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+       let ctx = document.getElementById('kurvaUsahaChart').getContext('2d'); if(window.myChart) window.myChart.destroy(); 
+       let prim = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(), txt = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
        window.myChart = new Chart(ctx, { type:'line', data:{ labels:lbl, datasets:[ {label:'Laba', data:dt, backgroundColor:'rgba(2,132,199,0.1)', borderColor:prim, borderWidth:3, fill:true, order:2}, {label:'Rata-rata', data:rataArr, borderColor:'#3b82f6', borderWidth:2, borderDash:[5,5], fill:false, pointRadius:0, order:1} ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{color:txt}}, x:{title:{display:true, text:'TANGGAL', color:txt}, ticks:{color:txt}}}}});
     }
     function renderKurvaBulanIni() { renderKurvaUsaha(dataCacheKeseluruhan); }
 
-    // ==========================================
-    // 12. NOTA & SHARE FUNGSI (VERCEL FIX)
-    // ==========================================
     var tempNotaLamaText = ""; 
-
     function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
-      var teksNota = 
-        "```\n" + 
-        "✨ SALINAN TRANSAKSI ✨\n" +
-        "📅 " + tgl + " | " + jam + "\n" +
-        "──────────────────\n" +
-        "👤 NAMA      : " + nama + "\n" +
-        "📱 NOMOR     : " + nomor + "\n" +
-        "🏷️ CODE      : " + code + "\n" +
-        "📦 KUOTA     : " + kuota + "\n" +
-        "💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + 
-        "```\n" + 
-        "\n──────────────────\n" +
-        "✅ `SILAHKAN DI CEK`\n" +
-        "🤝 `DITUNGGU ORDERAN BERIKUTNYA`"; 
-      
+      var teksNota = "```\n✨ SALINAN TRANSAKSI ✨\n📅 " + tgl + " | " + jam + "\n──────────────────\n👤 NAMA      : " + nama + "\n📱 NOMOR     : " + nomor + "\n🏷️ CODE      : " + code + "\n📦 KUOTA     : " + kuota + "\n💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + "```\n\n──────────────────\n✅ `SILAHKAN DI CEK`"; 
       tempNotaLamaText = teksNota; 
       document.getElementById('textNota').innerHTML = formatNotaToHTML(teksNota); 
       document.getElementById('modalNota').style.display = 'flex'; 
@@ -1239,37 +1103,19 @@
       let html = '<div style="font-size:0.75rem; line-height:1.6; font-family: \'Courier New\', Courier, monospace; font-weight: bold; color: var(--text-main);">';
       lines.forEach(l => {
         let txt = l.trim(); if (txt === '') return;
-        if (txt.includes('──────') || txt.includes('━━━━━━')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">'; 
+        if (txt.includes('──────')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">'; 
         else if (txt.indexOf(':') > -1 && !txt.includes('📅')) {
           let idx = txt.indexOf(':'), lbl = txt.substring(0, idx).trim(), val = txt.substring(idx + 1).trim();
           html += `<div style="display:flex; padding:4px 0;"><div style="width:40%; color:var(--text-muted);">${lbl}</div><div style="width:5%;">:</div><div style="width:55%; text-transform:uppercase;">${val}</div></div>`;
         } else {
-          let w = (txt.includes('SUKSES') || txt.includes('DICEK') || txt.includes('Terima Kasih')) ? 'var(--color-success)' : 'inherit';
-          html += `<div style="text-align:center; color:${w}; margin:4px 0; text-transform:uppercase;">${txt}</div>`;
+          html += `<div style="text-align:center; margin:4px 0; text-transform:uppercase;">${txt}</div>`;
         }
       }); return html + '</div>';
     }
 
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
-
-    function kirimWaTeksSukses() { 
-      let pesan = encodeURIComponent(tempNotaWA);
-      if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-          window.location.href = "whatsapp://send?text=" + pesan;
-      } else {
-          window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + pesan, "_blank");
-      }
-    }
-
-    function tagihWA(nama, totalBon) { 
-      let msg = `*INFORMASI TAGIHAN BON*\n\nNAMA : ${nama}\nTOTAL : Rp ${totalBon}\n\nMohon untuk dicek kembali ya. Terima Kasih`; 
-      let pesan = encodeURIComponent(msg);
-      if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-          window.location.href = "whatsapp://send?text=" + pesan;
-      } else {
-          window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + pesan, "_blank");
-      }
-    }
+    function kirimWaTeksSukses() { window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA), "_blank"); }
+    function tagihWA(nama, totalBon) { window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(`*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`), "_blank"); }
     
     function kirimKeWA() {
       let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
@@ -1278,108 +1124,103 @@
         canvas.toBlob(blob => {
           let f = new File([blob], 'Nota.png', { type: 'image/png' });
           if (navigator.canShare && navigator.canShare({ files: [f] })) { 
-             navigator.share({ title: 'Nota Transaksi', files: [f] }).then(() => { btn.innerHTML = txt; btn.disabled = false; }).catch(() => dlFoto(canvas, btn, txt)); 
+             navigator.share({ title: 'Nota', files: [f] }).then(() => { btn.innerHTML = txt; btn.disabled = false; }).catch(() => dlFoto(canvas, btn, txt)); 
           } else { dlFoto(canvas, btn, txt); }
         });
       });
     }
-    
     function dlFoto(c, b, t) { 
       let dataUrl = c.toDataURL('image/png');
-      document.getElementById('area-nota-foto').innerHTML = `<img src="${dataUrl}" style="width:100%; border-radius:16px; border:2px solid var(--primary);"><p style="font-size:0.8rem; color:var(--color-warning); font-weight:800; text-align:center; margin-top:15px; line-height:1.4;"><i class="ph-fill ph-warning-circle"></i> TEKAN & TAHAN GAMBAR DI ATAS LALU PILIH "BAGIKAN GAMBAR" ATAU "SIMPAN".</p>`;
-      b.innerHTML = '<i class="ph-fill ph-check-circle"></i> FOTO SIAP'; b.disabled = true;
+      document.getElementById('area-nota-foto').innerHTML = `<img src="${dataUrl}" style="width:100%; border-radius:16px;"><p style="font-size:0.8rem; color:var(--color-warning); text-align:center; margin-top:15px;">TEKAN & TAHAN GAMBAR LALU SIMPAN.</p>`;
+      b.innerHTML = '<i class="ph-fill ph-check-circle"></i> SIAP'; b.disabled = true;
     }
 
-    // ==========================================
-    // 13. PELINDUNG FORM (ANTI ILANG ANGKA 0 DI HP)
-    // ==========================================
     function formatNomorHP(el) {
       let val = el.value.replace(/[^0-9+\s]/g, '');
-      let parts = val.split(/\s+/);
-      let formatted = parts.map(p => {
+      el.value = val.split(/\s+/).map(p => {
          if (p.startsWith('+62')) return '0' + p.substring(3);
          if (p.startsWith('62')) return '0' + p.substring(2);
          if (p.startsWith('8')) return '0' + p;
          return p;
-      });
-      el.value = formatted.join(' ');
+      }).join(' ');
     }
-
     document.getElementById('nomor').addEventListener('input', function() { formatNomorHP(this); });
     document.getElementById('edit-nomor').addEventListener('input', function() { formatNomorHP(this); });
 
-    // ==========================================
-    // 13.B NAVIGASI ENTER UNTUK INPUT TRANSAKSI
-    // ==========================================
-    const inputIds = ['tgl-transaksi', 'nama', 'nomor', 'code', 'kuber', 'modal', 'harga'];
-    inputIds.forEach((id, index) => {
-        let el = document.getElementById(id);
-        if(el) {
-            el.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); 
-                    if (index < inputIds.length - 1) {
-                        document.getElementById(inputIds[index + 1]).focus();
-                    } else {
-                        document.getElementById('btn-submit').click();
-                    }
-                }
-            });
-        }
-    });
-
-    // ==========================================
-    // 14. PROFIL, WALLPAPER & INISIALISASI
-    // ==========================================
     function muatProfilToko() {
       let nm = localStorage.getItem('wistara_nama') || "WISTARA-STORE", ds = localStorage.getItem('wistara_desc') || "SISTEM KASIR DIGITAL", ft = localStorage.getItem('wistara_foto');
       document.getElementById('dash-toko-nama').innerText = nm; document.getElementById('dash-toko-desc').innerText = ds;
       document.getElementById('nota-toko-nama').innerHTML = `<i class="ph-fill ph-receipt"></i> ` + nm; document.getElementById('nota-toko-desc').innerText = ds;
       document.getElementById('profile-name-display').innerText = nm; document.getElementById('profile-desc-display').innerText = ds;
       document.getElementById('input-profile-name').value = nm; document.getElementById('input-profile-desc').value = ds;
-      if (ft) { document.getElementById('profile-img').src = ft; document.getElementById('profile-img').style.display = 'block'; document.getElementById('profile-icon').style.display = 'none'; tempFotoProfilBase64 = ft; }
+      if (ft) { document.getElementById('profile-img').src = ft; document.getElementById('profile-img').style.display = 'block'; document.getElementById('profile-icon').style.display = 'none'; }
     }
-    function previewFotoProfil(e) { let f = e.target.files[0]; if(!f) return; let r = new FileReader(); r.onload = ev => { let img = new Image(); img.onload = () => { let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 300, w = img.width, h = img.height; if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); tempFotoProfilBase64 = cvs.toDataURL('image/jpeg', 0.8); document.getElementById('profile-img').src = tempFotoProfilBase64; document.getElementById('profile-img').style.display = 'block'; document.getElementById('profile-icon').style.display = 'none'; }; img.src = ev.target.result; }; r.readAsDataURL(f); }
-    function simpanProfil() { localStorage.setItem('wistara_nama', document.getElementById('input-profile-name').value || "WISTARA-STORE"); localStorage.setItem('wistara_desc', document.getElementById('input-profile-desc').value || "SISTEM KASIR DIGITAL"); if(tempFotoProfilBase64) localStorage.setItem('wistara_foto', tempFotoProfilBase64); muatProfilToko(); alert("Profil Diperbarui!"); }
+    function previewFotoProfil(e) { 
+      let f = e.target.files[0]; if(!f) return; 
+      let r = new FileReader(); 
+      r.onload = ev => { 
+        let img = new Image(); 
+        img.onload = () => { 
+          let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 300, w = img.width, h = img.height; 
+          if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } 
+          cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); 
+          tempFotoProfilBase64 = cvs.toDataURL('image/jpeg', 0.8); 
+          document.getElementById('profile-img').src = tempFotoProfilBase64; 
+          document.getElementById('profile-img').style.display = 'block'; 
+          document.getElementById('profile-icon').style.display = 'none'; 
+        }; 
+        img.src = ev.target.result; 
+      }; 
+      r.readAsDataURL(f); 
+    }
+    function simpanProfil() { 
+      localStorage.setItem('wistara_nama', document.getElementById('input-profile-name').value || "WISTARA-STORE"); 
+      localStorage.setItem('wistara_desc', document.getElementById('input-profile-desc').value || "SISTEM KASIR DIGITAL"); 
+      if(tempFotoProfilBase64) localStorage.setItem('wistara_foto', tempFotoProfilBase64); 
+      muatProfilToko(); alert("Profil Diperbarui!"); 
+    }
     function muatBackgroundLokal() { let bg = localStorage.getItem('wistara_bg'); if (bg) document.body.style.backgroundImage = 'url(' + bg + ')'; }
-    function prosesGantiBackground(e) { let f = e.target.files[0]; if(!f) return; let r = new FileReader(); r.onload = ev => { let img = new Image(); img.onload = () => { let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 1200, w = img.width, h = img.height; if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); let url = cvs.toDataURL('image/jpeg', 0.7); document.body.style.backgroundImage = 'url(' + url + ')'; try{ localStorage.setItem('wistara_bg', url); alert('Wallpaper diganti!'); }catch(err){ alert('Gambar masih terlalu besar.'); } }; img.src = ev.target.result; }; r.readAsDataURL(f); }
+    function prosesGantiBackground(e) { 
+      let f = e.target.files[0]; if(!f) return; 
+      let r = new FileReader(); 
+      r.onload = ev => { 
+        let img = new Image(); 
+        img.onload = () => { 
+          let cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), max = 1200, w = img.width, h = img.height; 
+          if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } } 
+          cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h); 
+          let url = cvs.toDataURL('image/jpeg', 0.7); 
+          document.body.style.backgroundImage = 'url(' + url + ')'; 
+          localStorage.setItem('wistara_bg', url); 
+        }; 
+        img.src = ev.target.result; 
+      }; 
+      r.readAsDataURL(f); 
+    }
     function resetBackground() { localStorage.removeItem('wistara_bg'); document.body.style.backgroundImage = "var(--bg-image)"; }
 
     async function backupSemuaData() {
-      let btn = document.getElementById('btn-backup');
-      let textAsli = btn.innerHTML;
-      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIAPKAN FILE BACKUP...';
-      btn.disabled = true;
+      let btn = document.getElementById('btn-backup'); let textAsli = btn.innerHTML;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIAPKAN...'; btn.disabled = true;
       try {
         let backupData = {};
-        const koleksi = ["transaksi", "bon", "stok", "server", "tabungan", "celengan", "kreditur"];
+        const koleksi = ["transaksi", "bon", "stok", "server", "tabungan", "celengan", "kreditur", "catatan"];
         for (let col of koleksi) {
           let snap = await db.collection(col).get();
           backupData[col] = [];
           snap.forEach(doc => { backupData[col].push({ id: doc.id, ...doc.data() }); });
         }
-        let dataStr = JSON.stringify(backupData, null, 2);
-        let blob = new Blob([dataStr], { type: "application/json" });
+        let blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
         let url = URL.createObjectURL(blob);
-        let a = document.createElement('a');
-        a.href = url;
-        let tglDownload = new Date().toISOString().slice(0,10);
-        a.download = `Backup_Wistara_${tglDownload}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        alert("✅ Backup Berhasil! File tersimpan di Folder Download HP Anda.");
-      } catch (err) {
-        alert("❌ Gagal melakukan backup: " + err.message);
-      } finally {
-        btn.innerHTML = textAsli;
-        btn.disabled = false;
-      }
+        let a = document.createElement('a'); a.href = url; a.download = `Backup_Wistara_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        alert("✅ Backup Berhasil!");
+      } catch (err) { alert("❌ Gagal: " + err.message); } 
+      finally { btn.innerHTML = textAsli; btn.disabled = false; }
     }
 
     // ==========================================
-    // 15. FITUR CATATAN
+    // FITUR CATATAN & EDIT CATATAN
     // ==========================================
     function muatCatatan() {
       db.collection("catatan").orderBy("timestamp", "desc").onSnapshot(snap => {
@@ -1390,8 +1231,12 @@
         snap.forEach(doc => {
           let item = doc.data();
           let isiText = (item.isi || "").replace(/\n/g, '<br>');
+          let pIsi = String(item.isi || "").replace(/'/g, "\\'").replace(/\n/g, '\\n');
           html += `<div class="box-3d" style="padding:16px; margin-bottom:12px; position:relative;">
-                    <button onclick="hapusCatatan('${doc.id}')" style="position:absolute; top:12px; right:12px; background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button>
+                    <div style="position:absolute; top:12px; right:12px; display:flex; gap:6px;">
+                      <button onclick="bukaEditCatatan('${doc.id}', '${pIsi}')" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); padding:6px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button>
+                      <button onclick="hapusCatatan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button>
+                    </div>
                     <div style="font-size:0.75rem; color:var(--text-muted); font-weight:800; margin-bottom:10px;"><i class="ph-fill ph-clock"></i> ${item.tanggal}</div>
                     <div style="font-size:0.9rem; font-weight:700; line-height:1.5;">${isiText}</div>
                   </div>`;
@@ -1417,13 +1262,34 @@
       });
     }
 
+    function bukaEditCatatan(id, isi) {
+      document.getElementById('edit-catatan-id').value = id;
+      document.getElementById('edit-catatan-isi').value = isi;
+      document.getElementById('modalEditCatatan').style.display = 'flex';
+    }
+
+    function simpanEditCatatan() {
+      let id = document.getElementById('edit-catatan-id').value;
+      let isiBaru = document.getElementById('edit-catatan-isi').value.trim();
+      if(!isiBaru) return;
+      let btn = document.getElementById('btn-simpan-edit-catatan');
+      btn.innerHTML = 'MENYIMPAN...'; btn.disabled = true;
+      db.collection("catatan").doc(id).update({
+        isi: isiBaru
+      }).then(() => {
+        tutupModal('modalEditCatatan');
+        btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN';
+        btn.disabled = false;
+      });
+    }
+
     function hapusCatatan(id) {
       if(confirm("Hapus catatan ini secara permanen?")) db.collection("catatan").doc(id).delete();
     }
 
     window.onload = function() {
        let s = document.getElementById('opacity-slider'); if(s) s.value = savedOpacity;
-       muatBackgroundLokal(); muatProfilToko(); updateBtnMode(); initEfekCahaya();
+       muatBackgroundLokal(); muatProfilToko(); updateBtnMode();
        muatDataSemua(); muatStok(); muatServer(); muatTabungan(); muatCelengan(); muatKreditur(); muatDaftarBon();
     };
   </script>
