@@ -182,7 +182,7 @@
           <div class="input-group"><label>JENIS TRANSAKSI</label><select id="tabungan-jenis"><option value="SETOR">SETOR TABUNGAN (+)</option><option value="TARIK">TARIK SALDO (-)</option></select></div>
           <div class="input-group"><label>ALOKASI / KATEGORI</label><input type="text" id="tabungan-kategori" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: Laba Usaha / Dana Darurat"></div>
           <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="tabungan-nominal" placeholder="Contoh: 50k" oninput="formatUangK(this)"></div>
-          <button class="btn" id="btn-simpan-tabungan" onclick="simpanTabungan()"><i class="ph-fill ph-piggy-bank"></i> SIMPAN TABUNGAN</button>
+          <button type="button" class="btn" id="btn-simpan-tabungan" onclick="simpanTabungan()"><i class="ph-fill ph-piggy-bank"></i> SIMPAN TABUNGAN</button>
         </div>
         <div style="font-weight: 900; font-size: 0.9rem; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-clock-counter-clockwise"></i> RIWAYAT TABUNGAN</div>
         <div id="list-tabungan"><p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">Belum ada catatan tabungan.</p></div>
@@ -194,11 +194,11 @@
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;"><span><i class="ph-fill ph-target"></i> TARGET CELENGAN</span></div>
         <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-          <button id="btn-celengan-berlangsung" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--primary-grad); color: #fff; border: none; font-size: 0.8rem;" onclick="renderCelengan('berlangsung')">BERLANGSUNG</button>
-          <button id="btn-celengan-tercapai" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--input-bg); color: var(--text-main); border: 2px solid var(--input-border); font-size: 0.8rem;" onclick="renderCelengan('tercapai')">TERCAPAI</button>
+          <button type="button" id="btn-celengan-berlangsung" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--primary-grad); color: #fff; border: none; font-size: 0.8rem;" onclick="renderCelengan('berlangsung')">BERLANGSUNG</button>
+          <button type="button" id="btn-celengan-tercapai" style="flex: 1; padding: 10px; border-radius: 12px; font-weight: 900; background: var(--input-bg); color: var(--text-main); border: 2px solid var(--input-border); font-size: 0.8rem;" onclick="renderCelengan('tercapai')">TERCAPAI</button>
         </div>
         <div id="list-celengan"></div>
-        <button class="btn" style="width: 100%; border-radius: 16px; margin-top: 10px; padding: 16px;" onclick="bukaModalCelenganBaru()"><i class="ph-bold ph-plus"></i> TAMBAH CELENGAN BARU</button>
+        <button type="button" class="btn" style="width: 100%; border-radius: 16px; margin-top: 10px; padding: 16px;" onclick="bukaModalCelenganBaru()"><i class="ph-bold ph-plus"></i> TAMBAH CELENGAN BARU</button>
       </div>
     </div>
 
@@ -211,7 +211,7 @@
         <div class="input-group"><label>3. NOMINAL (Rp)</label><input type="text" id="kreditur-nominal" placeholder="Contoh: 1000000" oninput="formatUangK(this); hitungAdminOtomatis()"></div>
         <div class="input-group"><label>4. TENOR (BULAN)</label><input type="number" id="kreditur-tenor" placeholder="Contoh: 6"></div>
         <div class="input-group"><label>5. ADMIN / BLN (Rp) <span style="color:var(--color-warning); font-size:0.7rem;">*Otomatis 5%</span></label><input type="text" id="kreditur-admin" oninput="formatUangK(this)"></div>
-        <button class="btn" id="btn-simpan-kreditur" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
+        <button type="button" class="btn" id="btn-simpan-kreditur" style="margin-top: 10px;" onclick="simpanKrediturBaru()"><i class="ph-bold ph-floppy-disk"></i> SIMPAN DATA KREDITUR</button>
       </div>
       <div class="glass-panel card">
         <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-list-dashes"></i> DAFTAR KREDITUR</span></div>
@@ -227,7 +227,7 @@
         <div class="input-group">
           <textarea id="input-catatan" rows="4" placeholder="Ketik catatan di sini..." style="width: 100%; padding: 14px 16px; border-radius: 14px; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
         </div>
-        <button class="btn" onclick="simpanCatatan()" id="btn-simpan-catatan" style="margin-top: 5px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN CATATAN</button>
+        <button type="button" class="btn" onclick="simpanCatatan()" id="btn-simpan-catatan" style="margin-top: 5px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN CATATAN</button>
       </div>
       
       <div class="glass-panel card">
@@ -241,7 +241,7 @@
         <p style="font-size: 0.85rem; color: var(--text-main); font-weight:700; margin-bottom: 15px;">
           Download seluruh data (Transaksi, Bon, Stok, Celengan, dll) ke dalam HP/Laptop Anda. Lakukan ini seminggu sekali untuk berjaga-jaga jika database Firebase bermasalah.
         </p>
-        <button class="btn" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="backupSemuaData()" id="btn-backup">
+        <button type="button" class="btn" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="backupSemuaData()" id="btn-backup">
           <i class="ph-bold ph-download-simple"></i> DOWNLOAD BACKUP (.JSON)
         </button>
       </div>
@@ -262,14 +262,14 @@
       <div class="glass-panel card">
         <div class="card-title" style="justify-content:space-between;"><span id="judul-tabel-trx"><i class="ph-fill ph-clipboard-text"></i> TRANSAKSI HARI INI</span><i class="ph-bold ph-arrows-clockwise" style="cursor:pointer;" onclick="muatDataSemua()" title="Refresh"></i></div>
         <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-          <button style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; cursor: pointer; border: 2px solid var(--input-border); transition: 0.2s; background: var(--input-bg); color:var(--text-main);" id="btn-mode-hariini" onclick="gantiModeTrx('hariini')">HARI INI</button>
-          <button style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; cursor: pointer; border: 2px solid var(--input-border); transition: 0.2s; background: var(--input-bg); color:var(--text-main);" id="btn-mode-semua" onclick="gantiModeTrx('semua')">KESELURUHAN</button>
+          <button type="button" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; cursor: pointer; border: 2px solid var(--input-border); transition: 0.2s; background: var(--input-bg); color:var(--text-main);" id="btn-mode-hariini" onclick="gantiModeTrx('hariini')">HARI INI</button>
+          <button type="button" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; cursor: pointer; border: 2px solid var(--input-border); transition: 0.2s; background: var(--input-bg); color:var(--text-main);" id="btn-mode-semua" onclick="gantiModeTrx('semua')">KESELURUHAN</button>
         </div>
         <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-nomor" placeholder="🔍 Cari Nama, Nomor, Kode..." onkeyup="filterTransaksi()"></div>
         <div class="box-3d" style="padding: 16px; margin-bottom: 15px;">
           <label style="font-size: 0.78rem; color: var(--text-main); font-weight: 900; display: block; margin-bottom: 10px; text-align: center;"><i class="ph-fill ph-calendar-blank" style="color:var(--primary); margin-right:4px;"></i> CARI RENTANG TANGGAL</label>
           <div style="display: flex; gap: 8px; margin-bottom: 12px;"><div style="flex: 1;"><input type="date" id="filter-mulai"></div><div style="flex: 1;"><input type="date" id="filter-akhir"></div></div>
-          <button class="btn" style="padding: 12px; font-size: 0.9rem; border-radius: 12px;" onclick="terapkanFilterTanggal()"><i class="ph-bold ph-magnifying-glass"></i> TAMPILKAN</button>
+          <button type="button" class="btn" style="padding: 12px; font-size: 0.9rem; border-radius: 12px;" onclick="terapkanFilterTanggal()"><i class="ph-bold ph-magnifying-glass"></i> TAMPILKAN</button>
         </div>
         <div id="list-harian"></div>
       </div>
@@ -291,38 +291,38 @@
             <input type="text" class="input-profil" id="input-profile-desc" placeholder="Ketik Slogan / Deskripsi">
             <input type="file" id="input-profile-foto" accept="image/*" style="display: none;" onchange="previewFotoProfil(event)">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
-              <button class="btn" style="padding: 12px; font-size: 0.8rem; background: var(--panel-bg); color: var(--primary); border: 2px solid var(--input-border); box-shadow: none;" onclick="document.getElementById('input-profile-foto').click()"><i class="ph-fill ph-camera"></i> GANTI FOTO</button>
-              <button class="btn" style="padding: 12px; font-size: 0.8rem;" onclick="simpanProfil()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+              <button type="button" class="btn" style="padding: 12px; font-size: 0.8rem; background: var(--panel-bg); color: var(--primary); border: 2px solid var(--input-border); box-shadow: none;" onclick="document.getElementById('input-profile-foto').click()"><i class="ph-fill ph-camera"></i> GANTI FOTO</button>
+              <button type="button" class="btn" style="padding: 12px; font-size: 0.8rem;" onclick="simpanProfil()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
             </div>
           </div>
           
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-palette"></i> 24 PILIHAN TEMA APLIKASI</label>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 18px; max-height: 250px; overflow-y: auto;">
-              <button class="theme-btn" style="background: rgba(255,255,255,0.9); color: #1d4ed8; border: 2px solid #1d4ed8;" onclick="setTheme('light')">PROFESIONAL</button>
-              <button class="theme-btn" style="background: rgba(10,10,10,0.9); color: #dc2626; border: 2px solid #dc2626;" onclick="setTheme('dark')">RED DARK</button>
-              <button class="theme-btn" style="background: rgba(28,25,23,0.9); color: #22c55e; border: 2px solid #22c55e;" onclick="setTheme('forest')">FOREST GREEN</button>
-              <button class="theme-btn" style="background: rgba(245,245,244,0.9); color: #78350f; border: 2px solid #78350f;" onclick="setTheme('coffee')">COFFEE</button>
-              <button class="theme-btn" style="background: rgba(255,255,255,0.9); color: #000000; border: 2px solid #000000;" onclick="setTheme('monochrome')">MONOCHROME</button>
-              <button class="theme-btn" style="background: rgba(250,245,255,0.9); color: #8b5cf6; border: 2px solid #8b5cf6;" onclick="setTheme('lavender')">LAVENDER</button>
-              <button class="theme-btn" style="background: rgba(253,242,248,0.9); color: #db2777; border: 2px solid #db2777;" onclick="setTheme('pastel-pink')">PASTEL PINK</button>
-              <button class="theme-btn" style="background: rgba(15,23,42,0.9); color: #38bdf8; border: 2px solid #38bdf8;" onclick="setTheme('ocean-dark')">OCEAN DARK</button>
-              <button class="theme-btn" style="background: rgba(5,11,20,0.9); color: #06b6d4; border: 2px solid #06b6d4;" onclick="setTheme('cyber')">CYBER CYAN</button>
-              <button class="theme-btn" style="background: rgba(15,5,24,0.9); color: #a855f7; border: 2px solid #a855f7;" onclick="setTheme('neon')">NEON PURPLE</button>
-              <button class="theme-btn" style="background: rgba(26,16,5,0.9); color: #f59e0b; border: 2px solid #f59e0b;" onclick="setTheme('sunset')">SUNSET GOLD</button>
-              <button class="theme-btn" style="background: rgba(254,252,232,0.9); color: #15803d; border: 2px solid #15803d;" onclick="setTheme('dynamic')">NATURE GLOW</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #0f172a, #164e63); color: #2dd4bf; border: 2px solid #06b6d4;" onclick="setTheme('grad-ocean')">GRAD OCEAN</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #2e1065, #701a75); color: #f0abfc; border: 2px solid #d946ef;" onclick="setTheme('grad-twilight')">TWILIGHT</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #064e3b, #065f46); color: #a7f3d0; border: 2px solid #10b981;" onclick="setTheme('grad-emerald')">EMERALD</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #fff1f2, #ffedd5); color: #f43f5e; border: 2px solid #fb7185;" onclick="setTheme('grad-peach')">PEACH BREEZE</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #020617, #1e1b4b); color: #8b5cf6; border: 2px solid #4f46e5;" onclick="setTheme('grad-midnight')">MIDNIGHT</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #171717, #422006); color: #f59e0b; border: 2px solid #b45309;" onclick="setTheme('grad-gold')">RICH GOLD</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #022c22, #2e1065); color: #99f6e4; border: 2px solid #14b8a6;" onclick="setTheme('grad-aurora')">AURORA TEAL</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #450a0a, #7c2d12); color: #fca5a5; border: 2px solid #ef4444;" onclick="setTheme('grad-fire')">LAVA FIRE</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #4c0519, #3b0764); color: #fecdd3; border: 2px solid #e11d48;" onclick="setTheme('grad-berry')">DEEP BERRY</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); color: #0284c7; border: 2px solid #0ea5e9;" onclick="setTheme('grad-sky')">CLEAR SKY</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #7c2d12, #1e3a8a); color: #fdba74; border: 2px solid #f97316;" onclick="setTheme('grad-dusk')">DUSK ORANGE</button>
-              <button class="theme-btn" style="background: linear-gradient(135deg, #f0fdf4, #dbeafe); color: #16a34a; border: 2px solid #22c55e;" onclick="setTheme('grad-mint')">MINT FRESH</button>
+              <button type="button" class="theme-btn" style="background: rgba(255,255,255,0.9); color: #1d4ed8; border: 2px solid #1d4ed8;" onclick="setTheme('light')">PROFESIONAL</button>
+              <button type="button" class="theme-btn" style="background: rgba(10,10,10,0.9); color: #dc2626; border: 2px solid #dc2626;" onclick="setTheme('dark')">RED DARK</button>
+              <button type="button" class="theme-btn" style="background: rgba(28,25,23,0.9); color: #22c55e; border: 2px solid #22c55e;" onclick="setTheme('forest')">FOREST GREEN</button>
+              <button type="button" class="theme-btn" style="background: rgba(245,245,244,0.9); color: #78350f; border: 2px solid #78350f;" onclick="setTheme('coffee')">COFFEE</button>
+              <button type="button" class="theme-btn" style="background: rgba(255,255,255,0.9); color: #000000; border: 2px solid #000000;" onclick="setTheme('monochrome')">MONOCHROME</button>
+              <button type="button" class="theme-btn" style="background: rgba(250,245,255,0.9); color: #8b5cf6; border: 2px solid #8b5cf6;" onclick="setTheme('lavender')">LAVENDER</button>
+              <button type="button" class="theme-btn" style="background: rgba(253,242,248,0.9); color: #db2777; border: 2px solid #db2777;" onclick="setTheme('pastel-pink')">PASTEL PINK</button>
+              <button type="button" class="theme-btn" style="background: rgba(15,23,42,0.9); color: #38bdf8; border: 2px solid #38bdf8;" onclick="setTheme('ocean-dark')">OCEAN DARK</button>
+              <button type="button" class="theme-btn" style="background: rgba(5,11,20,0.9); color: #06b6d4; border: 2px solid #06b6d4;" onclick="setTheme('cyber')">CYBER CYAN</button>
+              <button type="button" class="theme-btn" style="background: rgba(15,5,24,0.9); color: #a855f7; border: 2px solid #a855f7;" onclick="setTheme('neon')">NEON PURPLE</button>
+              <button type="button" class="theme-btn" style="background: rgba(26,16,5,0.9); color: #f59e0b; border: 2px solid #f59e0b;" onclick="setTheme('sunset')">SUNSET GOLD</button>
+              <button type="button" class="theme-btn" style="background: rgba(254,252,232,0.9); color: #15803d; border: 2px solid #15803d;" onclick="setTheme('dynamic')">NATURE GLOW</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #0f172a, #164e63); color: #2dd4bf; border: 2px solid #06b6d4;" onclick="setTheme('grad-ocean')">GRAD OCEAN</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #2e1065, #701a75); color: #f0abfc; border: 2px solid #d946ef;" onclick="setTheme('grad-twilight')">TWILIGHT</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #064e3b, #065f46); color: #a7f3d0; border: 2px solid #10b981;" onclick="setTheme('grad-emerald')">EMERALD</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #fff1f2, #ffedd5); color: #f43f5e; border: 2px solid #fb7185;" onclick="setTheme('grad-peach')">PEACH BREEZE</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #020617, #1e1b4b); color: #8b5cf6; border: 2px solid #4f46e5;" onclick="setTheme('grad-midnight')">MIDNIGHT</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #171717, #422006); color: #f59e0b; border: 2px solid #b45309;" onclick="setTheme('grad-gold')">RICH GOLD</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #022c22, #2e1065); color: #99f6e4; border: 2px solid #14b8a6;" onclick="setTheme('grad-aurora')">AURORA TEAL</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #450a0a, #7c2d12); color: #fca5a5; border: 2px solid #ef4444;" onclick="setTheme('grad-fire')">LAVA FIRE</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #4c0519, #3b0764); color: #fecdd3; border: 2px solid #e11d48;" onclick="setTheme('grad-berry')">DEEP BERRY</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); color: #0284c7; border: 2px solid #0ea5e9;" onclick="setTheme('grad-sky')">CLEAR SKY</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #7c2d12, #1e3a8a); color: #fdba74; border: 2px solid #f97316;" onclick="setTheme('grad-dusk')">DUSK ORANGE</button>
+              <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #f0fdf4, #dbeafe); color: #16a34a; border: 2px solid #22c55e;" onclick="setTheme('grad-mint')">MINT FRESH</button>
             </div>
             
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 8px;"><i class="ph-fill ph-sliders"></i> TRANSPARANSI PANEL</label>
@@ -332,8 +332,8 @@
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-image"></i> GANTI WALLPAPER KUSTOM</label>
             <input type="file" id="input-bg" accept="image/*" style="display: none;" onchange="prosesGantiBackground(event)">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-              <button class="btn" style="padding: 12px; font-size: 0.8rem; background: var(--panel-bg); color: var(--primary); border: 2px solid var(--input-border); box-shadow: none;" onclick="document.getElementById('input-bg').click()"><i class="ph-bold ph-upload-simple"></i> GALERI HP</button>
-              <button class="btn" style="padding: 12px; font-size: 0.8rem; background: rgba(220, 38, 38, 0.1); color: var(--color-danger); border: 2px solid var(--color-danger); box-shadow: none;" onclick="resetBackground()"><i class="ph-bold ph-trash"></i> KEMBALIKAN</button>
+              <button type="button" class="btn" style="padding: 12px; font-size: 0.8rem; background: var(--panel-bg); color: var(--primary); border: 2px solid var(--input-border); box-shadow: none;" onclick="document.getElementById('input-bg').click()"><i class="ph-bold ph-upload-simple"></i> GALERI HP</button>
+              <button type="button" class="btn" style="padding: 12px; font-size: 0.8rem; background: rgba(220, 38, 38, 0.1); color: var(--color-danger); border: 2px solid var(--color-danger); box-shadow: none;" onclick="resetBackground()"><i class="ph-bold ph-trash"></i> KEMBALIKAN</button>
             </div>
           </div>
         </div>
@@ -368,7 +368,7 @@
         <div class="input-group"><label>TOTAL KUOTA</label><input type="text" id="kuber" class="input-upper" placeholder="Contoh: 10" onchange="formatGB(this)"></div>
         <div class="input-group"><label>MODAL (Rp)</label><input type="text" id="modal" placeholder="Contoh: 54k" oninput="formatUangK(this)"></div>
         <div class="input-group"><label>HARGA JUAL (Rp)</label><input type="text" id="harga" placeholder="Contoh: 55k" oninput="formatUangK(this)"></div>
-        <button class="btn" onclick="kirimData()" id="btn-submit" style="margin-top: 10px;"><i class="ph-fill ph-lightning"></i> EKSEKUSI TRANSAKSI</button>
+        <button type="button" class="btn" onclick="kirimData()" id="btn-submit" style="margin-top: 10px;"><i class="ph-fill ph-lightning"></i> EKSEKUSI TRANSAKSI</button>
       </div>
     </div>
     
@@ -379,7 +379,7 @@
         <div class="input-group"><label>KODE PAKET</label><input type="text" id="stok-kode" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: T10"></div>
         <div class="input-group"><label>VARIANT (OPSIONAL)</label><input type="text" id="stok-variant" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: Tsel 10GB"></div>
         <div class="input-group"><label>JUMLAH TAMBAH STOK</label><input type="number" id="stok-jumlah" placeholder="Contoh: 50"></div>
-        <button class="btn" onclick="simpanStok()" id="btn-stok" style="margin-top: 10px;"><i class="ph-bold ph-plus"></i> TAMBAHKAN STOK</button>
+        <button type="button" class="btn" onclick="simpanStok()" id="btn-stok" style="margin-top: 10px;"><i class="ph-bold ph-plus"></i> TAMBAHKAN STOK</button>
       </div>
       <div class="glass-panel card">
         <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-cube"></i> SISA STOK GUDANG</span></div>
@@ -391,7 +391,7 @@
     <div id="tab-bon" class="section">
       <div class="glass-panel card">
         <div class="card-title" style="justify-content:space-between;"><span><i class="ph-fill ph-notebook"></i> DAFTAR PIUTANG BON</span></div>
-        <button class="btn" style="background: linear-gradient(135deg, var(--color-warning), #b45309); color: #fff; margin-bottom: 18px;" onclick="bukaModalSetBon()"><i class="ph-fill ph-scales"></i> SET SALDO BON MANUAL</button>
+        <button type="button" class="btn" style="background: linear-gradient(135deg, var(--color-warning), #b45309); color: #fff; margin-bottom: 18px;" onclick="bukaModalSetBon()"><i class="ph-fill ph-scales"></i> SET SALDO BON MANUAL</button>
         <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-bon" class="input-upper" placeholder="🔍 Cari Nama Reseller..." onkeyup="filterBon()"></div>
         <div id="list-bon"></div>
       </div>
@@ -403,7 +403,7 @@
         <div class="card-title"><i class="ph-fill ph-hand-coins"></i> BAYAR BON</div>
         <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="nama-bayar" class="input-upper" list="list-nama" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."></div>
         <div class="input-group"><label>JUMLAH BAYAR (Rp)</label><input type="text" id="nominal-bayar" placeholder="Contoh: 50k" oninput="formatUangK(this)"></div>
-        <button class="btn" style="background: linear-gradient(135deg, var(--color-success), #047857); margin-top: 10px;" id="btn-bayar" onclick="prosesBayar()"><i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR</button>
+        <button type="button" class="btn" style="background: linear-gradient(135deg, var(--color-success), #047857); margin-top: 10px;" id="btn-bayar" onclick="prosesBayar()"><i class="ph-bold ph-checks"></i> KONFIRMASI BAYAR</button>
       </div>
     </div>
 
@@ -414,7 +414,7 @@
         <div class="box-3d" style="padding: 18px; margin-bottom: 22px;">
           <div class="input-group"><label>NAMA SERVER</label><input type="text" id="server-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: SERVER TELKOMSEL"></div>
           <div class="input-group"><label>NOMOR SERVER</label><input type="text" id="server-nomor" placeholder="Contoh: 081234567890"></div>
-          <button id="btn-submit-server" class="btn" onclick="simpanServer()" style="margin-top: 10px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN SERVER</button>
+          <button type="button" id="btn-submit-server" class="btn" onclick="simpanServer()" style="margin-top: 10px;"><i class="ph-fill ph-floppy-disk"></i> SIMPAN SERVER</button>
         </div>
         <div style="text-align: center; color: var(--primary); font-weight: 900; margin-bottom: 12px; font-size: 1.05rem; letter-spacing: 0.5px;">📋 DAFTAR SERVER</div>
         <div class="input-group" style="margin-bottom: 15px;"><input type="text" id="cari-server" class="input-upper" placeholder="🔍 Cari Nama atau 4 Angka..." onkeyup="filterServer()"></div>
@@ -435,8 +435,8 @@
         </div>
       </div>
       <div class="modal-btns" style="padding: 14px; margin-top: 0; border-top: 2px solid var(--input-border); background: var(--input-bg);">
-        <button class="btn-wa" onclick="kirimKeWA()"><i class="ph-fill ph-whatsapp-logo" style="font-size:1.2rem;"></i> BAGIKAN FOTO</button>
-        <button class="btn-close" onclick="tutupModal('modalNota')">TUTUP</button>
+        <button type="button" class="btn-wa" onclick="kirimKeWA()"><i class="ph-fill ph-whatsapp-logo" style="font-size:1.2rem;"></i> BAGIKAN FOTO</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalNota')">TUTUP</button>
       </div>
     </div>
   </div>
@@ -451,8 +451,8 @@
         <textarea id="edit-catatan-isi" rows="5" style="width: 100%; padding: 14px 16px; border-radius: 14px; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
       </div>
       <div class="modal-btns">
-        <button class="btn" style="flex: 1;" onclick="simpanEditCatatan()" id="btn-simpan-edit-catatan"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
-        <button class="btn-close" onclick="tutupModal('modalEditCatatan')">BATAL</button>
+        <button type="button" class="btn" style="flex: 1;" onclick="simpanEditCatatan()" id="btn-simpan-edit-catatan"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalEditCatatan')">BATAL</button>
       </div>
     </div>
   </div>
@@ -469,8 +469,8 @@
       <div class="input-group"><label>MODAL (Rp)</label><input type="text" id="edit-modal" oninput="formatUangK(this)"></div>
       <div class="input-group"><label>HARGA JUAL (Rp)</label><input type="text" id="edit-harga" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
-        <button class="btn" style="flex: 1;" onclick="simpanEdit()" id="btn-simpan-edit"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
-        <button class="btn-close" onclick="tutupModal('modalEdit')">BATAL</button>
+        <button type="button" class="btn" style="flex: 1;" onclick="simpanEdit()" id="btn-simpan-edit"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalEdit')">BATAL</button>
       </div>
     </div>
   </div>
@@ -482,8 +482,8 @@
       <div class="input-group"><label>NAMA SERVER</label><input type="text" id="edit-server-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
       <div class="input-group"><label>NOMOR SERVER</label><input type="text" id="edit-server-nomor"></div>
       <div class="modal-btns">
-        <button class="btn" style="flex: 1;" id="btn-simpan-edit-server" onclick="simpanEditServer()">SIMPAN</button>
-        <button class="btn-close" onclick="tutupModal('modalEditServer')">BATAL</button>
+        <button type="button" class="btn" style="flex: 1;" id="btn-simpan-edit-server" onclick="simpanEditServer()">SIMPAN</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalEditServer')">BATAL</button>
       </div>
     </div>
   </div>
@@ -494,8 +494,8 @@
       <div class="input-group"><label>NAMA RESELLER</label><input type="text" id="set-bon-nama" class="input-upper" list="list-nama" oninput="this.value = this.value.toUpperCase()" placeholder="Ketik nama..."></div>
       <div class="input-group"><label>TOTAL BON BARU (Rp)</label><input type="text" id="set-bon-nominal" placeholder="Contoh: 150000" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
-        <button class="btn" style="background: linear-gradient(135deg, var(--color-warning), #b45309); flex: 1;" onclick="simpanSetBon()" id="btn-simpan-setbon"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
-        <button class="btn-close" onclick="tutupModal('modalSetBon')">BATAL</button>
+        <button type="button" class="btn" style="background: linear-gradient(135deg, var(--color-warning), #b45309); flex: 1;" onclick="simpanSetBon()" id="btn-simpan-setbon"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalSetBon')">BATAL</button>
       </div>
     </div>
   </div>
@@ -506,9 +506,9 @@
       <h3 style="color: var(--color-success); margin-top: 0; font-weight: 900;">TRANSAKSI SUKSES!</h3>
       <p style="color: var(--text-main); font-size: 0.88rem; margin-bottom: 22px; font-weight: 700;">Pilih format nota untuk pelanggan:</p>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button class="btn" style="background: linear-gradient(135deg, var(--color-success), #047857);" onclick="kirimWaTeksSukses()"><i class="ph-fill ph-whatsapp-logo" style="font-size:1.3rem;"></i> KIRIM NOTA TEKS</button>
-        <button class="btn" style="background: var(--input-bg); color: var(--primary); border: 2px solid var(--input-border); box-shadow: none;" onclick="bukaNotaGambarSukses()"><i class="ph-fill ph-receipt"></i> BUKA NOTA GAMBAR</button>
-        <button class="btn-close" style="width: 100%; margin-top: 5px;" onclick="tutupModal('modalSuksesTrx')">TUTUP</button>
+        <button type="button" class="btn" style="background: linear-gradient(135deg, var(--color-success), #047857);" onclick="kirimWaTeksSukses()"><i class="ph-fill ph-whatsapp-logo" style="font-size:1.3rem;"></i> KIRIM NOTA TEKS</button>
+        <button type="button" class="btn" style="background: var(--input-bg); color: var(--primary); border: 2px solid var(--input-border); box-shadow: none;" onclick="bukaNotaGambarSukses()"><i class="ph-fill ph-receipt"></i> BUKA NOTA GAMBAR</button>
+        <button type="button" class="btn-close" style="width: 100%; margin-top: 5px;" onclick="tutupModal('modalSuksesTrx')">TUTUP</button>
       </div>
     </div>
   </div>
@@ -522,8 +522,8 @@
       <div class="input-group"><label>RENCANA PENGISIAN</label><select id="celengan-rencana"><option value="Harian">Harian</option><option value="Mingguan">Mingguan</option><option value="Bulanan">Bulanan</option></select></div>
       <div class="input-group"><label>NOMINAL PENGISIAN (Rp)</label><input type="text" id="celengan-nominal" placeholder="Contoh: 100.000" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
-        <button class="btn" id="btn-simpan-celengan" style="flex: 1;" onclick="simpanCelenganBaru()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
-        <button class="btn-close" onclick="tutupModal('modalBuatCelengan')">BATAL</button>
+        <button type="button" class="btn" id="btn-simpan-celengan" style="flex: 1;" onclick="simpanCelenganBaru()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalBuatCelengan')">BATAL</button>
       </div>
     </div>
   </div>
@@ -534,8 +534,8 @@
       <input type="hidden" id="isi-celengan-id">
       <div class="input-group"><label>NOMINAL YANG DITABUNG (Rp)</label><input type="text" id="isi-celengan-nominal" placeholder="Contoh: 50.000" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
-        <button class="btn" id="btn-isi-celengan" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanIsiCelengan()"><i class="ph-bold ph-plus"></i> TAMBAH SALDO</button>
-        <button class="btn-close" onclick="tutupModal('modalIsiCelengan')">BATAL</button>
+        <button type="button" class="btn" id="btn-isi-celengan" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanIsiCelengan()"><i class="ph-bold ph-plus"></i> TAMBAH SALDO</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalIsiCelengan')">BATAL</button>
       </div>
     </div>
   </div>
@@ -550,8 +550,8 @@
       <div class="input-group"><label>TENOR (BULAN)</label><input type="number" id="edit-kreditur-tenor"></div>
       <div class="input-group"><label>ADMIN PER BULAN (Rp)</label><input type="text" id="edit-kreditur-admin" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
-        <button class="btn" id="btn-simpan-edit-kreditur" style="flex: 1;" onclick="simpanEditKreditur()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
-        <button class="btn-close" onclick="tutupModal('modalEditKreditur')">BATAL</button>
+        <button type="button" class="btn" id="btn-simpan-edit-kreditur" style="flex: 1;" onclick="simpanEditKreditur()"><i class="ph-fill ph-floppy-disk"></i> SIMPAN</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalEditKreditur')">BATAL</button>
       </div>
     </div>
   </div>
@@ -563,8 +563,8 @@
       <div class="input-group"><label>FOTO BUKTI PEMBAYARAN</label><input type="file" id="input-kreditur-bukti" accept="image/*" style="padding: 10px;" onchange="previewBuktiKreditur(event)"><input type="hidden" id="kreditur-bukti-base64"></div>
       <div class="input-group"><label>NOMINAL BAYAR (Rp)</label><input type="text" id="bayar-kreditur-nominal" oninput="formatUangK(this)"></div>
       <div class="modal-btns">
-        <button class="btn" id="btn-simpan-bayar-kreditur" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanBayarKreditur()"><i class="ph-bold ph-check"></i> KONFIRMASI BAYAR</button>
-        <button class="btn-close" onclick="tutupModal('modalBayarKreditur')">BATAL</button>
+        <button type="button" class="btn" id="btn-simpan-bayar-kreditur" style="flex: 1; background: linear-gradient(135deg, var(--color-success), #047857);" onclick="simpanBayarKreditur()"><i class="ph-bold ph-check"></i> KONFIRMASI BAYAR</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalBayarKreditur')">BATAL</button>
       </div>
     </div>
   </div>
@@ -573,7 +573,7 @@
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 10px; font-weight: 900;"><i class="ph-bold ph-clock-counter-clockwise"></i> RIWAYAT BAYAR</h3>
       <div id="list-riwayat-kreditur"></div>
-      <button class="btn-close" style="width: 100%; margin-top: 15px;" onclick="tutupModal('modalRiwayatKreditur')">TUTUP</button>
+      <button type="button" class="btn-close" style="width: 100%; margin-top: 15px;" onclick="tutupModal('modalRiwayatKreditur')">TUTUP</button>
     </div>
   </div>
 
@@ -783,8 +783,8 @@
                   <div style="font-weight:900; font-size:1rem; text-transform:uppercase;"><i class="ph-fill ph-lightning" style="color:var(--color-warning);"></i> ${item.nama}</div>
                   <div style="display:flex; align-items:center; gap:6px;">
                     <div style="font-weight:900; font-size:1.05rem; color:var(--color-danger); margin-right:4px;">Rp ${item.total.toLocaleString('id-ID')}</div>
-                    <button onclick="tagihWA('${item.nama}', '${item.total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button>
-                    <button onclick="hapusBon('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:10px;"><i class="ph-bold ph-trash"></i></button>
+                    <button type="button" onclick="tagihWA('${item.nama}', '${item.total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button>
+                    <button type="button" onclick="hapusBon('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:10px;"><i class="ph-bold ph-trash"></i></button>
                   </div>
                 </div>`;
       });
@@ -823,7 +823,7 @@
               let item = doc.data(), id = doc.id, w = item.stok <= 5 ? 'var(--color-danger)' : 'var(--color-success)';
               html += `<div class="box-3d" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px;">
                         <div><div style="font-weight:900; font-size:1.05rem;"><i class="ph-bold ph-barcode" style="color:var(--primary);"></i> ${item.kode}</div><div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">${item.variant || 'Tanpa Variant'}</div></div>
-                        <div style="display: flex; align-items: center; gap: 12px;"><div style="font-weight:900; font-size:1.6rem; color:${w};">${item.stok}</div><button onclick="hapusStokItem('${id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div>
+                        <div style="display: flex; align-items: center; gap: 12px;"><div style="font-weight:900; font-size:1.6rem; color:${w};">${item.stok}</div><button type="button" onclick="hapusStokItem('${id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div>
                       </div>`;
           }); lStok.innerHTML = html;
       });
@@ -847,7 +847,7 @@
         let pNama = String(item.nama).replace(/'/g, "\\'"), pNomor = String(item.nomor).replace(/'/g, "\\'");
         html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
                   <div><div style="font-weight:900; font-size:1.05rem; text-transform:uppercase;"><i class="ph-fill ph-hard-drives" style="color:var(--primary);"></i> ${item.nama}</div><div style="color:var(--color-success); font-weight:800; font-size:0.92rem;">${item.nomor}</div></div>
-                  <div style="display:flex; gap:6px;"><button onclick="bukaEditServer('${item.id}', '${pNama}', '${pNomor}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); padding:8px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="hapusServer('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
+                  <div style="display:flex; gap:6px;"><button type="button" onclick="bukaEditServer('${item.id}', '${pNama}', '${pNomor}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); padding:8px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" onclick="hapusServer('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
       }); container.innerHTML = html;
     }
     function filterServer() { let kw = document.getElementById('cari-server').value.toLowerCase().trim(); renderListServer(serverCache.filter(i => i.nama.toLowerCase().includes(kw) || i.nomor.toLowerCase().includes(kw))); }
@@ -869,7 +869,7 @@
           let w = item.jenis === 'SETOR' ? 'var(--color-success)' : 'var(--color-danger)', pref = item.jenis === 'SETOR' ? '+' : '-';
           html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:14px; margin-bottom:10px;">
                     <div><div style="font-weight:900; font-size:0.9rem; text-transform:uppercase;">${item.kategori}</div><div style="font-size:0.75rem; color:var(--text-muted);">${item.tanggal} • <b style="color:${w};">${item.jenis}</b></div></div>
-                    <div style="display:flex; align-items:center; gap:10px;"><div style="font-weight:900; font-size:0.95rem; color:${w};">${pref}Rp ${item.nominal.toLocaleString('id-ID')}</div><button onclick="hapusTabungan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
+                    <div style="display:flex; align-items:center; gap:10px;"><div style="font-weight:900; font-size:0.95rem; color:${w};">${pref}Rp ${item.nominal.toLocaleString('id-ID')}</div><button type="button" onclick="hapusTabungan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>`;
         });
         document.getElementById('tabungan-total').innerText = "Rp " + totalSaldo.toLocaleString('id-ID'); 
         document.getElementById('tabungan-hariini').innerText = "Rp " + hariIni.toLocaleString('id-ID'); 
@@ -899,7 +899,7 @@
         let belumIsi = (item.terkumpul < item.target && item.terakhirIsi !== tglSkrg) ? `<div style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; text-align:center; font-weight:900; border-radius:8px; margin-bottom:10px;">BELUM DIISI HARI INI!</div>` : '';
         let status = item.terkumpul >= item.target ? `<i class="ph-fill ph-check-circle" style="color:var(--color-success);"></i> TARGET TERCAPAI!` : `Estimasi ${est} Kali Pengisian Lagi`;
         container.innerHTML += `<div class="box-3d" style="padding:16px; position:relative;">
-          <button onclick="hapusCelengan('${item.id}')" style="position:absolute; top:10px; right:10px; background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px; z-index:10;"><i class="ph-bold ph-trash"></i></button>
+          <button type="button" onclick="hapusCelengan('${item.id}')" style="position:absolute; top:10px; right:10px; background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px; z-index:10;"><i class="ph-bold ph-trash"></i></button>
           <div style="background:var(--input-bg); height:250px; border-radius:14px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:15px; border:2px dashed var(--input-border);">${img}</div>
           <div style="font-weight:900; font-size:1.1rem; text-transform:uppercase; margin-bottom:10px;">${item.nama}</div>${belumIsi}
           <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px dashed var(--input-border); padding-bottom:15px; margin-bottom:15px;">
@@ -907,7 +907,7 @@
             <div style="width:50px; height:50px; border-radius:50%; background:conic-gradient(var(--primary) ${persen}%, var(--input-bg) 0); display:flex; align-items:center; justify-content:center;"><div style="width:40px; height:40px; background:var(--panel-bg); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.75rem;">${persen}%</div></div>
           </div>
           <div style="text-align:center; font-weight:900; font-size:0.8rem;">${status}</div>
-          ${item.terkumpul < item.target ? `<button class="btn" style="margin-top:15px;" onclick="bukaModalIsiCelengan('${item.id}')"><i class="ph-bold ph-plus"></i> ISI CELENGAN</button>` : ''}
+          ${item.terkumpul < item.target ? `<button type="button" class="btn" style="margin-top:15px;" onclick="bukaModalIsiCelengan('${item.id}')"><i class="ph-bold ph-plus"></i> ISI CELENGAN</button>` : ''}
         </div>`;
       });
     }
@@ -945,10 +945,10 @@
           <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
             <div><div style="font-weight:900; font-size:1.1rem; text-transform:uppercase;">${item.nama}</div><span style="background:var(--input-bg); color:${w}; border:1px solid ${w}; padding:3px 8px; border-radius:6px; font-size:0.7rem; font-weight:900;">${item.jenis}</span></div>
             <div style="display:flex; gap:6px;">
-              <button onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
-              <button onclick="bukaModalBayarKreditur('${item.id}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-money"></i></button>
-              <button onclick="bukaModalEditKreditur('${item.id}')" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
-              <button onclick="hapusKreditur('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-trash"></i></button>
+              <button type="button" onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
+              <button type="button" onclick="bukaModalBayarKreditur('${item.id}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-money"></i></button>
+              <button type="button" onclick="bukaModalEditKreditur('${item.id}')" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
+              <button type="button" onclick="hapusKreditur('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-trash"></i></button>
             </div>
           </div>
           <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;"><span>Pinjaman: Rp ${item.nominal.toLocaleString('id-ID')}</span><span>Admin: Rp ${item.admin.toLocaleString('id-ID')}</span></div>
@@ -1046,7 +1046,7 @@
       list.slice(0, 15).forEach(item => {
         let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0';
         let pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
-        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
+        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button type="button" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button type="button" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
       container.innerHTML = html;
     }
@@ -1098,6 +1098,12 @@
       document.getElementById('modalNota').style.display = 'flex'; 
     }
 
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, function(ch) {
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];
+      });
+    }
+
     function formatNotaToHTML(teks) {
       let lines = teks.replace(/```/g, '').split('\n');
       let html = '<div style="font-size:0.75rem; line-height:1.6; font-family: \'Courier New\', Courier, monospace; font-weight: bold; color: var(--text-main);">';
@@ -1108,7 +1114,7 @@
           let idx = txt.indexOf(':'), lbl = txt.substring(0, idx).trim(), val = txt.substring(idx + 1).trim();
           html += `<div style="display:flex; padding:4px 0;"><div style="width:40%; color:var(--text-muted);">${lbl}</div><div style="width:5%;">:</div><div style="width:55%; text-transform:uppercase;">${val}</div></div>`;
         } else {
-          html += `<div style="text-align:center; margin:4px 0; text-transform:uppercase;">${txt}</div>`;
+          html += `<div style="text-align:center; margin:4px 0; text-transform:uppercase;">${escapeHTML(txt)}</div>`;
         }
       }); return html + '</div>';
     }
@@ -1118,12 +1124,12 @@
     function kirimWaTeksSukses() {
       // Membersihkan teks dari karakter spasi berlebih agar aman dibuka via URL WhatsApp
       let cleanText = tempNotaWA.replace(/```/g, '').trim();
-      window.open("[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(cleanText), "_blank");
+      window.open("https://wa.me/?text=" + encodeURIComponent(cleanText), "_blank");
     }
 
     function tagihWA(nama, totalBon) {
       let pesanTagihan = `*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`;
-      window.open("[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(pesanTagihan), "_blank");
+      window.open("https://wa.me/?text=" + encodeURIComponent(pesanTagihan), "_blank");
     }
     
     function kirimKeWA() {
@@ -1239,12 +1245,12 @@
         let html = '';
         snap.forEach(doc => {
           let item = doc.data();
-          let isiText = (item.isi || "").replace(/\n/g, '<br>');
+          let isiText = escapeHTML(item.isi || "").replace(/\n/g, "<br>");
           let pIsi = String(item.isi || "").replace(/'/g, "\\'").replace(/\n/g, '\\n');
           html += `<div class="box-3d" style="padding:16px; margin-bottom:12px; position:relative;">
                     <div style="position:absolute; top:12px; right:12px; display:flex; gap:6px;">
-                      <button onclick="bukaEditCatatan('${doc.id}', '${pIsi}')" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); padding:6px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button>
-                      <button onclick="hapusCatatan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button>
+                      <button type="button" onclick="bukaEditCatatan('${doc.id}', '${pIsi}')" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); padding:6px; border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i></button>
+                      <button type="button" onclick="hapusCatatan('${doc.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:6px; border-radius:8px;"><i class="ph-bold ph-trash"></i></button>
                     </div>
                     <div style="font-size:0.75rem; color:var(--text-muted); font-weight:800; margin-bottom:10px;"><i class="ph-fill ph-clock"></i> ${item.tanggal}</div>
                     <div style="font-size:0.9rem; font-weight:700; line-height:1.5;">${isiText}</div>
