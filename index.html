@@ -1121,11 +1121,12 @@
 
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
     
-    function kirimWaTeksSukses() {
-      // Membersihkan teks dari karakter spasi berlebih agar aman dibuka via URL WhatsApp
-      let cleanText = tempNotaWA.replace(/```/g, '').trim();
-      window.open("https://wa.me/?text=" + encodeURIComponent(cleanText), "_blank");
+          function kirimWaTeksSukses() {
+      // Langsung encode tempNotaWA tanpa menghapus tanda backtick (```)
+      let url = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA);
+      window.open(url, "_blank");
     }
+
 
     function tagihWA(nama, totalBon) {
       let pesanTagihan = `*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`;
