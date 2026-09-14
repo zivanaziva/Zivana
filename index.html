@@ -1122,11 +1122,27 @@
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
     
           function kirimWaTeksSukses() {
-      // Langsung encode tempNotaWA tanpa menghapus tanda backtick (```)
-      let url = "[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA);
-      window.open(url, "_blank");
-    }
+      function kirimWaTeksSukses() {
+  if (!tempNotaWA || !tempNotaWA.trim()) {
+    alert("❌ Nota belum tersedia!");
+    return;
+  }
 
+  // Pastikan format monospace WhatsApp tetap menggunakan ```
+  let pesanWA = String(tempNotaWA);
+
+  // Bersihkan jika ada karakter aneh dari HTML
+  pesanWA = pesanWA.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+  // Gunakan URL WhatsApp yang benar
+  let urlWA = "https://wa.me/?text=" + encodeURIComponent(pesanWA);
+
+  // Tutup modal transaksi sukses
+  tutupModal('modalSuksesTrx');
+
+  // Buka WhatsApp
+  window.location.href = urlWA;
+}
 
     function tagihWA(nama, totalBon) {
       let pesanTagihan = `*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`;
