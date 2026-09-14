@@ -1114,8 +1114,17 @@
     }
 
     function bukaNotaGambarSukses() { tutupModal('modalSuksesTrx'); document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar); document.getElementById('modalNota').style.display = 'flex'; }
-    function kirimWaTeksSukses() { window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(tempNotaWA), "_blank"); }
-    function tagihWA(nama, totalBon) { window.open("[https://api.whatsapp.com/send?text=](https://api.whatsapp.com/send?text=)" + encodeURIComponent(`*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`), "_blank"); }
+    
+    function kirimWaTeksSukses() {
+      // Membersihkan teks dari karakter spasi berlebih agar aman dibuka via URL WhatsApp
+      let cleanText = tempNotaWA.replace(/```/g, '').trim();
+      window.open("[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(cleanText), "_blank");
+    }
+
+    function tagihWA(nama, totalBon) {
+      let pesanTagihan = `*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`;
+      window.open("[https://wa.me/?text=](https://wa.me/?text=)" + encodeURIComponent(pesanTagihan), "_blank");
+    }
     
     function kirimKeWA() {
       let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
