@@ -247,13 +247,35 @@
       </div>
     </div>
 
-    <!-- TAB CARI -->
+        <!-- TAB CARI -->
     <div id="tab-cari" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="border: none; margin-bottom: 4px;"><i class="ph-bold ph-magnifying-glass"></i> PENCARIAN DATA</div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); font-weight:700; margin-top: 0; margin-bottom: 15px;">Ketik Nama, Nomor, atau Kode</p>
-        <div class="input-group"><input type="text" id="input-cari-khusus" placeholder="🔍 Cari data di sini..." onkeyup="jalankanPencarianKhusus()" style="font-size: 1rem; padding: 16px; border-radius: 16px;"></div>
-        <div id="hasil-cari-khusus" style="margin-top: 18px;"><div style="text-align: center; color: var(--text-muted); padding: 25px 10px;"><i class="ph-fill ph-folder-open" style="font-size: 3.5rem; margin-bottom: 12px; opacity: 0.5;"></i><br><b>Hasil pencarian akan tampil di sini</b></div></div>
+        
+        <!-- Filter Pencarian Berdasarkan Teks -->
+        <p style="font-size: 0.8rem; color: var(--text-muted); font-weight:700; margin-top: 0; margin-bottom: 8px;">Ketik Nama, Nomor, atau Kode</p>
+        <div class="input-group" style="margin-bottom: 15px;">
+          <input type="text" id="input-cari-khusus" placeholder="🔍 Cari data di sini..." onkeyup="jalankanPencarianKhusus()" style="font-size: 1rem; padding: 16px; border-radius: 16px;">
+        </div>
+        
+        <hr style="border: 0; border-top: 2px dashed var(--input-border); margin: 18px 0;">
+
+        <!-- Filter Pencarian Berdasarkan Bulan -->
+        <p style="font-size: 0.8rem; color: var(--text-muted); font-weight:700; margin-top: 0; margin-bottom: 8px;">Atau Cari Berdasarkan Bulan</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <input type="month" id="input-cari-bulan" style="flex: 2; padding: 14px; border-radius: 16px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-weight: 800; font-family: inherit; font-size: 1rem;">
+          <button type="button" class="btn" style="flex: 1; border-radius: 16px; padding: 14px;" onclick="jalankanPencarianBulan()">
+            <i class="ph-bold ph-magnifying-glass"></i> CARI
+          </button>
+        </div>
+
+        <!-- Wadah Hasil Pencarian -->
+        <div id="hasil-cari-khusus" style="margin-top: 18px;">
+          <div style="text-align: center; color: var(--text-muted); padding: 25px 10px;">
+            <i class="ph-fill ph-folder-open" style="font-size: 3.5rem; margin-bottom: 12px; opacity: 0.5;"></i><br>
+            <b>Hasil pencarian akan tampil di sini</b>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1110,6 +1132,63 @@
       if (hasil.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900; color:var(--color-danger);">TIDAK DITEMUKAN.</p>'; return; }
       let html = ''; hasil.forEach(item => { html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><div><span style="font-weight:900; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket}</span><span style="font-size:0.78rem; color:var(--text-muted);">${item.tanggal}</span><span style="font-weight:900; color:var(--primary);">Rp ${item.harga.toLocaleString('id-ID')}</span></div></div>`; }); container.innerHTML = html;
     }
+
+    function jalankanPencarianBulan() {
+      let inputBulan = document.getElementById('input-cari-bulan').value;
+      let container = document.getElementById('hasil-cari-khusus');
+      
+      if (!inputBulan) { 
+          alert("Pilih bulan terlebih dahulu!"); 
+          return; 
+      }
+      
+      // Kosongkan kolom pencarian teks agar pengguna tidak bingung
+      document.getElementById('input-cari-khusus').value = '';
+
+      let parts = inputBulan.split('-'); 
+      let targetTahun = parts[0]; 
+      let targetBulan = parts[1]; 
+
+      // Cari data yang cocok dengan bulan dan tahun yang dipilih
+      let hasil = dataCacheKeseluruhan.filter(item => { 
+          let tglParts = (item.tanggal || "").split('-'); 
+          return tglParts[1] === targetBulan && tglParts[2] === targetTahun; 
+      }); 
+
+      if (hasil.length === 0) { 
+          container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900; color:var(--color-danger);">TIDAK ADA TRANSAKSI DI BULAN INI.</p>'; 
+          return; 
+      }
+
+      // Hitung total untuk ringkasan bulan
+      let totalLaba = 0;
+      let html = ''; 
+      
+      hasil.forEach(item => { 
+          totalLaba += ((item.harga || 0) - (item.modal || 0));
+          html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><div><span style="font-weight:900; text-transform:uppercase;"><i class="ph-fill ph-user" style="color:var(--primary);"></i> ${item.nama}</span><br><span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> ${item.nomor}</span></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket}</span><span style="font-size:0.78rem; color:var(--text-muted);">${item.tanggal}</span><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`; 
+      }); 
+      
+      // Buat UI Ringkasan Bulan
+      let ringkasanHTML = `
+      <div class="box-3d" style="padding: 16px; margin-bottom: 18px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--color-success); text-align: center;">
+          <div style="font-weight: 900; color: var(--color-success); margin-bottom: 12px;"><i class="ph-fill ph-chart-bar"></i> REKAP BULAN ${targetBulan}-${targetTahun}</div>
+          <div style="display: flex; justify-content: space-around;">
+              <div>
+                  <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted);">TOTAL TRX</div>
+                  <div style="font-weight: 900; font-size: 1.1rem; color: var(--text-main);">${hasil.length}</div>
+              </div>
+              <div>
+                  <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted);">LABA BERSIH</div>
+                  <div style="font-weight: 900; font-size: 1.1rem; color: var(--color-success);">Rp ${totalLaba.toLocaleString('id-ID')}</div>
+              </div>
+          </div>
+      </div>`;
+
+      // Render Ringkasan + List Data ke Layar
+      container.innerHTML = ringkasanHTML + html;
+    }
+
     
     function terapkanFilterTanggal() { 
       let m = document.getElementById('filter-mulai').value, a = document.getElementById('filter-akhir').value; 
@@ -1363,11 +1442,46 @@
       if(confirm("Hapus catatan ini secara permanen?")) db.collection("catatan").doc(id).delete();
     }
 
-    window.onload = function() {
+    // ==========================================
+    // FITUR NAVIGASI ENTER UNTUK TRANSAKSI
+    // ==========================================
+    function pasangNavigasiEnter() {
+      // Daftar ID input berurutan dari atas ke bawah
+      const urutanInput = ['tgl-transaksi', 'nama', 'nomor', 'code', 'kuber', 'modal', 'harga'];
+      
+      urutanInput.forEach((id, index) => {
+        let elemen = document.getElementById(id);
+        if (elemen) {
+          elemen.addEventListener('keydown', function(event) {
+            // Cek apakah tombol yang ditekan adalah Enter
+            if (event.key === 'Enter') {
+              event.preventDefault(); // Mencegah efek default Enter
+              
+              if (index === urutanInput.length - 1) {
+                // Jika berada di kolom terakhir ('harga'), otomatis klik tombol Eksekusi
+                document.getElementById('btn-submit').click();
+                
+                // Kembalikan fokus ke kolom 'nama' untuk transaksi berikutnya
+                setTimeout(() => { document.getElementById('nama').focus(); }, 500);
+              } else {
+                // Jika bukan terakhir, pindah kursor ke kolom di bawahnya
+                document.getElementById(urutanInput[index + 1]).focus();
+              }
+            }
+          });
+        }
+      });
+    }
+
+        window.onload = function() {
        let s = document.getElementById('opacity-slider'); if(s) s.value = savedOpacity;
        muatBackgroundLokal(); muatProfilToko(); updateBtnMode();
        muatDataSemua(); muatStok(); muatServer(); muatTabungan(); muatCelengan(); muatKreditur(); muatDaftarBon();
+       
+       // Panggil fungsi navigasi Enter di sini
+       pasangNavigasiEnter();
     };
+
   </script>
 </body>
 </html>
