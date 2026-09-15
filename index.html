@@ -801,17 +801,61 @@
       if(!nama) return; db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => tutupModal('modalSetBon'));
     }
     
-    function prosesBayar() {
+          function prosesBayar() {
       let nama = document.getElementById('nama-bayar').value.trim(), bayar = parseFloat(document.getElementById('nominal-bayar').value.replace(/[^0-9]/g, '')) || 0;
       if(!nama || !bayar) { alert("Nama dan Nominal Bayar harus diisi!"); return; }
+      
       let bonExist = bonCache.find(b => (b.nama || "").toLowerCase() === nama.toLowerCase());
       if (bonExist) {
+          // Tombol loading
+          let btn = document.getElementById('btn-bayar');
+          let textAsli = btn.innerHTML;
+          btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMPROSES...'; 
+          btn.disabled = true;
+
+          // Perhitungan Bon
+          let bonLama = bonExist.total;
+          let sisaBon = bonLama - bayar;
+          if (sisaBon < 0) sisaBon = 0; // Mencegah sisa bon minus jika bayar berlebih
+          let statusBon = sisaBon === 0 ? "LUNAS 🎉" : "BELUM LUNAS ⏳";
+
           db.collection("bon").doc(bonExist.id).update({ total: firebase.firestore.FieldValue.increment(-bayar) }).then(() => { 
               document.getElementById('nama-bayar').value = ''; document.getElementById('nominal-bayar').value = '';
-              alert("Pembayaran Bon berhasil dicatat!");
+              
+              // Buat Format Nota Monospace WhatsApp
+              let ts = getTglJam();
+              let teksNota = `\`\`\`✨ PEMBAYARAN BERHASIL ✨
+📅 ${ts.tanggal} | ${ts.jam}
+──────────────────
+👤 NAMA      : ${bonExist.nama}
+💰 NOMINAL   : Rp ${bayar.toLocaleString('id-ID')}
+📒 BON LAMA  : Rp ${bonLama.toLocaleString('id-ID')}
+📉 SISA BON  : Rp ${sisaBon.toLocaleString('id-ID')}
+📌 STATUS    : ${statusBon}
+──────────────────
+✅ SILAKAN DICEK
+🙏 Terima Kasih\`\`\``;
+              
+              // Masukkan ke variabel global agar bisa dibaca oleh modal sukses
+              tempNotaWA = teksNota;
+              tempNotaGambar = teksNota;
+              
+              // Tampilkan popup modal sukses seperti saat transaksi normal
+              document.getElementById('modalSuksesTrx').style.display = 'flex';
+              
+              // Kembalikan tombol ke semula
+              btn.innerHTML = textAsli;
+              btn.disabled = false;
+          }).catch(err => {
+              alert("Gagal memproses pembayaran: " + err.message);
+              btn.innerHTML = textAsli;
+              btn.disabled = false;
           });
-      } else { alert("Data bon tidak ditemukan!"); }
+      } else { 
+          alert("Data bon tidak ditemukan!"); 
+      }
     }
+
 
     function muatStok() {
       db.collection("stok").onSnapshot((snap) => {
