@@ -574,10 +574,14 @@
     </div>
   </div>
 
-  <div id="modalEditKreditur" class="modal-overlay">
+    <div id="modalEditKreditur" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-pencil-simple"></i> EDIT KREDITUR</h3>
       <input type="hidden" id="edit-kreditur-id">
+      
+      <!-- TAMBAHAN: Kolom Edit Tanggal -->
+      <div class="input-group"><label>TANGGAL PINJAMAN</label><input type="date" id="edit-kreditur-tanggal"></div>
+      
       <div class="input-group"><label>NAMA</label><input type="text" id="edit-kreditur-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()"></div>
       <div class="input-group"><label>JENIS</label><select id="edit-kreditur-jenis"><option value="Uang">Uang</option><option value="Barang">Barang</option></select></div>
       <div class="input-group"><label>NOMINAL (Rp)</label><input type="text" id="edit-kreditur-nominal" oninput="formatUangK(this)"></div>
@@ -589,6 +593,7 @@
       </div>
     </div>
   </div>
+
 
   <div id="modalBayarKreditur" class="modal-overlay">
     <div class="modal-box">
@@ -1044,14 +1049,44 @@
       if(!data.nama || !data.nominal) return; db.collection("kreditur").add(data).then(() => { document.querySelectorAll('#tab-kreditur input').forEach(el=>el.value=''); });
     }
     function hapusKreditur(id) { if(confirm("Hapus kreditur?")) db.collection("kreditur").doc(id).delete(); }
-    function bukaModalEditKreditur(id) {
+    
+        function bukaModalEditKreditur(id) {
       let d = krediturCache.find(x => x.id === id); if(!d) return;
-      document.getElementById('edit-kreditur-id').value = d.id; document.getElementById('edit-kreditur-nama').value = d.nama; document.getElementById('edit-kreditur-jenis').value = d.jenis; document.getElementById('edit-kreditur-nominal').value = d.nominal; document.getElementById('edit-kreditur-tenor').value = d.tenor; document.getElementById('edit-kreditur-admin').value = d.admin; document.getElementById('modalEditKreditur').style.display = 'flex';
+      document.getElementById('edit-kreditur-id').value = d.id; 
+      
+      // Mengubah format tanggal agar bisa masuk ke input kalender
+      document.getElementById('edit-kreditur-tanggal').value = d.tanggal ? (d.tanggal.split('-')[2] + '-' + d.tanggal.split('-')[1] + '-' + d.tanggal.split('-')[0]) : "";
+      
+      document.getElementById('edit-kreditur-nama').value = d.nama; 
+      document.getElementById('edit-kreditur-jenis').value = d.jenis; 
+      document.getElementById('edit-kreditur-nominal').value = d.nominal; 
+      document.getElementById('edit-kreditur-tenor').value = d.tenor; 
+      document.getElementById('edit-kreditur-admin').value = d.admin; 
+      document.getElementById('modalEditKreditur').style.display = 'flex';
     }
+
     function simpanEditKreditur() {
-      let id = document.getElementById('edit-kreditur-id').value, data = { nama: document.getElementById('edit-kreditur-nama').value, jenis: document.getElementById('edit-kreditur-jenis').value, nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, ''))||0, tenor: parseInt(document.getElementById('edit-kreditur-tenor').value)||0, admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, ''))||0 };
-      db.collection("kreditur").doc(id).update(data).then(() => tutupModal('modalEditKreditur'));
+      let id = document.getElementById('edit-kreditur-id').value;
+      let tglInput = document.getElementById('edit-kreditur-tanggal').value; // Mengambil data tanggal
+      
+      let data = { 
+        tanggal: tglInput ? formatTgl(tglInput) : getTglJam().tanggal, // Menyimpan tanggal
+        nama: document.getElementById('edit-kreditur-nama').value, 
+        jenis: document.getElementById('edit-kreditur-jenis').value, 
+        nominal: parseFloat(document.getElementById('edit-kreditur-nominal').value.replace(/[^0-9]/g, ''))||0, 
+        tenor: parseInt(document.getElementById('edit-kreditur-tenor').value)||0, 
+        admin: parseFloat(document.getElementById('edit-kreditur-admin').value.replace(/[^0-9]/g, ''))||0 
+      };
+      
+      let btn = document.getElementById('btn-simpan-edit-kreditur');
+      if (btn) { btn.innerHTML = 'MENYIMPAN...'; btn.disabled = true; }
+      
+      db.collection("kreditur").doc(id).update(data).then(() => {
+        tutupModal('modalEditKreditur');
+        if (btn) { btn.innerHTML = '<i class="ph-fill ph-floppy-disk"></i> SIMPAN'; btn.disabled = false; }
+      });
     }
+
     function previewBuktiKreditur(e) { 
       let f = e.target.files[0]; if(!f) return; 
       let r = new FileReader(); 
@@ -1067,6 +1102,7 @@
       }; 
       r.readAsDataURL(f); 
     }
+
     function bukaModalBayarKreditur(id) { document.getElementById('bayar-kreditur-id').value = id; document.getElementById('bayar-kreditur-nominal').value=''; document.getElementById('kreditur-bukti-base64').value=''; document.getElementById('modalBayarKreditur').style.display='flex'; }
     function simpanBayarKreditur() { let id = document.getElementById('bayar-kreditur-id').value, nom = parseFloat(document.getElementById('bayar-kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0, bkt = document.getElementById('kreditur-bukti-base64').value; if(!nom) return; db.collection("kreditur").doc(id).collection("riwayat").add({ nominal: nom, bukti: bkt, tgl: getTglJam().tanggal, timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { tutupModal('modalBayarKreditur'); alert("Pembayaran dicatat!"); }); }
     function bukaModalRiwayatKreditur(id) {
