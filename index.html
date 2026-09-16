@@ -1214,12 +1214,13 @@
     var currentPageRiwayat = 1;
     var dataRiwayatAktif = [];
 
-    // Fungsi untuk reset ke halaman 1 jika dropdown diubah
+  
+                 // Fungsi untuk reset ke halaman 1 jika dropdown diubah
     function resetHalamanRiwayat() {
         tampilkanListTransaksi(dataRiwayatAktif, 1);
     }
 
-    // Ganti fungsi tampilkanListTransaksi yang lama dengan yang baru ini
+    // Fungsi utama yang sudah digabung (Pagination + Fix Angka 0)
     function tampilkanListTransaksi(list, page = 1) {
       let container = document.getElementById('list-harian'); if(!container) return; updateBtnMode();
       
@@ -1252,11 +1253,24 @@
           paginatedList = list.slice(startIndex, startIndex + limit);
       }
       
-      // RENDER ITEM HANYA SESUAI LIMIT
+      // RENDER ITEM (Dengan Fix Angka 0)
       paginatedList.forEach(item => {
         let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0';
-        let pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
-        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button type="button" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button type="button" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
+        
+        // --- FITUR MENGEMBALIKAN ANGKA 0 ---
+        let displayNomor = String(item.nomor || "-").split(/\s+/).map(p => {
+            if (p.startsWith('8')) return '0' + p;
+            if (p.startsWith('62')) return '0' + p.substring(2);
+            if (p.startsWith('+62')) return '0' + p.substring(3);
+            return p;
+        }).join(' ');
+
+        let pNama = String(item.nama || "-").replace(/'/g, "\\'");
+        let pNomor = displayNomor.replace(/'/g, "\\'"); 
+        let pCode = String(item.paket || "-").replace(/'/g, "\\'");
+        let pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
+        
+        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${displayNomor}</span></div><div style="display:flex; gap:6px;"><button type="button" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button type="button" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
       
       // TAMBAHKAN TOMBOL SEBELUMNYA / SELANJUTNYA
@@ -1274,6 +1288,7 @@
 
       container.innerHTML = html;
     }
+
 
           function filterTransaksi() { 
       let kw = document.getElementById('cari-nomor').value.toLowerCase().trim(); 
