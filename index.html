@@ -1019,30 +1019,89 @@
     function hapusCelengan(id) { if(confirm("Hapus celengan?")) db.collection("celengan").doc(id).delete(); }
 
     function muatKreditur() { db.collection("kreditur").onSnapshot(snap => { krediturCache = []; snap.forEach(doc => krediturCache.push({id: doc.id, ...doc.data()})); renderKrediturOnline(); }); }
+    
     function renderKrediturOnline() {
       let container = document.getElementById('list-kreditur'); if(!container) return; container.innerHTML = '';
       if(krediturCache.length === 0) { container.innerHTML = '<p style="text-align:center; font-weight:800;">Belum ada kreditur.</p>'; return; }
+      
       krediturCache.forEach(item => {
-        let total = item.nominal + (item.admin * item.tenor), cicilan = Math.round(total / item.tenor), w = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
+        let total = item.nominal + (item.admin * item.tenor);
+        let cicilan = Math.round(total / item.tenor);
+        let w = item.jenis === 'Uang' ? 'var(--color-success)' : 'var(--primary)';
+        
+        // Menampilkan tanggal jika datanya ada
+        let displayTgl = item.tanggal ? `<span style="font-size:0.75rem; color:var(--text-muted); font-weight:800; display:flex; align-items:center; gap:4px;"><i class="ph-bold ph-calendar-blank"></i> ${item.tanggal}</span>` : '';
+
+        // HITUNG KELEBIHAN HARI OTOMATIS (PRORATA 5%)
+        let infoKelebihanHTML = '';
+        let tambahanAdmin = 0;
+        
+        if (item.tanggal) {
+           let parts = item.tanggal.split('-');
+           if (parts.length === 3) {
+               let tglPinjam = new Date(parts[2], parts[1] - 1, parts[0]);
+               let tglTempo = new Date(tglPinjam);
+               tglTempo.setMonth(tglTempo.getMonth() + item.tenor);
+               
+               let hariIni = new Date();
+               hariIni.setHours(0,0,0,0);
+               tglTempo.setHours(0,0,0,0);
+
+               let selisihWaktu = hariIni.getTime() - tglTempo.getTime();
+               let telatHari = Math.floor(selisihWaktu / (1000 * 3600 * 24));
+
+               if (telatHari > 0) {
+                   let adminPerHari = item.admin / 30;
+                   tambahanAdmin = Math.round(adminPerHari * telatHari);
+                   total += tambahanAdmin; 
+                   
+                   infoKelebihanHTML = `
+                   <div style="background: rgba(220, 38, 38, 0.1); border: 1px dashed var(--color-danger); padding: 10px; border-radius: 8px; margin-top: 12px;">
+                       <div style="color: var(--color-danger); font-weight: 900; font-size: 0.75rem; margin-bottom: 4px;"><i class="ph-bold ph-warning-circle"></i> LEWAT JATUH TEMPO: ${telatHari} HARI</div>
+                       <div style="display:flex; justify-content:space-between; font-size: 0.8rem; color: var(--text-main); font-weight: 800;">
+                           <span>Bunga Kelebihan Hari:</span>
+                           <span style="color:var(--color-danger);">+ Rp ${tambahanAdmin.toLocaleString('id-ID')}</span>
+                       </div>
+                   </div>`;
+               }
+           }
+        }
+
         container.innerHTML += `<div class="box-3d" style="padding:16px;">
           <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <div><div style="font-weight:900; font-size:1.1rem; text-transform:uppercase;">${item.nama}</div><span style="background:var(--input-bg); color:${w}; border:1px solid ${w}; padding:3px 8px; border-radius:6px; font-size:0.7rem; font-weight:900;">${item.jenis}</span></div>
-            <div style="display:flex; gap:6px;">
+            <div>
+                <div style="font-weight:900; font-size:1.1rem; text-transform:uppercase;">${item.nama}</div>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                    <span style="background:var(--input-bg); color:${w}; border:1px solid ${w}; padding:3px 8px; border-radius:6px; font-size:0.7rem; font-weight:900;">${item.jenis}</span>
+                    ${displayTgl}
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:6px; align-items: flex-start;">
               <button type="button" onclick="bukaModalRiwayatKreditur('${item.id}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-clock-counter-clockwise"></i></button>
               <button type="button" onclick="bukaModalBayarKreditur('${item.id}')" style="background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-money"></i></button>
               <button type="button" onclick="bukaModalEditKreditur('${item.id}')" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-pencil-simple"></i></button>
               <button type="button" onclick="hapusKreditur('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); border-radius:8px; padding:6px 10px;"><i class="ph-bold ph-trash"></i></button>
             </div>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;"><span>Pinjaman: Rp ${item.nominal.toLocaleString('id-ID')}</span><span>Admin: Rp ${item.admin.toLocaleString('id-ID')}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">
+              <span>Pinjaman: Rp ${item.nominal.toLocaleString('id-ID')}</span>
+              <span>Admin/Bln: Rp ${item.admin.toLocaleString('id-ID')}</span>
+          </div>
           <hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:0.8rem; font-weight:800;">Tenor: <span style="color:var(--primary);">${item.tenor} Bln</span><br><span style="font-size:0.75rem; color:var(--text-muted);">Cicilan: Rp ${cicilan.toLocaleString('id-ID')}/bln</span></div>
-            <div style="text-align:right;"><div style="font-size:0.65rem; font-weight:800; color:var(--text-muted);">TOTAL</div><div style="font-weight:900; font-size:1.1rem; color:var(--color-warning);">Rp ${total.toLocaleString('id-ID')}</div></div>
+            <div style="font-size:0.8rem; font-weight:800;">Tenor: <span style="color:var(--primary);">${item.tenor} Bln</span><br><span style="font-size:0.75rem; color:var(--text-muted);">Cicilan Dasar: Rp ${cicilan.toLocaleString('id-ID')}/bln</span></div>
+            <div style="text-align:right;">
+                <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted);">TOTAL TAGIHAN</div>
+                <div style="font-weight:900; font-size:1.1rem; color:var(--color-warning);">Rp ${total.toLocaleString('id-ID')}</div>
+            </div>
           </div>
+          ${infoKelebihanHTML}
         </div>`;
       });
     }
+
+
     function hitungAdminOtomatis() { let nom = parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0, adm = nom * 0.05; document.getElementById('kreditur-admin').value = adm > 0 ? adm : ''; }
     function simpanKrediturBaru() {
       let data = { nama: document.getElementById('kreditur-nama').value, jenis: document.getElementById('kreditur-jenis').value, nominal: parseFloat(document.getElementById('kreditur-nominal').value.replace(/[^0-9]/g, '')) || 0, tenor: parseInt(document.getElementById('kreditur-tenor').value) || 0, admin: parseFloat(document.getElementById('kreditur-admin').value.replace(/[^0-9]/g, '')) || 0 };
