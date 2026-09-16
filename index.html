@@ -1277,12 +1277,29 @@
 
 
     function filterTransaksi() { 
+          function filterTransaksi() { 
       let kw = document.getElementById('cari-nomor').value.toLowerCase().trim(); 
       let target = (modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan; 
+      
       if(!kw) return tampilkanListTransaksi(target, 1); 
-      let res = target.filter(i => (i.nama||"").toLowerCase().includes(kw) || (i.paket||"").toLowerCase().includes(kw) || (i.nomor||"").includes(kw)); 
+      
+      let res = target.filter(i => {
+          // Paksa ubah semua data menjadi Teks (String) agar tidak error saat dibaca
+          let strNama = String(i.nama || "").toLowerCase();
+          let strPaket = String(i.paket || "").toLowerCase();
+          let strNomor = String(i.nomor || "").toLowerCase();
+          
+          // Hapus spasi pada nomor HP dan kata kunci agar pencarian lebih akurat
+          let nomorTanpaSpasi = strNomor.replace(/\s/g, '');
+          let kwTanpaSpasi = kw.replace(/\s/g, '');
+
+          return strNama.includes(kw) || strPaket.includes(kw) || strNomor.includes(kw) || nomorTanpaSpasi.includes(kwTanpaSpasi);
+      }); 
+      
+      // Tampilkan hasil pencariannya dari halaman 1
       tampilkanListTransaksi(res, 1); 
     }
+
 
     function jalankanPencarianKhusus() {
       let kw = document.getElementById('input-cari-khusus').value.toLowerCase().trim(), container = document.getElementById('hasil-cari-khusus');
