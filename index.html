@@ -293,6 +293,18 @@
           <div style="display: flex; gap: 8px; margin-bottom: 12px;"><div style="flex: 1;"><input type="date" id="filter-mulai"></div><div style="flex: 1;"><input type="date" id="filter-akhir"></div></div>
           <button type="button" class="btn" style="padding: 12px; font-size: 0.9rem; border-radius: 12px;" onclick="terapkanFilterTanggal()"><i class="ph-bold ph-magnifying-glass"></i> TAMPILKAN</button>
         </div>
+        <!-- Tambahkan Dropdown ini tepat di atas list-harian -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 5px;">
+          <label style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);"><i class="ph-bold ph-list-numbers"></i> TAMPILKAN:</label>
+          <select id="select-limit-riwayat" onchange="resetHalamanRiwayat()" style="padding: 8px 12px; border-radius: 12px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-weight: 900; outline: none; cursor: pointer;">
+            <option value="10">10 Baris</option>
+            <option value="25">25 Baris</option>
+            <option value="50">50 Baris</option>
+            <option value="all">Semua Data</option>
+          </select>
+        </div>
+        
+        <!-- Ini adalah wadah list harian yang sudah ada sebelumnya -->
         <div id="list-harian"></div>
       </div>
     </div>
@@ -1103,19 +1115,71 @@
     function gantiModeTrx(mode) { modeAktif = mode; updateBtnMode(); renderTabelAktif(); }
     function renderTabelAktif() { tampilkanListTransaksi((modeAktif === 'hariini') ? dataCacheHariIni : dataCacheKeseluruhan, 1); }
     
+        // Tambahkan 2 variabel global ini untuk menyimpan status halaman
+    var currentPageRiwayat = 1;
+    var dataRiwayatAktif = [];
+
+    // Fungsi untuk reset ke halaman 1 jika dropdown diubah
+    function resetHalamanRiwayat() {
+        tampilkanListTransaksi(dataRiwayatAktif, 1);
+    }
+
+    // Ganti fungsi tampilkanListTransaksi yang lama dengan yang baru ini
     function tampilkanListTransaksi(list, page = 1) {
       let container = document.getElementById('list-harian'); if(!container) return; updateBtnMode();
+      
+      // Simpan data dan halaman saat ini
+      dataRiwayatAktif = list;
+      currentPageRiwayat = page;
+
       if (list.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">BELUM ADA DATA.</p>'; return; }
-      let th = 0, tm = 0; list.forEach(item => { th += (item.harga || 0); tm += (item.modal || 0); }); let lb = th - tm;
+      
+      // REKAP TETAP MENGHITUNG KESELURUHAN DATA
+      let th = 0, tm = 0; 
+      list.forEach(item => { th += (item.harga || 0); tm += (item.modal || 0); }); 
+      let lb = th - tm;
+      
       let html = `<div class="box-3d" style="display:flex; flex-direction:column; padding:20px; background:var(--input-bg); border:2px solid var(--input-border);"><div style="text-align:center; font-weight:900; font-size:1.1rem; margin-bottom:15px;" class="text-gradient"><i class="ph-fill ph-wallet"></i> REKAP</div><div style="display:flex; justify-content:space-between;"><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">MODAL</div><div style="color:var(--color-warning); font-weight:900;">Rp ${tm.toLocaleString('id-ID')}</div></div><div style="flex:1; text-align:center;"><div style="font-size:0.75rem; font-weight:800;">PENDAPATAN</div><div style="color:var(--primary); font-weight:900;">Rp ${th.toLocaleString('id-ID')}</div></div></div><hr style="border:0; border-top:2px dashed var(--input-border); margin:12px 0;"><div style="text-align:center;"><div style="font-size:0.85rem; font-weight:800;">LABA BERSIH</div><div style="color:var(--color-success); font-size:1.4rem; font-weight:900;">Rp ${lb.toLocaleString('id-ID')}</div></div></div>`;
       
-      list.slice(0, 15).forEach(item => {
+      // LOGIKA PEMOTONGAN DATA (PAGINATION)
+      let limitSelect = document.getElementById('select-limit-riwayat');
+      let limit = limitSelect ? limitSelect.value : 10;
+      let paginatedList = list;
+      let totalPages = 1;
+
+      if (limit !== 'all') {
+          limit = parseInt(limit);
+          totalPages = Math.ceil(list.length / limit);
+          if (currentPageRiwayat > totalPages) currentPageRiwayat = totalPages;
+          if (currentPageRiwayat < 1) currentPageRiwayat = 1;
+          
+          let startIndex = (currentPageRiwayat - 1) * limit;
+          paginatedList = list.slice(startIndex, startIndex + limit);
+      }
+      
+      // RENDER ITEM HANYA SESUAI LIMIT
+      paginatedList.forEach(item => {
         let li = (item.harga || 0) - (item.modal || 0), tl = (li > 0) ? '+Rp ' + li.toLocaleString('id-ID') : 'Rp 0';
         let pNama = String(item.nama || "-").replace(/'/g, "\\'"), pNomor = String(item.nomor || "-").replace(/'/g, "\\'"), pCode = String(item.paket || "-").replace(/'/g, "\\'"), pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
         html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${item.nomor || "-"}</span></div><div style="display:flex; gap:6px;"><button type="button" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button type="button" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
+      
+      // TAMBAHKAN TOMBOL SEBELUMNYA / SELANJUTNYA
+      if (limit !== 'all' && totalPages > 1) {
+          let btnPrev = currentPageRiwayat > 1 ? `<button type="button" class="btn" style="flex:1; padding:12px; border-radius:14px; font-size:0.8rem; background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); box-shadow:none;" onclick="tampilkanListTransaksi(dataRiwayatAktif, ${currentPageRiwayat - 1})"><i class="ph-bold ph-caret-left"></i> KEMBALI</button>` : `<div style="flex:1;"></div>`;
+          
+          let btnNext = currentPageRiwayat < totalPages ? `<button type="button" class="btn" style="flex:1; padding:12px; border-radius:14px; font-size:0.8rem; background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); box-shadow:none;" onclick="tampilkanListTransaksi(dataRiwayatAktif, ${currentPageRiwayat + 1})">LANJUT <i class="ph-bold ph-caret-right"></i></button>` : `<div style="flex:1;"></div>`;
+          
+          html += `<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:15px; margin-bottom: 25px;">
+                      ${btnPrev}
+                      <div style="font-weight:900; font-size:0.85rem; color:var(--text-muted);">HAL ${currentPageRiwayat} / ${totalPages}</div>
+                      ${btnNext}
+                   </div>`;
+      }
+
       container.innerHTML = html;
     }
+
 
     function filterTransaksi() { 
       let kw = document.getElementById('cari-nomor').value.toLowerCase().trim(); 
