@@ -1456,10 +1456,18 @@
   window.location.href = urlWA;
 }
 
-    function tagihWA(nama, totalBon) {
-      let pesanTagihan = `*TAGIHAN BON*\nNAMA: ${nama}\nTOTAL: Rp ${totalBon}`;
+        function tagihWA(nama, totalBon) {
+      let pesanTagihan = `\`\`\`🧾 TAGIHAN BON 🧾
+──────────────────
+👤 NAMA      : ${nama}
+💰 TOTAL BON : Rp ${totalBon}
+──────────────────
+✅ Silahkan di cek
+🙏 Terimakasih\`\`\``;
+
       window.open("https://wa.me/?text=" + encodeURIComponent(pesanTagihan), "_blank");
     }
+
     
     function kirimKeWA() {
       let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
