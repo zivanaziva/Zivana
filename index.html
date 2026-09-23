@@ -247,15 +247,19 @@
       </div>
     </div>
 
-    <!-- TAB TRX ONLINE (AXIE STORE) -->
+        <!-- TAB TRX ONLINE (AXIE STORE) -->
     <div id="tab-trx-online" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;">
-            <span><i class="ph-fill ph-globe"></i> TRANSAKSI ONLINE (AXIE)</span>
+            <span><i class="ph-fill ph-globe"></i> TRANSAKSI (AXIE)</span>
             <span id="saldo-axie" style="font-size: 0.8rem; background: var(--input-bg); padding: 4px 8px; border-radius: 8px; font-weight: 900; color: var(--primary);">Cek Saldo...</span>
         </div>
         
-        <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top: 0; margin-bottom: 15px;">Tembak paket langsung ke server pusat Axie Store.</p>
+        <!-- FITUR TAMBAHAN: CEK STOK & REFRESH -->
+        <div style="display:flex; gap:10px; margin-bottom: 15px;">
+            <button type="button" class="btn" id="btn-cek-stok" onclick="cekStokAxie()" style="flex:1; font-size:0.75rem; background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); box-shadow:none; padding:8px;"><i class="ph-bold ph-package"></i> CEK STOK</button>
+            <button type="button" class="btn" onclick="muatKatalogAxie()" style="flex:1; font-size:0.75rem; background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); box-shadow:none; padding:8px;"><i class="ph-bold ph-arrows-clockwise"></i> REFRESH PAKET</button>
+        </div>
         
         <div class="input-group">
             <label>NOMOR XL TUJUAN</label>
@@ -274,7 +278,7 @@
         </button>
       </div>
 
-      <!-- Kotak untuk menampilkan hasil status transaksi -->
+      <!-- Kotak untuk menampilkan hasil status transaksi / stok -->
       <div id="hasil-trx-online" style="margin-top: 15px; display: none;"></div>
     </div>
 
@@ -1760,27 +1764,59 @@
         }
     }
 
-    // Fungsi 2: Muat Katalog Paket ke dalam Dropdown
+       // Fungsi 2: Muat Katalog Paket (Diperbarui agar lebih kebal error)
     async function muatKatalogAxie() {
         let selectPaket = document.getElementById('online-paket');
         if(!selectPaket) return;
         
-        let data = await fetchAxieAPI('/api/akrab/list');
+        selectPaket.innerHTML = '<option value="">-- MEMUAT KATALOG... --</option>';
+        let res = await fetchAxieAPI('/api/akrab/list');
         
-        if (data && data.status === true && Array.isArray(data.data)) {
+        // Logika cerdas untuk mencari letak daftar paketnya
+        let daftarPaket = [];
+        if (Array.isArray(res)) daftarPaket = res;
+        else if (res && Array.isArray(res.data)) daftarPaket = res.data;
+        else if (res && Array.isArray(res.list)) daftarPaket = res.list;
+
+        if (daftarPaket.length > 0) {
             let optionsHTML = '<option value="">-- PILIH PAKET --</option>';
-            // Asumsi API mengembalikan array of object dengan field 'kode' dan 'nama'
-            data.data.forEach(item => {
-                let kode = item.kode || item.code || item.id; 
+            daftarPaket.forEach(item => {
+                let kode = item.kode || item.code || item.id || item.paket; 
                 let nama = item.nama || item.name || item.description || kode;
                 let harga = item.harga || item.price ? ` - Rp ${parseInt(item.harga || item.price).toLocaleString('id-ID')}` : '';
                 optionsHTML += `<option value="${kode}">${nama}${harga}</option>`;
             });
             selectPaket.innerHTML = optionsHTML;
         } else {
-            selectPaket.innerHTML = '<option value="">-- GAGAL MEMUAT PAKET --</option>';
+            selectPaket.innerHTML = '<option value="">-- GAGAL (KOSONG) --</option>';
+            // Menampilkan error asli dari server untuk dipelajari jika masih gagal
+            document.getElementById('hasil-trx-online').style.display = 'block';
+            document.getElementById('hasil-trx-online').innerHTML = `<div style="padding:10px; background:var(--input-bg); border-radius:8px; font-size:0.7rem; color:var(--color-danger);">Debug Data Paket: ${JSON.stringify(res)}</div>`;
         }
     }
+
+    // Fungsi Tambahan: Cek Stok Akrab
+    async function cekStokAxie() {
+        let btn = document.getElementById('btn-cek-stok');
+        let wadahHasil = document.getElementById('hasil-trx-online');
+        
+        if(btn) { btn.innerHTML = 'MENGECEK...'; btn.disabled = true; }
+        let res = await fetchAxieAPI('/api/stock-akrab');
+        
+        if(btn) { btn.innerHTML = '<i class="ph-bold ph-package"></i> CEK STOK'; btn.disabled = false; }
+        if(wadahHasil) {
+            wadahHasil.style.display = 'block';
+            
+            // Menampilkan hasil stok mentah (JSON) ke layar secara rapi
+            wadahHasil.innerHTML = `
+                <div style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:15px;">
+                    <div style="font-weight:900; font-size:0.9rem; margin-bottom:8px; color:var(--primary);"><i class="ph-bold ph-info"></i> INFORMASI STOK</div>
+                    <pre style="font-size:0.75rem; white-space:pre-wrap; word-wrap:break-word; color:var(--text-main); margin:0;">${JSON.stringify(res.data || res, null, 2)}</pre>
+                </div>
+            `;
+        }
+    }
+
 
     // Fungsi 3: Eksekusi Transaksi Order
     async function prosesTrxOnline() {
