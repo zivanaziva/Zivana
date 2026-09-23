@@ -247,6 +247,38 @@
       </div>
     </div>
 
+    <!-- TAB TRX ONLINE (AXIE STORE) -->
+    <div id="tab-trx-online" class="section">
+      <div class="glass-panel card" style="margin-top: 15px;">
+        <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;">
+            <span><i class="ph-fill ph-globe"></i> TRANSAKSI ONLINE (AXIE)</span>
+            <span id="saldo-axie" style="font-size: 0.8rem; background: var(--input-bg); padding: 4px 8px; border-radius: 8px; font-weight: 900; color: var(--primary);">Cek Saldo...</span>
+        </div>
+        
+        <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top: 0; margin-bottom: 15px;">Tembak paket langsung ke server pusat Axie Store.</p>
+        
+        <div class="input-group">
+            <label>NOMOR XL TUJUAN</label>
+            <input type="tel" id="online-nomor" autocomplete="off" placeholder="Contoh: 0819...">
+        </div>
+        
+        <div class="input-group">
+            <label>PILIH PAKET AKRAB</label>
+            <select id="online-paket" style="text-transform: uppercase;">
+                <option value="">-- MEMUAT KATALOG PAKET... --</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn" onclick="prosesTrxOnline()" id="btn-trx-online" style="margin-top: 10px; background: linear-gradient(135deg, var(--color-success), #047857);">
+            <i class="ph-bold ph-paper-plane-right"></i> KIRIM TRANSAKSI
+        </button>
+      </div>
+
+      <!-- Kotak untuk menampilkan hasil status transaksi -->
+      <div id="hasil-trx-online" style="margin-top: 15px; display: none;"></div>
+    </div>
+
+
         <!-- TAB CARI -->
     <div id="tab-cari" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
@@ -670,13 +702,30 @@
     function setTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('wistara_theme', themeName); }
     function setOpacity(val) { document.documentElement.style.setProperty('--panel-opacity', val); localStorage.setItem('wistara_opacity', val); }
 
-    function switchTab(tabId, element) {
-      document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active'); if (element) element.classList.add('active');
+        function switchTab(tabId, element) {
+      document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); 
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active'); 
+      if (element) element.classList.add('active');
+      
       if(tabId === 'tab-harian' || tabId === 'tab-beranda' || tabId === 'tab-statistik') muatDataSemua();
-      if(tabId === 'tab-bon') muatDaftarBon(); if(tabId === 'tab-stok') muatStok(); if(tabId === 'tab-server') muatServer(); if(tabId === 'tab-tabungan') muatTabungan(); if(tabId === 'tab-kreditur') muatKreditur();
+      if(tabId === 'tab-bon') muatDaftarBon(); 
+      if(tabId === 'tab-stok') muatStok(); 
+      if(tabId === 'tab-server') muatServer(); 
+      if(tabId === 'tab-tabungan') muatTabungan(); 
+      if(tabId === 'tab-kreditur') muatKreditur();
       if(tabId === 'tab-lainnya') muatCatatan();
+      
+      // --- INI TAMBAHAN UNTUK TAB TRX ONLINE ---
+      if(tabId === 'tab-trx-online') {
+          cekSaldoAxie();
+          muatKatalogAxie();
+          let wadahHasil = document.getElementById('hasil-trx-online');
+          if(wadahHasil) wadahHasil.style.display = 'none';
+      }
     }
+
 
     function updateBtnMode() {
       var bH = document.getElementById('btn-mode-hariini'), bS = document.getElementById('btn-mode-semua');
@@ -1669,6 +1718,115 @@
         }
       });
     }
+
+    // ==========================================
+    // FITUR TRANSAKSI ONLINE (AXIE STORE API)
+    // ==========================================
+    
+    // GANTI DENGAN API KEY ANDA YANG SEBENARNYA!
+    const AXIE_API_KEY = "4caaeacb-1b3a-4972-8af4-ef77b9fa6fd7"; 
+    const AXIE_BASE_URL = "https://reseller.axiestore.com";
+
+    // Fungsi Pembantu untuk Mengirim Request ke Server Axie
+    async function fetchAxieAPI(endpoint) {
+        try {
+            let response = await fetch(`${AXIE_BASE_URL}${endpoint}`, {
+                method: 'GET',
+                headers: {
+                    'accept': '*/*',
+                    'x-key': AXIE_API_KEY
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            console.error("Error Axie API:", error);
+            return { status: false, message: "Gagal terhubung ke server Axie." };
+        }
+    }
+
+    // Fungsi 1: Cek Saldo
+    async function cekSaldoAxie() {
+        let labelSaldo = document.getElementById('saldo-axie');
+        if(!labelSaldo) return;
+        
+        let data = await fetchAxieAPI('/api/saldo');
+        if (data && data.status === true) {
+            // Asumsi API mengembalikan field "saldo" (Silakan sesuaikan jika namanya beda)
+            let sld = data.data && data.data.saldo ? data.data.saldo : (data.saldo || 0); 
+            labelSaldo.innerHTML = `Rp ${parseInt(sld).toLocaleString('id-ID')}`;
+        } else {
+            labelSaldo.innerHTML = "Error";
+            labelSaldo.style.color = "var(--color-danger)";
+        }
+    }
+
+    // Fungsi 2: Muat Katalog Paket ke dalam Dropdown
+    async function muatKatalogAxie() {
+        let selectPaket = document.getElementById('online-paket');
+        if(!selectPaket) return;
+        
+        let data = await fetchAxieAPI('/api/akrab/list');
+        
+        if (data && data.status === true && Array.isArray(data.data)) {
+            let optionsHTML = '<option value="">-- PILIH PAKET --</option>';
+            // Asumsi API mengembalikan array of object dengan field 'kode' dan 'nama'
+            data.data.forEach(item => {
+                let kode = item.kode || item.code || item.id; 
+                let nama = item.nama || item.name || item.description || kode;
+                let harga = item.harga || item.price ? ` - Rp ${parseInt(item.harga || item.price).toLocaleString('id-ID')}` : '';
+                optionsHTML += `<option value="${kode}">${nama}${harga}</option>`;
+            });
+            selectPaket.innerHTML = optionsHTML;
+        } else {
+            selectPaket.innerHTML = '<option value="">-- GAGAL MEMUAT PAKET --</option>';
+        }
+    }
+
+    // Fungsi 3: Eksekusi Transaksi Order
+    async function prosesTrxOnline() {
+        let no = document.getElementById('online-nomor').value.replace(/\s/g, '');
+        let pkt = document.getElementById('online-paket').value;
+        let btn = document.getElementById('btn-trx-online');
+        let wadahHasil = document.getElementById('hasil-trx-online');
+        
+        if (!no || !pkt) { alert("Nomor tujuan dan Paket wajib diisi!"); return; }
+        
+        if (!confirm(`Lanjutkan tembak paket ${pkt} ke nomor ${no}?`)) return;
+
+        btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMPROSES...'; 
+        btn.disabled = true;
+        wadahHasil.style.display = 'none';
+
+        // Endpoint GET /api/akrab/order?nomor=...&paket=...
+        let urlOrder = `/api/akrab/order?nomor=${encodeURIComponent(no)}&paket=${encodeURIComponent(pkt)}`;
+        let hasil = await fetchAxieAPI(urlOrder);
+        
+        btn.innerHTML = '<i class="ph-bold ph-paper-plane-right"></i> KIRIM TRANSAKSI';
+        btn.disabled = false;
+        
+        // Tampilkan Hasil di Layar
+        wadahHasil.style.display = 'block';
+        if (hasil && hasil.status === true) {
+             wadahHasil.innerHTML = `
+                <div style="background: rgba(16, 185, 129, 0.1); border: 2px solid var(--color-success); border-radius: 12px; padding: 16px; text-align: center;">
+                    <i class="ph-fill ph-check-circle" style="font-size: 3rem; color: var(--color-success); margin-bottom: 10px;"></i>
+                    <div style="font-weight: 900; color: var(--color-success); font-size: 1.1rem; margin-bottom: 4px;">ORDER BERHASIL DIBUAT!</div>
+                    <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">Task ID: <span style="color:var(--primary);">${hasil.data && hasil.data.id ? hasil.data.id : (hasil.id || '-')}</span></div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Catat Task ID untuk mengecek status pesanan pada menu Riwayat.</p>
+                </div>
+             `;
+             cekSaldoAxie(); // Refresh Saldo
+        } else {
+             wadahHasil.innerHTML = `
+                <div style="background: rgba(220, 38, 38, 0.1); border: 2px solid var(--color-danger); border-radius: 12px; padding: 16px; text-align: center;">
+                    <i class="ph-fill ph-x-circle" style="font-size: 3rem; color: var(--color-danger); margin-bottom: 10px;"></i>
+                    <div style="font-weight: 900; color: var(--color-danger); font-size: 1.1rem; margin-bottom: 4px;">ORDER GAGAL!</div>
+                    <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-main);">${hasil.message || 'Terjadi kesalahan dari server pusat.'}</div>
+                </div>
+             `;
+        }
+    }
+
 
         window.onload = function() {
        let s = document.getElementById('opacity-slider'); if(s) s.value = savedOpacity;
