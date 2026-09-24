@@ -247,20 +247,26 @@
       </div>
     </div>
 
-        <!-- TAB TRX ONLINE (AXIE STORE) -->
+    <!-- TAB TRX ONLINE (AXIE STORE) -->
     <div id="tab-trx-online" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;">
-            <span><i class="ph-fill ph-globe"></i> TRANSAKSI (AXIE)</span>
+            <span><i class="ph-fill ph-globe"></i> TRANSAKSI ( AKRAB )</span>
             <span id="saldo-axie" style="font-size: 0.8rem; background: var(--input-bg); padding: 4px 8px; border-radius: 8px; font-weight: 900; color: var(--primary);">Cek Saldo...</span>
         </div>
         
-        <!-- FITUR TAMBAHAN: CEK STOK & REFRESH -->
-        <div style="display:flex; gap:10px; margin-bottom: 15px;">
-            <button type="button" class="btn" id="btn-cek-stok" onclick="cekStokAxie()" style="flex:1; font-size:0.75rem; background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); box-shadow:none; padding:8px;"><i class="ph-bold ph-package"></i> CEK STOK</button>
-            <button type="button" class="btn" onclick="muatKatalogAxie()" style="flex:1; font-size:0.75rem; background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); box-shadow:none; padding:8px;"><i class="ph-bold ph-arrows-clockwise"></i> REFRESH PAKET</button>
+        <!-- MENU LENGKAP AXIE STORE -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom: 20px; margin-top: 10px;">
+            <button type="button" class="btn" id="btn-cek-stok" onclick="cekStokAxie()" style="font-size:0.7rem; background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); box-shadow:none; padding:10px;"><i class="ph-bold ph-package"></i> CEK STOK</button>
+            <button type="button" class="btn" onclick="riwayatAxie()" style="font-size:0.7rem; background:rgba(139,92,246,0.1); color:#8b5cf6; border:1px solid #8b5cf6; box-shadow:none; padding:10px;"><i class="ph-bold ph-clock-counter-clockwise"></i> RIWAYAT TRX</button>
+            <button type="button" class="btn" onclick="cekKuotaAxie()" style="font-size:0.7rem; background:rgba(236,72,153,0.1); color:#ec4899; border:1px solid #ec4899; box-shadow:none; padding:10px;"><i class="ph-bold ph-sim-card"></i> CEK NOMOR / KUOTA</button>
+            <button type="button" class="btn" onclick="topupAxie()" style="font-size:0.7rem; background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); box-shadow:none; padding:10px;"><i class="ph-bold ph-qr-code"></i> TOPUP / QRIS</button>
+            <button type="button" class="btn" onclick="muatKatalogAxie()" style="font-size:0.7rem; background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); box-shadow:none; padding:10px;"><i class="ph-bold ph-arrows-clockwise"></i> REFRESH PAKET</button>
         </div>
         
+        <hr style="border:0; border-top:1px dashed var(--input-border); margin:15px 0;">
+        <div style="font-weight:900; font-size:0.85rem; color:var(--text-main); margin-bottom:15px;"><i class="ph-bold ph-shopping-cart"></i> BUAT PESANAN BARU</div>
+
         <div class="input-group">
             <label>NOMOR XL TUJUAN</label>
             <input type="tel" id="online-nomor" autocomplete="off" placeholder="Contoh: 0819...">
@@ -273,16 +279,17 @@
             </select>
         </div>
 
-        <button type="button" class="btn" onclick="prosesTrxOnline()" id="btn-trx-online" style="margin-top: 10px; background: linear-gradient(135deg, var(--color-success), #047857);">
+        <button type="button" class="btn" onclick="prosesTrxOnline()" id="btn-trx-online" style="margin-top: 5px; background: linear-gradient(135deg, var(--color-success), #047857);">
             <i class="ph-bold ph-paper-plane-right"></i> KIRIM TRANSAKSI
         </button>
       </div>
 
-      <!-- Kotak untuk menampilkan hasil status transaksi / stok -->
+      <!-- Kotak Multi-Fungsi untuk menampilkan hasil aksi -->
       <div id="hasil-trx-online" style="margin-top: 15px; display: none;"></div>
     </div>
 
-
+        
+        
         <!-- TAB CARI -->
     <div id="tab-cari" class="section">
       <div class="glass-panel card" style="margin-top: 15px;">
@@ -1764,57 +1771,346 @@
         }
     }
 
-       // Fungsi 2: Muat Katalog Paket (Diperbarui agar lebih kebal error)
+    // Fungsi 2: Muat Katalog Paket (Diperbarui sesuai format asli Axie)
     async function muatKatalogAxie() {
         let selectPaket = document.getElementById('online-paket');
+        let wadahHasil = document.getElementById('hasil-trx-online');
         if(!selectPaket) return;
         
         selectPaket.innerHTML = '<option value="">-- MEMUAT KATALOG... --</option>';
         let res = await fetchAxieAPI('/api/akrab/list');
         
-        // Logika cerdas untuk mencari letak daftar paketnya
-        let daftarPaket = [];
-        if (Array.isArray(res)) daftarPaket = res;
-        else if (res && Array.isArray(res.data)) daftarPaket = res.data;
-        else if (res && Array.isArray(res.list)) daftarPaket = res.list;
-
-        if (daftarPaket.length > 0) {
+        // Membaca format JSON khusus dari Axie Store yang ada di pesan merah
+        if (res && res.paket) {
             let optionsHTML = '<option value="">-- PILIH PAKET --</option>';
-            daftarPaket.forEach(item => {
-                let kode = item.kode || item.code || item.id || item.paket; 
-                let nama = item.nama || item.name || item.description || kode;
-                let harga = item.harga || item.price ? ` - Rp ${parseInt(item.harga || item.price).toLocaleString('id-ID')}` : '';
-                optionsHTML += `<option value="${kode}">${nama}${harga}</option>`;
+            
+            // Mengubah objek paket menjadi daftar pilihan
+            Object.keys(res.paket).forEach(kodePaket => {
+                let item = res.paket[kodePaket];
+                let namaTampil = kodePaket.toUpperCase(); // Mengubah axa14 menjadi AXA14
+                let hargaTampil = item.harga || ('Rp ' + item.harga_int);
+                let stokTampil = item.stock > 0 ? `(Stok: ${item.stock})` : `(KOSONG)`;
+                
+                // Tambahkan ke dropdown
+                optionsHTML += `<option value="${kodePaket}">${namaTampil} - ${hargaTampil} ${stokTampil}</option>`;
             });
+            
             selectPaket.innerHTML = optionsHTML;
+            if(wadahHasil) wadahHasil.style.display = 'none'; // Sembunyikan tulisan debug merah
         } else {
             selectPaket.innerHTML = '<option value="">-- GAGAL (KOSONG) --</option>';
-            // Menampilkan error asli dari server untuk dipelajari jika masih gagal
-            document.getElementById('hasil-trx-online').style.display = 'block';
-            document.getElementById('hasil-trx-online').innerHTML = `<div style="padding:10px; background:var(--input-bg); border-radius:8px; font-size:0.7rem; color:var(--color-danger);">Debug Data Paket: ${JSON.stringify(res)}</div>`;
+            if(wadahHasil) {
+                wadahHasil.style.display = 'block';
+                wadahHasil.innerHTML = `<div style="padding:10px; background:var(--input-bg); border-radius:8px; font-size:0.7rem; color:var(--color-danger); word-wrap:break-word;">Debug Data Paket: ${JSON.stringify(res)}</div>`;
+            }
         }
     }
 
-    // Fungsi Tambahan: Cek Stok Akrab
+
+
+        // Fungsi Tambahan: Cek Stok Akrab dengan Tampilan Kartu Elegan
     async function cekStokAxie() {
         let btn = document.getElementById('btn-cek-stok');
         let wadahHasil = document.getElementById('hasil-trx-online');
         
         if(btn) { btn.innerHTML = 'MENGECEK...'; btn.disabled = true; }
-        let res = await fetchAxieAPI('/api/stock-akrab');
+        
+        // Memanggil data katalog lengkap (memuat deskripsi area & stok)
+        let res = await fetchAxieAPI('/api/akrab/list');
         
         if(btn) { btn.innerHTML = '<i class="ph-bold ph-package"></i> CEK STOK'; btn.disabled = false; }
-        if(wadahHasil) {
-            wadahHasil.style.display = 'block';
+        if(!wadahHasil) return;
+        
+        wadahHasil.style.display = 'block';
+        
+        if (res && res.paket) {
+            let cardsHTML = `
+            <div style="text-align:center; margin-bottom:20px; margin-top:10px;">
+                <div style="font-weight:900; font-size:1.1rem; color:var(--text-main);">Informasi Stok Akrab</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">Ketersediaan slot stok paket akrab real-time.</div>
+            </div>`;
             
-            // Menampilkan hasil stok mentah (JSON) ke layar secara rapi
+            Object.keys(res.paket).forEach(kode => {
+                let item = res.paket[kode];
+                let namaPaket = kode.toUpperCase();
+                let harga = item.harga || ('Rp ' + parseInt(item.harga_int || 0).toLocaleString('id-ID'));
+                let stock = item.stock || 0;
+                
+                // Menyusun baris deskripsi Area
+                let deskripsiHTML = '';
+                if (item.deskripsi) {
+                    let lines = item.deskripsi.split('\n');
+                    lines.forEach(line => {
+                        if(line.trim()) {
+                            deskripsiHTML += `<div style="font-size:0.78rem; font-weight:700; color:var(--text-main); margin-bottom:5px;">${line.trim()}</div>`;
+                        }
+                    });
+                }
+                
+                // Badge Status Stok
+                let statusBadge = stock > 0 
+                    ? `<span style="background:rgba(16,185,129,0.12); color:var(--color-success); border:1px solid var(--color-success); padding:4px 16px; border-radius:20px; font-size:0.75rem; font-weight:800;"><i class="ph-bold ph-check"></i> Tersedia (${stock})</span>`
+                    : `<span style="background:rgba(220,38,38,0.12); color:var(--color-danger); border:1px solid var(--color-danger); padding:4px 16px; border-radius:20px; font-size:0.75rem; font-weight:800;"><i class="ph-bold ph-x"></i> Kosong</span>`;
+
+                // Kartu Paket
+                cardsHTML += `
+                <div class="box-3d" style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:18px; padding:16px; margin-bottom:25px; text-align:center; position:relative;">
+                    
+                    <!-- Badge Nama Paket (Melayang di atas) -->
+                    <div style="display:inline-block; background:linear-gradient(135deg, #2563eb, var(--primary)); color:#fff; font-weight:900; font-size:0.85rem; padding:6px 24px; border-radius:20px; margin-top:-30px; margin-bottom:14px; box-shadow:0 4px 12px rgba(37,99,235,0.3); text-transform:uppercase;">
+                        ${namaPaket}
+                    </div>
+                    
+                    <!-- List Deskripsi Kuota Per Area -->
+                    <div style="text-align:left; background:rgba(0,0,0,0.03); padding:12px 16px; border-radius:12px; margin-bottom:14px; border:1px solid var(--panel-border);">
+                        ${deskripsiHTML || '<div style="font-size:0.75rem; color:var(--text-muted); text-align:center;">Tidak ada detail deskripsi.</div>'}
+                    </div>
+                    
+                    <hr style="border:0; border-top:1px dashed var(--input-border); margin:12px 0;">
+                    
+                    <!-- Badge Status & Harga -->
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                        ${statusBadge}
+                        <div style="background:linear-gradient(135deg, #2563eb, var(--primary)); color:#fff; font-weight:900; font-size:0.85rem; padding:6px 20px; border-radius:20px; box-shadow:0 4px 10px rgba(37,99,235,0.25); display:inline-flex; align-items:center; gap:6px;">
+                            <i class="ph-fill ph-currency-dollar"></i> ${harga}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            
+            wadahHasil.innerHTML = cardsHTML;
+        } else {
+            wadahHasil.innerHTML = '<div style="text-align:center; color:var(--color-danger); font-weight:800; padding:15px;">Gagal memuat rincian stok paket.</div>';
+        }
+    }
+
+
+    // Fungsi 4: Cek Riwayat Transaksi (/api/history)
+    async function riwayatAxie() {
+        let wadahHasil = document.getElementById('hasil-trx-online');
+        if(!wadahHasil) return;
+        wadahHasil.style.display = 'block';
+        wadahHasil.innerHTML = '<div style="text-align:center; padding:20px; font-weight:800; color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br>Menarik data riwayat...</div>';
+        
+        let res = await fetchAxieAPI('/api/history?limit=15'); // Mengambil 15 data terakhir
+        
+        let historyData = res.data || res.list || res;
+        if(historyData && typeof historyData === 'object' && !Array.isArray(historyData)) {
+            historyData = Object.values(historyData); // Konversi ke array jika formatnya object
+        }
+
+        if(historyData && Array.isArray(historyData)) {
+            let html = '<div style="font-weight:900; font-size:1.1rem; margin-bottom:15px; color:var(--text-main); text-align:center;">Riwayat Transaksi Axie</div>';
+            
+            if(historyData.length === 0) {
+                html += '<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; font-weight:700;">Belum ada riwayat transaksi.</div>';
+            } else {
+                historyData.forEach(trx => {
+                    let st = String(trx.status || '').toLowerCase();
+                    let color = st.includes('sukses') || st.includes('success') ? 'var(--color-success)' : (st.includes('gagal') || st.includes('fail') ? 'var(--color-danger)' : 'var(--color-warning)');
+                    
+                    html += `
+                    <div class="box-3d" style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:12px; padding:12px; margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-weight:900; font-size:0.85rem; text-transform:uppercase; color:var(--text-main);">${trx.paket || trx.code || '-'}</span>
+                            <span style="font-size:0.7rem; color:#fff; background:${color}; padding:4px 10px; border-radius:8px; font-weight:900; text-transform:uppercase;">${trx.status || 'PENDING'}</span>
+                        </div>
+                        <div style="font-size:0.95rem; font-weight:900; color:var(--primary); margin-bottom:4px; letter-spacing:1px;">${trx.nomor || trx.tujuan || '-'}</div>
+                        <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span>${trx.tanggal || trx.created_at || trx.date || '-'}</span>
+                            <span>ID: ${trx.id || '-'}</span>
+                        </div>
+                        <div style="font-size:0.75rem; background:rgba(0,0,0,0.03); padding:8px; border-radius:8px; border:1px solid var(--panel-border); color:var(--text-main); word-wrap:break-word;">
+                            <span style="font-weight:800;">Ket/SN:</span> ${trx.sn || trx.keterangan || trx.message || '-'}
+                        </div>
+                    </div>`;
+                });
+            }
+            wadahHasil.innerHTML = html;
+        } else {
+            wadahHasil.innerHTML = `<div style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:15px; border-radius:12px; font-weight:800; font-size:0.8rem; word-wrap:break-word;">Gagal memuat riwayat.<br><br>Data Mentah: ${JSON.stringify(res)}</div>`;
+        }
+    }
+    
+    // Fungsi 5: Menampilkan Form Khusus Cek Kuota (Terpisah 100% dari transaksi)
+    function cekKuotaAxie() {
+        // Menggunakan wadah hasil paling atas untuk menghindari bug HTML ganda
+        let wadah = document.querySelectorAll('#hasil-trx-online')[0];
+        if(!wadah) return;
+        
+        wadah.style.display = 'block';
+        wadah.innerHTML = `
+            <div class="box-3d" style="background:var(--input-bg); border:2px solid #3b82f6; border-radius:12px; padding:20px; text-align:center; box-shadow: 0 8px 20px rgba(59,130,246,0.15);">
+                <div style="font-weight:900; font-size:1.1rem; color:#3b82f6; margin-bottom:10px;"><i class="ph-fill ph-sim-card"></i> CEK NOMOR & KUOTA</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; font-weight:700;">Masukkan nomor XL/AXIS (Tidak tersambung dengan pesanan):</div>
+                
+                <input type="tel" id="nomor-khusus-cek" placeholder="Ketik nomor di sini..." autocomplete="off" style="width:100%; padding:14px; border-radius:10px; border:2px solid #3b82f6; background:rgba(59,130,246,0.05); color:var(--text-main); font-weight:900; text-align:center; margin-bottom:15px; font-size:1.1rem; outline:none;">
+                
+                <button type="button" class="btn" onclick="prosesCekKuotaAxie()" style="background:linear-gradient(135deg, #3b82f6, #1d4ed8); width:100%; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:0.95rem;">
+                    <i class="ph-bold ph-magnifying-glass"></i> CEK SEKARANG
+                </button>
+            </div>
+        `;
+        
+        // Auto-focus agar keyboard langsung muncul
+        setTimeout(() => {
+            let inp = document.getElementById('nomor-khusus-cek');
+            if(inp) inp.focus();
+        }, 100);
+    }
+
+    // Fungsi Tambahan: Eksekusi Cek Kuota & Smart Parser
+    async function prosesCekKuotaAxie() {
+        let input = document.getElementById('nomor-khusus-cek');
+        let nomor = input ? input.value.trim().replace(/\s/g, '') : '';
+        let wadahHasil = document.querySelectorAll('#hasil-trx-online')[0];
+        
+        if(!nomor) {
+            if(input) { input.style.border = '2px solid var(--color-danger)'; input.focus(); }
+            return;
+        }
+        
+        wadahHasil.innerHTML = `<div style="text-align:center; padding:30px; font-weight:800; color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2.5rem; color:#3b82f6;"></i><br><br>Mengecek detail kuota ${nomor}...</div>`;
+        
+        let res = await fetchAxieAPI(`/sidompul?nomor=${encodeURIComponent(nomor)}`);
+        let data = res.data || res;
+
+        if (data && data.subs_info) {
+            let subs = data.subs_info;
+            let pkg = data.package_info || {};
+            
+            let htmlInfo = `
+                <div class="box-3d" style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:0; overflow:hidden;">
+                    
+                    <div style="background:linear-gradient(135deg, #ec4899, #be185d); color:white; padding:15px; text-align:center;">
+                        <div style="font-weight:900; font-size:1.3rem; letter-spacing:1px; margin-bottom:4px;"><i class="ph-fill ph-sim-card"></i> ${subs.msisdn || nomor}</div>
+                        <div style="font-size:0.75rem; font-weight:800; opacity:0.9; text-transform:uppercase;">
+                            <span style="background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:10px; margin-right:4px;">${subs.operator || '-'}</span>
+                            <span style="background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:10px;">Jaringan ${subs.net_type || '-'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:16px;">
+                        <div style="font-weight:900; font-size:0.85rem; color:var(--text-main); margin-bottom:12px; border-bottom:1px dashed var(--panel-border); padding-bottom:6px;"><i class="ph-bold ph-info"></i> STATUS KARTU</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
+                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Masa Aktif</div>
+                                <div style="font-size:0.85rem; font-weight:900; color:var(--color-success);">${subs.exp_date || '-'}</div>
+                            </div>
+                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
+                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Masa Tenggang</div>
+                                <div style="font-size:0.85rem; font-weight:900; color:var(--color-warning);">${subs.grace_until || '-'}</div>
+                            </div>
+                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
+                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Umur Kartu</div>
+                                <div style="font-size:0.85rem; font-weight:900; color:var(--text-main);">${subs.tenure || '-'}</div>
+                            </div>
+                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
+                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Registrasi KTP</div>
+                                <div style="font-size:0.85rem; font-weight:900; color:var(--text-main);">${subs.id_verified || '-'}</div>
+                            </div>
+                        </div>
+
+                        <div style="font-weight:900; font-size:0.85rem; color:var(--text-main); margin-bottom:12px; border-bottom:1px dashed var(--panel-border); padding-bottom:6px;"><i class="ph-bold ph-package"></i> DETAIL PAKET & KUOTA</div>
+            `;
+            
+            if (pkg.packages && pkg.packages.length > 0) {
+                htmlInfo += `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; font-size:0.8rem; color:#334155; box-shadow:inset 0 2px 4px rgba(0,0,0,0.03);">`;
+                
+                pkg.packages.forEach((p, idx) => {
+                    if (idx > 0) htmlInfo += `<hr style="border:0; border-top:2px dashed #cbd5e1; margin:20px 0;">`;
+                    
+                    htmlInfo += `
+                        <div style="line-height:2.2; margin-bottom:10px; font-weight:700;">
+                            <div style="color:#1e3a8a; font-weight:900; font-size:0.95rem;">🎁 Quota: ${p.name || p.package_name || p.paket || 'Paket Utama'}</div>
+                            <div>🍂 Aktif Hingga: ${p.exp_date || p.expired || '-'}</div>
+                        </div>
+                    `;
+                    
+                    let benefits = [];
+                    if (Array.isArray(p.benefits)) benefits = p.benefits;
+                    else if (Array.isArray(p.benefit)) benefits = p.benefit;
+                    else if (Array.isArray(p.details)) benefits = p.details;
+                    else {
+                        for (let key in p) {
+                            if (Array.isArray(p[key])) { benefits = p[key]; break; }
+                        }
+                    }
+
+                    if (benefits.length > 0) {
+                        benefits.forEach(b => {
+                            let namaB = b.name || b.benefit_name || b.benefit || b.nama || '-';
+                            let tipeB = b.type || b.quota_type || b.tipe || 'DATA';
+                            let totalB = b.total || b.quota || b.kuota || '-';
+                            let sisaB = b.remaining || b.sisa || b.remaining_quota || b.sisa_kuota || '0';
+                            
+                            htmlInfo += `
+                                <div style="background:rgba(0,0,0,0.03); border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px; line-height:2;">
+                                    <div style="font-weight:800; color:#0f172a;">🎁 Benefit: ${namaB}</div>
+                                    <div style="color:#475569;">🎁 Tipe Kuota: ${tipeB}</div>
+                                    <div style="color:#475569;">🎁 Kuota: ${totalB}</div>
+                                    <div style="color:var(--color-success); font-weight:900;">🌲 Sisa Kuota: ${sisaB}</div>
+                                </div>
+                            `;
+                        });
+                    } else if (p.total || p.remaining || p.quota || p.sisa) {
+                        let tipeB = p.type || p.quota_type || p.tipe || 'DATA';
+                        let totalB = p.total || p.quota || p.kuota || '-';
+                        let sisaB = p.remaining || p.sisa || p.remaining_quota || p.sisa_kuota || '0';
+                        htmlInfo += `
+                            <div style="background:rgba(0,0,0,0.03); border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px; line-height:2;">
+                                <div style="font-weight:800; color:#0f172a;">🎁 Benefit: ${p.name || 'Detail Paket'}</div>
+                                <div style="color:#475569;">🎁 Tipe Kuota: ${tipeB}</div>
+                                <div style="color:#475569;">🎁 Kuota: ${totalB}</div>
+                                <div style="color:var(--color-success); font-weight:900;">🌲 Sisa Kuota: ${sisaB}</div>
+                            </div>
+                        `;
+                    }
+                });
+                htmlInfo += `</div>`; 
+            } else {
+                 htmlInfo += `
+                    <div style="background:rgba(220,38,38,0.05); border:1px dashed rgba(220,38,38,0.3); border-radius:10px; padding:16px; text-align:center;">
+                        <i class="ph-fill ph-warning-circle" style="color:var(--color-danger); font-size:1.5rem; margin-bottom:6px;"></i>
+                        <div style="font-size:0.8rem; font-weight:800; color:var(--text-main); line-height:1.4;">${pkg.error_message || "Tidak ada paket aktif."}</div>
+                    </div>
+                 `;
+            }
+            
+            htmlInfo += `</div></div>`; 
+            wadahHasil.innerHTML = htmlInfo;
+            
+        } else {
             wadahHasil.innerHTML = `
-                <div style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:15px;">
-                    <div style="font-weight:900; font-size:0.9rem; margin-bottom:8px; color:var(--primary);"><i class="ph-bold ph-info"></i> INFORMASI STOK</div>
-                    <pre style="font-size:0.75rem; white-space:pre-wrap; word-wrap:break-word; color:var(--text-main); margin:0;">${JSON.stringify(res.data || res, null, 2)}</pre>
+                <div class="box-3d" style="background:var(--input-bg); border:2px solid var(--color-danger); border-radius:12px; padding:15px; text-align:center;">
+                    <div style="font-weight:900; font-size:1rem; margin-bottom:10px; color:var(--color-danger);"><i class="ph-fill ph-warning-circle"></i> CEK NOMOR GAGAL</div>
+                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Respons tidak sesuai atau nomor salah.</div>
                 </div>
             `;
         }
+    }
+
+         
+    // Fungsi 6: Topup Saldo (QRIS)
+    async function topupAxie() {
+        let nominal = prompt("Pengisian Saldo via QRIS\n\nMasukkan nominal topup (Rupiah):\n\n*Kosongkan lalu klik OK jika hanya ingin mengecek tagihan yang masih gantung/belum dibayar.");
+        if(nominal === null) return; // Batal ditekan
+        
+        let wadahHasil = document.getElementById('hasil-trx-online');
+        if(!wadahHasil) return;
+        wadahHasil.style.display = 'block';
+        wadahHasil.innerHTML = `<div style="text-align:center; padding:20px; font-weight:800; color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br>Meminta data QRIS ke server...</div>`;
+        
+        let url = nominal ? `/api/topupv2?nominal=${encodeURIComponent(nominal)}` : `/api/topupv2`;
+        let res = await fetchAxieAPI(url);
+        
+        wadahHasil.innerHTML = `
+            <div class="box-3d" style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:15px;">
+                <div style="font-weight:900; font-size:1rem; margin-bottom:15px; color:var(--color-success); text-align:center;"><i class="ph-fill ph-qr-code"></i> INVOICE TOPUP</div>
+                <pre style="font-size:0.75rem; white-space:pre-wrap; word-wrap:break-word; color:var(--text-main); margin:0; background:rgba(0,0,0,0.03); padding:12px; border-radius:8px; border:1px solid var(--panel-border); font-family:monospace;">${JSON.stringify(res.data || res, null, 2)}</pre>
+                <div style="font-size:0.7rem; color:var(--text-muted); margin-top:10px; text-align:center; font-weight:700;">*Data di atas adalah respons mentah dari server. Silakan scan kode QR/salin link jika tersedia.</div>
+            </div>
+        `;
     }
 
 
