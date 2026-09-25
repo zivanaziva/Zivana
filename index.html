@@ -1931,39 +1931,8 @@
             wadahHasil.innerHTML = `<div style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:15px; border-radius:12px; font-weight:800; font-size:0.8rem; word-wrap:break-word;">Gagal memuat riwayat.<br><br>Data Mentah: ${JSON.stringify(res)}</div>`;
         }
     }
-    
-    // Fungsi 5: Menampilkan Form Khusus Cek Kuota (Terpisah 100% dari transaksi)
-    function cekKuotaAxie() {
-        // Menggunakan wadah hasil paling atas untuk menghindari bug HTML ganda
-        let wadah = document.querySelectorAll('#hasil-trx-online')[0];
-        if(!wadah) return;
-        
-        wadah.style.display = 'block';
-        wadah.innerHTML = `
-            <div class="box-3d" style="background:var(--input-bg); border:2px solid #3b82f6; border-radius:12px; padding:20px; text-align:center; box-shadow: 0 8px 20px rgba(59,130,246,0.15);">
-                <div style="font-weight:900; font-size:1.1rem; color:#3b82f6; margin-bottom:10px;"><i class="ph-fill ph-sim-card"></i> CEK NOMOR & KUOTA</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; font-weight:700;">Masukkan nomor XL/AXIS (Tidak tersambung dengan pesanan):</div>
-                
-                <input type="tel" id="nomor-khusus-cek" placeholder="Ketik nomor di sini..." autocomplete="off" style="width:100%; padding:14px; border-radius:10px; border:2px solid #3b82f6; background:rgba(59,130,246,0.05); color:var(--text-main); font-weight:900; text-align:center; margin-bottom:15px; font-size:1.1rem; outline:none;">
-                
-                <button type="button" class="btn" onclick="prosesCekKuotaAxie()" style="background:linear-gradient(135deg, #3b82f6, #1d4ed8); width:100%; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:0.95rem;">
-                    <i class="ph-bold ph-magnifying-glass"></i> CEK SEKARANG
-                </button>
-            </div>
-        `;
-        
-        // Auto-focus agar keyboard langsung muncul
-        setTimeout(() => {
-            let inp = document.getElementById('nomor-khusus-cek');
-            if(inp) inp.focus();
-        }, 100);
-    }
-
-    
-
-
-
-                      // Fungsi Tambahan: Eksekusi Cek Kuota & Render UI ala Web Resmi
+   
+    // Fungsi Tambahan: Eksekusi Cek Kuota & Render UI ala Web Resmi
     async function prosesCekKuotaAxie() {
         let input = document.getElementById('nomor-khusus-cek');
         let nomor = input ? input.value.trim().replace(/\s/g, '') : '';
@@ -2128,16 +2097,8 @@
         }
     }
 
-    // Fungsi Tambahan untuk Tombol Copy Text
-    function salinTeksKuotaAxie() {
-        if(window.tempTeksSalinKuota) {
-            navigator.clipboard.writeText(window.tempTeksSalinKuota)
-                .then(() => alert("Berhasil! Rincian kuota telah disalin."))
-                .catch(() => alert("Gagal menyalin teks."));
-        }
-    }
 
-
+    
          
     // Fungsi 6: Topup Saldo (QRIS)
     async function topupAxie() {
