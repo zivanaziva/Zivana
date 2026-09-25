@@ -249,7 +249,7 @@
 
     <!-- TAB TRX ONLINE (AXIE STORE) -->
     <div id="tab-trx-online" class="section">
-      <div class="glass-panel card" style="margin-top: 15px;">
+      <div id="panel-order-axie" class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;">
             <span><i class="ph-fill ph-globe"></i> TRANSAKSI ( AKRAB )</span>
             <span id="saldo-axie" style="font-size: 0.8rem; background: var(--input-bg); padding: 4px 8px; border-radius: 8px; font-weight: 900; color: var(--primary);">Cek Saldo...</span>
@@ -281,6 +281,13 @@
 
         <button type="button" class="btn" onclick="prosesTrxOnline()" id="btn-trx-online" style="margin-top: 5px; background: linear-gradient(135deg, var(--color-success), #047857);">
             <i class="ph-bold ph-paper-plane-right"></i> KIRIM TRANSAKSI
+        </button>
+      </div>
+
+      <!-- Tombol kembali dari submenu TRX Online -->
+      <div id="btn-kembali-axie" style="display:none; margin-top:15px;">
+        <button type="button" class="btn" onclick="kembaliKeTransaksiAxie()" style="background:var(--input-bg); color:var(--text-main); border:2px solid var(--input-border); box-shadow:none;">
+          <i class="ph-bold ph-arrow-left"></i> KEMBALI KE TRANSAKSI
         </button>
       </div>
 
@@ -713,7 +720,45 @@
     function setTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('wistara_theme', themeName); }
     function setOpacity(val) { document.documentElement.style.setProperty('--panel-opacity', val); localStorage.setItem('wistara_opacity', val); }
 
-        function switchTab(tabId, element) {
+    // Kontrol tampilan submenu TRX Online: hanya satu tampilan yang aktif.
+    function tampilkanPanelAxie(mode) {
+      const order = document.getElementById('panel-order-axie');
+      const hasil = document.getElementById('hasil-trx-online');
+      const btnKembali = document.getElementById('btn-kembali-axie');
+      if (!order || !hasil) return;
+
+      if (mode === 'order') {
+        order.style.display = 'block';
+        hasil.style.display = 'none';
+        if (btnKembali) btnKembali.style.display = 'none';
+        hasil.innerHTML = '';
+      } else {
+        order.style.display = 'none';
+        hasil.style.display = 'block';
+        if (btnKembali) btnKembali.style.display = 'block';
+      }
+    }
+
+    // Kembali dari Cek Stok / Cek Kuota / Riwayat / Topup ke menu utama TRX Online.
+    function kembaliKeTransaksiAxie() {
+      tampilkanPanelAxie('order');
+      try { history.replaceState({ axieOrder: true }, '', location.pathname + location.search); } catch(e) {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Tombol Back Android/browser: jika sedang berada di submenu TRX Online,
+    // kembali dulu ke menu transaksi, bukan langsung keluar dari halaman.
+    window.addEventListener('popstate', function() {
+      const trxTab = document.getElementById('tab-trx-online');
+      if (trxTab && trxTab.classList.contains('active')) {
+        const hasil = document.getElementById('hasil-trx-online');
+        if (hasil && hasil.style.display !== 'none') {
+          tampilkanPanelAxie('order');
+        }
+      }
+    });
+
+    function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); 
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       
@@ -730,10 +775,9 @@
       
       // --- INI TAMBAHAN UNTUK TAB TRX ONLINE ---
       if(tabId === 'tab-trx-online') {
+          tampilkanPanelAxie('order');
           cekSaldoAxie();
           muatKatalogAxie();
-          let wadahHasil = document.getElementById('hasil-trx-online');
-          if(wadahHasil) wadahHasil.style.display = 'none';
       }
     }
 
@@ -1773,6 +1817,7 @@
 
     // Fungsi 2: Muat Katalog Paket (Diperbarui sesuai format asli Axie)
     async function muatKatalogAxie() {
+        tampilkanPanelAxie('order');
         let selectPaket = document.getElementById('online-paket');
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!selectPaket) return;
@@ -1810,6 +1855,7 @@
 
         // Fungsi Tambahan: Cek Stok Akrab dengan Tampilan Kartu Elegan
     async function cekStokAxie() {
+        tampilkanPanelAxie('result');
         let btn = document.getElementById('btn-cek-stok');
         let wadahHasil = document.getElementById('hasil-trx-online');
         
@@ -1887,6 +1933,8 @@
 
     // Fungsi 4: Cek Riwayat Transaksi (/api/history)
     async function riwayatAxie() {
+        tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!wadahHasil) return;
         wadahHasil.style.display = 'block';
@@ -1936,6 +1984,8 @@
 
     // Fungsi untuk memunculkan Form Input Cek Kuota
     function cekKuotaAxie() {
+        tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!wadahHasil) return;
         
@@ -1966,10 +2016,6 @@
     }
 
     // Fungsi Tambahan: Eksekusi Cek Kuota & Render UI ala Web Resmi
-    async function prosesCekKuotaAxie() {
-        let input = document.getElementById('nomor-khusus-cek');
-        // ... (dan seterusnya ke bawah tetap utuh) ...
-
     async function prosesCekKuotaAxie() {
         let input = document.getElementById('nomor-khusus-cek');
         let nomor = input ? input.value.trim().replace(/\s/g, '') : '';
@@ -2026,7 +2072,7 @@
             if (pkg.packages && pkg.packages.length > 0) {
                 pkg.packages.forEach((p) => {
                     let namaPaket = p.name || p.package_name || p.paket || 'Paket Utama';
-                    let expText = p.exp_date || p.expired || '-';
+                    let expText = p.expiry || p.exp_date || p.expired || p.expiry_date || p.expiration_date || p.end_date || p.active_until || p.valid_until || p.masa_aktif || p.masaAktif || '-';
                     
                     htmlInfo += `
                         <div class="box-3d" style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:14px; margin-bottom:15px; overflow:hidden; padding:0;">
@@ -2109,99 +2155,83 @@
                 </div>
             `; 
             wadahHasil.innerHTML = htmlInfo;
-
-            // Simpan teks salinan dalam format ringkas dan rapi untuk 1 layar WhatsApp
-            const ambil = (obj, keys, fallback='-') => {
-                for (const k of keys) {
-                    if (obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
-                        return obj[k];
-                    }
-                }
-                return fallback;
+            
+            // Simpan teks mentah untuk fitur salin
+            // Format teks salinan sesuai format laporan kuota
+            const pick = (...vals) => vals.find(v => v !== undefined && v !== null && String(v).trim() !== '') ?? '-';
+            const toNum = (v) => {
+                const n = parseFloat(String(v ?? '').replace(',', '.').replace(/[^0-9.]/g, ''));
+                return isNaN(n) ? 0 : n;
+            };
+            const unitOf = (v) => {
+                const m = String(v ?? '').match(/[A-Za-z]+/);
+                return m ? m[0].toUpperCase() : '';
+            };
+            const progressBar = (remaining, total) => {
+                const tv = toNum(total), rv = toNum(remaining);
+                const pct = tv > 0 ? Math.max(0, Math.min(100, Math.round((rv / tv) * 100))) : 0;
+                const filled = Math.round(pct / 10);
+                return `[${'🟩'.repeat(filled)}${'⬜'.repeat(10 - filled)} ${pct}%]`;
+            };
+            const quotaArrays = (p) => {
+                if (Array.isArray(p.quotas)) return p.quotas;
+                if (Array.isArray(p.quota)) return p.quota;
+                if (Array.isArray(p.benefits)) return p.benefits;
+                if (Array.isArray(p.benefit)) return p.benefit;
+                if (Array.isArray(p.details)) return p.details;
+                return [];
             };
 
-            const nilaiAngka = (v) => {
-                const m = String(v ?? '').replace(',', '.').match(/[\d.]+/);
-                return m ? parseFloat(m[0]) : 0;
-            };
+            const operatorText = pick(subs.operator, subs.provider, subs.operator_name, subs.carrier, 'XL');
+            const statusText = pick(subs.status, subs.network_status, subs.status_4g, subs.signal_status, '4G');
+            const volteRaw = pick(subs.volte, subs.voLTE, subs.is_volte, subs.volte_status, 'Aktif');
+            const verifiedRaw = pick(subs.verified, subs.is_verified, subs.verification, subs.verified_status, 'Sudah');
+            const umurText = pick(subs.umur, subs.age, subs.account_age, subs.duration, '-');
+            const aktifText = pick(subs.exp_date, subs.active_until, subs.valid_until, '-');
+            const tenggangText = pick(subs.grace_until, subs.grace_date, subs.tenggang, subs.grace_period, '-');
 
-            const keGB = (v) => {
-                const s = String(v ?? '').toUpperCase();
-                const n = nilaiAngka(s);
-                if (s.includes('TB')) return n * 1024;
-                if (s.includes('GB')) return n;
-                if (s.includes('MB')) return n / 1024;
-                return null;
-            };
-
-            const progressBar = (pct) => {
-                const p = Math.max(0, Math.min(100, Math.round(pct)));
-                const filled = Math.round(p / 10);
-                return `[${'🟩'.repeat(filled)}${'⬜'.repeat(10 - filled)} ${p}%]`;
-            };
-
-            const formatQuotaRingkas = (b) => {
-                const nama = ambil(b, ['name','benefit_name','benefit','nama'], 'Benefit');
-                const total = ambil(b, ['total','quota','kuota'], '0');
-                const sisa = ambil(b, ['remaining','sisa','remaining_quota','sisa_kuota'], '0');
-
-                let totalNum = keGB(total);
-                let sisaNum = keGB(sisa);
-
-                // Untuk SMS/Menit, hitung langsung dari angka.
-                if (totalNum === null || sisaNum === null) {
-                    totalNum = nilaiAngka(total);
-                    sisaNum = nilaiAngka(sisa);
-                }
-
-                const pct = totalNum > 0 ? Math.min((sisaNum / totalNum) * 100, 100) : 0;
-                return `   ├ 🌐 ${nama}: ${sisa} / ${total}\n   └ ${progressBar(pct)}`;
-            };
-
+            // Total data = jumlah sisa kuota data (GB), tidak menghitung SMS/menit.
             let totalDataGB = 0;
-            let rawText = `📒 Nomor     : ${ambil(subs, ['msisdn'], nomor)}
-🆔 Operator  : ${ambil(subs, ['operator','provider','carrier'], 'XL')}
-📶 Status    : ${ambil(subs, ['status','network_status','signal_status'], '-')}
-📡 VoLTE     : ${ambil(subs, ['volte','voLTE','is_volte'], '-')}
-📜 Verified  : ${ambil(subs, ['verified','verification','is_verified'], '-')}
-⏳ Umur      : ${ambil(subs, ['age','umur','subscriber_age'], '-')}
-📅 Aktif     : ${ambil(subs, ['exp_date','active_until'], '-')}
-⏳ Tenggang  : ${ambil(subs, ['grace_until','grace_period'], '-')}
-═══════════════════════
-🧮 Total Data: `;
+            (pkg.packages || []).forEach(p => {
+                quotaArrays(p).forEach(q => {
+                    const name = String(pick(q.name, q.benefit_name, q.benefit, q.nama, '')).toLowerCase();
+                    const rem = String(pick(q.remaining, q.sisa, q.remaining_quota, q.sisa_kuota, '0'));
+                    const total = String(pick(q.total, q.quota, q.kuota, '0'));
+                    const unit = unitOf(rem) || unitOf(total);
+                    if (unit === 'GB' && !/sms|menit|minute|voice|nelp|telepon/i.test(name)) totalDataGB += toNum(rem);
+                });
+            });
+            const totalDataText = totalDataGB ? `${totalDataGB.toFixed(2).replace(/\.00$/, '')} GB` : '0 GB';
 
-            const paketTeks = [];
+            let rawText = `📒 Nomor     : ${pick(subs.msisdn, nomor)}
+🆔 Operator  : ${operatorText}
+📶 Status    : ${statusText}
+📡 VoLTE    : ${volteRaw}
+📜 Verified : ${verifiedRaw}
+⏳ Umur     : ${umurText}
+📅 Aktif    : ${aktifText}
+⏳ Tenggang : ${tenggangText}
+═══════════════════════
+🧮 Total Data: ${totalDataText}\n\n`;
 
             if (pkg.packages && pkg.packages.length > 0) {
                 pkg.packages.forEach(p => {
-                    const namaPaket = ambil(p, ['name','package_name','paket'], 'Paket');
-                    const expPaket = ambil(p, ['expiry','exp_date','expired','expiry_date','expiration_date','end_date','active_until','valid_until','masa_aktif','masaAktif'], '-');
+                    const namaPaket = pick(p.name, p.package_name, p.paket, 'Paket');
+                    const expPaket = pick(p.expiry, p.exp_date, p.expired, p.expiry_date, p.expiration_date, p.end_date, p.active_until, p.valid_until, p.masa_aktif, p.masaAktif, '-');
+                    rawText += `📦 **${namaPaket}**\n   📅 Exp: ${expPaket}\n`;
 
-                    let quotas = [];
-                    if (Array.isArray(p.quotas)) quotas = p.quotas;
-                    else if (Array.isArray(p.benefits)) quotas = p.benefits;
-                    else if (Array.isArray(p.benefit)) quotas = p.benefit;
-                    else if (Array.isArray(p.details)) quotas = p.details;
-
-                    let bagian = `📦 ${namaPaket}\n   📅 Exp: ${expPaket}`;
-                    quotas.forEach(q => {
-                        const sisa = ambil(q, ['remaining','sisa','remaining_quota','sisa_kuota'], '0');
-                        const total = ambil(q, ['total','quota','kuota'], '0');
-                        const sisaGB = keGB(sisa);
-                        if (sisaGB !== null && /GB|MB|TB/i.test(String(sisa))) {
-                            totalDataGB += sisaGB;
-                        }
-                        bagian += `\n${formatQuotaRingkas(q)}`;
+                    quotaArrays(p).forEach(q => {
+                        const namaB = pick(q.name, q.benefit_name, q.benefit, q.nama, 'Kuota');
+                        const totalB = pick(q.total, q.quota, q.kuota, '0');
+                        const sisaB = pick(q.remaining, q.sisa, q.remaining_quota, q.sisa_kuota, '0');
+                        rawText += `   ├ 🌐 ${namaB}: ${sisaB} / ${totalB}\n`;
+                        rawText += `   └ ${progressBar(sisaB, totalB)}\n`;
                     });
-
-                    paketTeks.push(bagian);
+                    rawText += '\n';
                 });
             }
 
-            rawText += `${totalDataGB.toFixed(2).replace(/\.00$/, '')} GB\n\n`;
-            rawText += paketTeks.join('\n\n');
-            rawText += `\n═══════════════════════\n\n PANDUAN PENGGUNA : /start`;
-
+            rawText += `═══════════════════════\n\n PANDUAN PENGGUNA : /start`;
             window.tempTeksSalinKuota = rawText;
             
         } else {
@@ -2219,6 +2249,8 @@
          
     // Fungsi 6: Topup Saldo (QRIS)
     async function topupAxie() {
+        tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         let nominal = prompt("Pengisian Saldo via QRIS\n\nMasukkan nominal topup (Rupiah):\n\n*Kosongkan lalu klik OK jika hanya ingin mengecek tagihan yang masih gantung/belum dibayar.");
         if(nominal === null) return; // Batal ditekan
         
@@ -2242,6 +2274,7 @@
 
     // Fungsi 3: Eksekusi Transaksi Order
     async function prosesTrxOnline() {
+        tampilkanPanelAxie('order');
         let no = document.getElementById('online-nomor').value.replace(/\s/g, '');
         let pkt = document.getElementById('online-paket').value;
         let btn = document.getElementById('btn-trx-online');
