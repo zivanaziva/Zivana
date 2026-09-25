@@ -2157,17 +2157,86 @@
             wadahHasil.innerHTML = htmlInfo;
             
             // Simpan teks mentah untuk fitur salin
-            let rawText = `Cek Kuota XL/AXIS\nNomor: ${subs.msisdn || nomor}\nAktif: ${subs.exp_date || '-'}\nTenggang: ${subs.grace_until || '-'}\n\n`;
+            // Format teks salinan sesuai format laporan kuota
+            const pick = (...vals) => vals.find(v => v !== undefined && v !== null && String(v).trim() !== '') ?? '-';
+            const toNum = (v) => {
+                const n = parseFloat(String(v ?? '').replace(',', '.').replace(/[^0-9.]/g, ''));
+                return isNaN(n) ? 0 : n;
+            };
+            const unitOf = (v) => {
+                const m = String(v ?? '').match(/[A-Za-z]+/);
+                return m ? m[0].toUpperCase() : '';
+            };
+            const progressBar = (remaining, total) => {
+                const tv = toNum(total), rv = toNum(remaining);
+                const pct = tv > 0 ? Math.max(0, Math.min(100, Math.round((rv / tv) * 100))) : 0;
+                const filled = Math.round(pct / 10);
+                return `[${'🟩'.repeat(filled)}${'⬜'.repeat(10 - filled)} ${pct}%]`;
+            };
+            const quotaArrays = (p) => {
+                if (Array.isArray(p.quotas)) return p.quotas;
+                if (Array.isArray(p.quota)) return p.quota;
+                if (Array.isArray(p.benefits)) return p.benefits;
+                if (Array.isArray(p.benefit)) return p.benefit;
+                if (Array.isArray(p.details)) return p.details;
+                return [];
+            };
+
+            const operatorText = pick(subs.operator, subs.provider, subs.operator_name, subs.carrier, 'XL');
+            const statusText = pick(subs.status, subs.network_status, subs.status_4g, subs.signal_status, '4G');
+            const volteRaw = pick(subs.volte, subs.voLTE, subs.is_volte, subs.volte_status, 'Aktif');
+            const verifiedRaw = pick(subs.verified, subs.is_verified, subs.verification, subs.verified_status, 'Sudah');
+            const umurText = pick(subs.umur, subs.age, subs.account_age, subs.duration, '-');
+            const aktifText = pick(subs.exp_date, subs.active_until, subs.valid_until, '-');
+            const tenggangText = pick(subs.grace_until, subs.grace_date, subs.tenggang, subs.grace_period, '-');
+
+            // Total data = jumlah sisa kuota data (GB), tidak menghitung SMS/menit.
+            let totalDataGB = 0;
+            (pkg.packages || []).forEach(p => {
+                quotaArrays(p).forEach(q => {
+                    const name = String(pick(q.name, q.benefit_name, q.benefit, q.nama, '')).toLowerCase();
+                    const rem = String(pick(q.remaining, q.sisa, q.remaining_quota, q.sisa_kuota, '0'));
+                    const total = String(pick(q.total, q.quota, q.kuota, '0'));
+                    const unit = unitOf(rem) || unitOf(total);
+                    if (unit === 'GB' && !/sms|menit|minute|voice|nelp|telepon/i.test(name)) totalDataGB += toNum(rem);
+                });
+            });
+            const totalDataText = totalDataGB ? `${totalDataGB.toFixed(2).replace(/\.00$/, '')} GB` : '0 GB';
+
+            let rawText = `📒 Nomor    : ${pick(subs.msisdn, nomor)}\n` +
+                `🆔 Operator : ${operatorText}\n` +
+                `📶 Status   : ${statusText}\n` +
+                `📡 VoLTE   : ${volteRaw}\n` +
+                `📜 Verified : ${verifiedRaw}\n` +
+                `⏳ Umur    : ${umurText}\n` +
+                `📅 Aktif   : ${aktifText}\n` +
+                `⏳ Tenggang : ${tenggangText}\n` +
+                `═══════════════════════\n` +
+                `🧮 Total Data: ${totalDataText}\n\n`;
+
             if (pkg.packages && pkg.packages.length > 0) {
                 pkg.packages.forEach(p => {
-                    rawText += `[+] ${p.name || p.package_name || 'Paket'}\n`;
-                    let bnf = p.benefits || p.benefit || p.details || [];
-                    bnf.forEach(b => {
-                        rawText += ` - ${b.name || 'Benefit'}: ${b.remaining || '0'} dari ${b.total || '0'}\n`;
+                    const namaPaket = pick(p.name, p.package_name, p.paket, 'Paket');
+                    const expPaket = pick(p.expiry, p.exp_date, p.expired, p.expiry_date, p.expiration_date, p.end_date, p.active_until, p.valid_until, p.masa_aktif, p.masaAktif, '-');
+                    rawText += `📦 **${namaPaket}**\n`;
+                    rawText += `   📅 Exp: ${expPaket}\n`;
+
+                    const quotas = quotaArrays(p);
+                    quotas.forEach((q, idx) => {
+                        const namaB = pick(q.name, q.benefit_name, q.benefit, q.nama, 'Kuota');
+                        const totalB = pick(q.total, q.quota, q.kuota, '0');
+                        const sisaB = pick(q.remaining, q.sisa, q.remaining_quota, q.sisa_kuota, '0');
+                        rawText += `   ├ 🌐 ${namaB}: ${sisaB} / ${totalB}\n`;
+                        rawText += `   └ \n`;
+                        rawText += '```\n';
+                        rawText += `${progressBar(sisaB, totalB)}\n`;
+                        rawText += '```\n\n';
                     });
-                    rawText += ` (Exp: ${p.exp_date || p.expired || p.expiry_date || p.expiration_date || p.end_date || p.active_until || p.valid_until || p.masa_aktif || p.masaAktif || subs.exp_date || subs.active_until || subs.valid_until || '-'})\n\n`;
+                    rawText += '\n';
                 });
             }
+
+            rawText += `═══════════════════════\n\n PANDUAN PENGGUNA : /start`;
             window.tempTeksSalinKuota = rawText;
             
         } else {
