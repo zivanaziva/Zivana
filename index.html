@@ -249,7 +249,7 @@
 
     <!-- TAB TRX ONLINE (AXIE STORE) -->
     <div id="tab-trx-online" class="section">
-      <div class="glass-panel card" style="margin-top: 15px;">
+      <div id="panel-order-axie" class="glass-panel card" style="margin-top: 15px;">
         <div class="card-title" style="justify-content:space-between; border-bottom: none; margin-bottom: 5px;">
             <span><i class="ph-fill ph-globe"></i> TRANSAKSI ( AKRAB )</span>
             <span id="saldo-axie" style="font-size: 0.8rem; background: var(--input-bg); padding: 4px 8px; border-radius: 8px; font-weight: 900; color: var(--primary);">Cek Saldo...</span>
@@ -713,7 +713,23 @@
     function setTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('wistara_theme', themeName); }
     function setOpacity(val) { document.documentElement.style.setProperty('--panel-opacity', val); localStorage.setItem('wistara_opacity', val); }
 
-        function switchTab(tabId, element) {
+    // Kontrol tampilan submenu TRX Online: hanya satu tampilan yang aktif.
+    function tampilkanPanelAxie(mode) {
+      const order = document.getElementById('panel-order-axie');
+      const hasil = document.getElementById('hasil-trx-online');
+      if (!order || !hasil) return;
+
+      if (mode === 'order') {
+        order.style.display = 'block';
+        hasil.style.display = 'none';
+        hasil.innerHTML = '';
+      } else {
+        order.style.display = 'none';
+        hasil.style.display = 'block';
+      }
+    }
+
+    function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); 
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       
@@ -730,10 +746,9 @@
       
       // --- INI TAMBAHAN UNTUK TAB TRX ONLINE ---
       if(tabId === 'tab-trx-online') {
+          tampilkanPanelAxie('order');
           cekSaldoAxie();
           muatKatalogAxie();
-          let wadahHasil = document.getElementById('hasil-trx-online');
-          if(wadahHasil) wadahHasil.style.display = 'none';
       }
     }
 
@@ -1773,6 +1788,7 @@
 
     // Fungsi 2: Muat Katalog Paket (Diperbarui sesuai format asli Axie)
     async function muatKatalogAxie() {
+        tampilkanPanelAxie('order');
         let selectPaket = document.getElementById('online-paket');
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!selectPaket) return;
@@ -1810,6 +1826,7 @@
 
         // Fungsi Tambahan: Cek Stok Akrab dengan Tampilan Kartu Elegan
     async function cekStokAxie() {
+        tampilkanPanelAxie('result');
         let btn = document.getElementById('btn-cek-stok');
         let wadahHasil = document.getElementById('hasil-trx-online');
         
@@ -1887,6 +1904,7 @@
 
     // Fungsi 4: Cek Riwayat Transaksi (/api/history)
     async function riwayatAxie() {
+        tampilkanPanelAxie('result');
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!wadahHasil) return;
         wadahHasil.style.display = 'block';
@@ -1936,6 +1954,7 @@
 
     // Fungsi untuk memunculkan Form Input Cek Kuota
     function cekKuotaAxie() {
+        tampilkanPanelAxie('result');
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!wadahHasil) return;
         
@@ -2135,6 +2154,7 @@
          
     // Fungsi 6: Topup Saldo (QRIS)
     async function topupAxie() {
+        tampilkanPanelAxie('result');
         let nominal = prompt("Pengisian Saldo via QRIS\n\nMasukkan nominal topup (Rupiah):\n\n*Kosongkan lalu klik OK jika hanya ingin mengecek tagihan yang masih gantung/belum dibayar.");
         if(nominal === null) return; // Batal ditekan
         
@@ -2158,6 +2178,7 @@
 
     // Fungsi 3: Eksekusi Transaksi Order
     async function prosesTrxOnline() {
+        tampilkanPanelAxie('order');
         let no = document.getElementById('online-nomor').value.replace(/\s/g, '');
         let pkt = document.getElementById('online-paket').value;
         let btn = document.getElementById('btn-trx-online');
