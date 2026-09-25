@@ -284,6 +284,13 @@
         </button>
       </div>
 
+      <!-- Tombol kembali dari submenu TRX Online -->
+      <div id="btn-kembali-axie" style="display:none; margin-top:15px;">
+        <button type="button" class="btn" onclick="kembaliKeTransaksiAxie()" style="background:var(--input-bg); color:var(--text-main); border:2px solid var(--input-border); box-shadow:none;">
+          <i class="ph-bold ph-arrow-left"></i> KEMBALI KE TRANSAKSI
+        </button>
+      </div>
+
       <!-- Kotak Multi-Fungsi untuk menampilkan hasil aksi -->
       <div id="hasil-trx-online" style="margin-top: 15px; display: none;"></div>
     </div>
@@ -717,17 +724,39 @@
     function tampilkanPanelAxie(mode) {
       const order = document.getElementById('panel-order-axie');
       const hasil = document.getElementById('hasil-trx-online');
+      const btnKembali = document.getElementById('btn-kembali-axie');
       if (!order || !hasil) return;
 
       if (mode === 'order') {
         order.style.display = 'block';
         hasil.style.display = 'none';
+        if (btnKembali) btnKembali.style.display = 'none';
         hasil.innerHTML = '';
       } else {
         order.style.display = 'none';
         hasil.style.display = 'block';
+        if (btnKembali) btnKembali.style.display = 'block';
       }
     }
+
+    // Kembali dari Cek Stok / Cek Kuota / Riwayat / Topup ke menu utama TRX Online.
+    function kembaliKeTransaksiAxie() {
+      tampilkanPanelAxie('order');
+      try { history.replaceState({ axieOrder: true }, '', location.pathname + location.search); } catch(e) {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Tombol Back Android/browser: jika sedang berada di submenu TRX Online,
+    // kembali dulu ke menu transaksi, bukan langsung keluar dari halaman.
+    window.addEventListener('popstate', function() {
+      const trxTab = document.getElementById('tab-trx-online');
+      if (trxTab && trxTab.classList.contains('active')) {
+        const hasil = document.getElementById('hasil-trx-online');
+        if (hasil && hasil.style.display !== 'none') {
+          tampilkanPanelAxie('order');
+        }
+      }
+    });
 
     function switchTab(tabId, element) {
       document.querySelectorAll('.section').forEach(el => el.classList.remove('active')); 
@@ -1905,6 +1934,7 @@
     // Fungsi 4: Cek Riwayat Transaksi (/api/history)
     async function riwayatAxie() {
         tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!wadahHasil) return;
         wadahHasil.style.display = 'block';
@@ -1955,6 +1985,7 @@
     // Fungsi untuk memunculkan Form Input Cek Kuota
     function cekKuotaAxie() {
         tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         let wadahHasil = document.getElementById('hasil-trx-online');
         if(!wadahHasil) return;
         
@@ -2155,6 +2186,7 @@
     // Fungsi 6: Topup Saldo (QRIS)
     async function topupAxie() {
         tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         let nominal = prompt("Pengisian Saldo via QRIS\n\nMasukkan nominal topup (Rupiah):\n\n*Kosongkan lalu klik OK jika hanya ingin mengecek tagihan yang masih gantung/belum dibayar.");
         if(nominal === null) return; // Batal ditekan
         
