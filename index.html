@@ -1959,7 +1959,11 @@
         }, 100);
     }
 
-    // Fungsi Tambahan: Eksekusi Cek Kuota & Smart Parser
+    
+
+
+
+                      // Fungsi Tambahan: Eksekusi Cek Kuota & Render UI ala Web Resmi
     async function prosesCekKuotaAxie() {
         let input = document.getElementById('nomor-khusus-cek');
         let nomor = input ? input.value.trim().replace(/\s/g, '') : '';
@@ -1979,52 +1983,51 @@
             let subs = data.subs_info;
             let pkg = data.package_info || {};
             
+            // --- HEADER & GRID STATUS KARTU ---
             let htmlInfo = `
-                <div class="box-3d" style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:12px; padding:0; overflow:hidden;">
-                    
-                    <div style="background:linear-gradient(135deg, #ec4899, #be185d); color:white; padding:15px; text-align:center;">
-                        <div style="font-weight:900; font-size:1.3rem; letter-spacing:1px; margin-bottom:4px;"><i class="ph-fill ph-sim-card"></i> ${subs.msisdn || nomor}</div>
-                        <div style="font-size:0.75rem; font-weight:800; opacity:0.9; text-transform:uppercase;">
-                            <span style="background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:10px; margin-right:4px;">${subs.operator || '-'}</span>
-                            <span style="background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:10px;">Jaringan ${subs.net_type || '-'}</span>
+                <div style="margin-top: 10px;">
+                    <!-- Kotak Paket Saya - Berhasil -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:12px 16px; border-radius:12px; margin-bottom:15px; border:1px solid var(--input-border);">
+                        <div style="font-weight:900; font-size:1rem; color:var(--primary);">Paket Saya</div>
+                        <div style="background:rgba(16,185,129,0.15); color:var(--color-success); font-size:0.7rem; font-weight:900; padding:6px 12px; border-radius:8px; letter-spacing:0.5px;">BERHASIL</div>
+                    </div>
+
+                    <!-- Kotak Grid 4 Info -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px;">
+                        <div style="background:var(--input-bg); border:1px solid var(--input-border); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:800; letter-spacing:0.5px; margin-bottom:6px;">NOMOR</div>
+                            <div style="font-weight:900; font-size:0.95rem; color:var(--text-main);">${subs.msisdn || nomor}</div>
+                        </div>
+                        <div style="background:var(--input-bg); border:1px solid var(--input-border); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:800; letter-spacing:0.5px; margin-bottom:6px;">TIPE</div>
+                            <div style="font-weight:900; font-size:0.95rem; color:var(--text-main);">${subs.operator || 'XL'}</div>
+                        </div>
+                        <div style="background:var(--input-bg); border:1px solid var(--input-border); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:800; letter-spacing:0.5px; margin-bottom:6px;">MASA AKTIF</div>
+                            <div style="font-weight:900; font-size:0.85rem; color:var(--color-success);">${subs.exp_date || '-'}</div>
+                        </div>
+                        <div style="background:var(--input-bg); border:1px solid var(--input-border); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:800; letter-spacing:0.5px; margin-bottom:6px;">MASA TENGGANG</div>
+                            <div style="font-weight:900; font-size:0.85rem; color:var(--color-danger);">${subs.grace_until || '-'}</div>
                         </div>
                     </div>
-                    
-                    <div style="padding:16px;">
-                        <div style="font-weight:900; font-size:0.85rem; color:var(--text-main); margin-bottom:12px; border-bottom:1px dashed var(--panel-border); padding-bottom:6px;"><i class="ph-bold ph-info"></i> STATUS KARTU</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
-                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Masa Aktif</div>
-                                <div style="font-size:0.85rem; font-weight:900; color:var(--color-success);">${subs.exp_date || '-'}</div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
-                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Masa Tenggang</div>
-                                <div style="font-size:0.85rem; font-weight:900; color:var(--color-warning);">${subs.grace_until || '-'}</div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
-                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Umur Kartu</div>
-                                <div style="font-size:0.85rem; font-weight:900; color:var(--text-main);">${subs.tenure || '-'}</div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; border:1px solid var(--panel-border);">
-                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">Registrasi KTP</div>
-                                <div style="font-size:0.85rem; font-weight:900; color:var(--text-main);">${subs.id_verified || '-'}</div>
-                            </div>
-                        </div>
 
-                        <div style="font-weight:900; font-size:0.85rem; color:var(--text-main); margin-bottom:12px; border-bottom:1px dashed var(--panel-border); padding-bottom:6px;"><i class="ph-bold ph-package"></i> DETAIL PAKET & KUOTA</div>
+                    <!-- Judul Daftar Paket -->
+                    <div style="font-weight:900; font-size:1.1rem; color:var(--text-main); margin-bottom:12px;">Daftar Paket / Add On</div>
             `;
             
+            // --- LOOPING DATA PAKET & BENEFIT ---
             if (pkg.packages && pkg.packages.length > 0) {
-                htmlInfo += `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; font-size:0.8rem; color:#334155; box-shadow:inset 0 2px 4px rgba(0,0,0,0.03);">`;
-                
-                pkg.packages.forEach((p, idx) => {
-                    if (idx > 0) htmlInfo += `<hr style="border:0; border-top:2px dashed #cbd5e1; margin:20px 0;">`;
+                pkg.packages.forEach((p) => {
+                    let namaPaket = p.name || p.package_name || p.paket || 'Paket Utama';
+                    let expText = p.exp_date || p.expired || '-';
                     
                     htmlInfo += `
-                        <div style="line-height:2.2; margin-bottom:10px; font-weight:700;">
-                            <div style="color:#1e3a8a; font-weight:900; font-size:0.95rem;">🎁 Quota: ${p.name || p.package_name || p.paket || 'Paket Utama'}</div>
-                            <div>🍂 Aktif Hingga: ${p.exp_date || p.expired || '-'}</div>
-                        </div>
+                        <div class="box-3d" style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:14px; margin-bottom:15px; overflow:hidden; padding:0;">
+                            <div style="padding:16px;">
+                                <div style="display:flex; align-items:center; gap:8px; font-weight:900; font-size:1rem; color:var(--text-main); margin-bottom:20px;">
+                                    <i class="ph-fill ph-globe-hemisphere-east" style="color:var(--primary); font-size:1.3rem;"></i> ${namaPaket}
+                                </div>
                     `;
                     
                     let benefits = [];
@@ -2040,34 +2043,49 @@
                     if (benefits.length > 0) {
                         benefits.forEach(b => {
                             let namaB = b.name || b.benefit_name || b.benefit || b.nama || '-';
-                            let tipeB = b.type || b.quota_type || b.tipe || 'DATA';
                             let totalB = b.total || b.quota || b.kuota || '-';
                             let sisaB = b.remaining || b.sisa || b.remaining_quota || b.sisa_kuota || '0';
                             
+                            // Logika sederhana untuk menghitung progress bar
+                            let percent = 100;
+                            let valTotal = parseFloat(String(totalB).replace(/[^0-9.]/g, ''));
+                            let valSisa = parseFloat(String(sisaB).replace(/[^0-9.]/g, ''));
+                            
+                            if (String(totalB).toUpperCase().includes('GB')) valTotal *= 1024;
+                            if (String(sisaB).toUpperCase().includes('GB')) valSisa *= 1024;
+                            
+                            if (valTotal > 0 && !isNaN(valSisa)) {
+                                percent = Math.min((valSisa / valTotal) * 100, 100);
+                            }
+                            
                             htmlInfo += `
-                                <div style="background:rgba(0,0,0,0.03); border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px; line-height:2;">
-                                    <div style="font-weight:800; color:#0f172a;">🎁 Benefit: ${namaB}</div>
-                                    <div style="color:#475569;">🎁 Tipe Kuota: ${tipeB}</div>
-                                    <div style="color:#475569;">🎁 Kuota: ${totalB}</div>
-                                    <div style="color:var(--color-success); font-weight:900;">🌲 Sisa Kuota: ${sisaB}</div>
+                                <div style="margin-bottom:16px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; font-weight:900; font-size:0.85rem; color:var(--text-main); margin-bottom:8px;">
+                                        <div style="display:flex; align-items:center; gap:6px;"><i class="ph-fill ph-globe-hemisphere-east" style="color:var(--primary); font-size:1.1rem;"></i> ${namaB}</div>
+                                        <div>${sisaB}</div>
+                                    </div>
+                                    <div style="width:100%; background:rgba(0,0,0,0.1); height:4px; border-radius:4px; margin-bottom:8px; overflow:hidden;">
+                                        <div style="width:${percent}%; background:#10b981; height:100%; border-radius:4px;"></div>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); font-weight:700;">
+                                        <div>Gunakan di Jaringan & Handphone XL/AXIS</div>
+                                        <div>${totalB}</div>
+                                    </div>
                                 </div>
                             `;
                         });
-                    } else if (p.total || p.remaining || p.quota || p.sisa) {
-                        let tipeB = p.type || p.quota_type || p.tipe || 'DATA';
-                        let totalB = p.total || p.quota || p.kuota || '-';
-                        let sisaB = p.remaining || p.sisa || p.remaining_quota || p.sisa_kuota || '0';
-                        htmlInfo += `
-                            <div style="background:rgba(0,0,0,0.03); border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px; line-height:2;">
-                                <div style="font-weight:800; color:#0f172a;">🎁 Benefit: ${p.name || 'Detail Paket'}</div>
-                                <div style="color:#475569;">🎁 Tipe Kuota: ${tipeB}</div>
-                                <div style="color:#475569;">🎁 Kuota: ${totalB}</div>
-                                <div style="color:var(--color-success); font-weight:900;">🌲 Sisa Kuota: ${sisaB}</div>
-                            </div>
-                        `;
                     }
+                    
+                    // --- FOOTER KARTU PAKET (Masa Aktif Paket) ---
+                    htmlInfo += `
+                            </div>
+                            <div style="background:rgba(0,0,0,0.03); padding:12px 16px; border-top:1px solid var(--input-border); display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; font-weight:800; color:var(--text-muted);">
+                                <div style="display:flex; align-items:center; gap:6px;"><i class="ph-fill ph-calendar-blank" style="color:var(--color-danger); font-size:1.1rem;"></i> Aktif sampai</div>
+                                <div>${expText}</div>
+                            </div>
+                        </div>
+                    `;
                 });
-                htmlInfo += `</div>`; 
             } else {
                  htmlInfo += `
                     <div style="background:rgba(220,38,38,0.05); border:1px dashed rgba(220,38,38,0.3); border-radius:10px; padding:16px; text-align:center;">
@@ -2077,8 +2095,28 @@
                  `;
             }
             
-            htmlInfo += `</div></div>`; 
+            // --- TOMBOL SALIN TEKS ---
+            htmlInfo += `
+                    <button type="button" class="btn" style="background:transparent; border:2px solid var(--primary); color:var(--primary); box-shadow:none; padding:12px; border-radius:12px; margin-top:10px; font-size:0.9rem;" onclick="salinTeksKuotaAxie()">
+                        <i class="ph-bold ph-copy"></i> Salin Rincian Teks
+                    </button>
+                </div>
+            `; 
             wadahHasil.innerHTML = htmlInfo;
+            
+            // Simpan teks mentah untuk fitur salin
+            let rawText = `Cek Kuota XL/AXIS\nNomor: ${subs.msisdn || nomor}\nAktif: ${subs.exp_date || '-'}\nTenggang: ${subs.grace_until || '-'}\n\n`;
+            if (pkg.packages && pkg.packages.length > 0) {
+                pkg.packages.forEach(p => {
+                    rawText += `[+] ${p.name || p.package_name || 'Paket'}\n`;
+                    let bnf = p.benefits || p.benefit || p.details || [];
+                    bnf.forEach(b => {
+                        rawText += ` - ${b.name || 'Benefit'}: ${b.remaining || '0'} dari ${b.total || '0'}\n`;
+                    });
+                    rawText += ` (Exp: ${p.exp_date || p.expired || '-'})\n\n`;
+                });
+            }
+            window.tempTeksSalinKuota = rawText;
             
         } else {
             wadahHasil.innerHTML = `
@@ -2089,6 +2127,16 @@
             `;
         }
     }
+
+    // Fungsi Tambahan untuk Tombol Copy Text
+    function salinTeksKuotaAxie() {
+        if(window.tempTeksSalinKuota) {
+            navigator.clipboard.writeText(window.tempTeksSalinKuota)
+                .then(() => alert("Berhasil! Rincian kuota telah disalin."))
+                .catch(() => alert("Gagal menyalin teks."));
+        }
+    }
+
 
          
     // Fungsi 6: Topup Saldo (QRIS)
