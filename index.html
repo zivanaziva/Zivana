@@ -1933,6 +1933,43 @@
     }
    
     // Fungsi Tambahan: Eksekusi Cek Kuota & Render UI ala Web Resmi
+
+    // Fungsi untuk memunculkan Form Input Cek Kuota
+    function cekKuotaAxie() {
+        let wadahHasil = document.getElementById('hasil-trx-online');
+        if(!wadahHasil) return;
+        
+        wadahHasil.style.display = 'block';
+        wadahHasil.innerHTML = `
+            <div class="box-3d" style="background:var(--panel-bg); border:2px solid var(--input-border); padding:18px;">
+                <div style="font-weight:900; font-size:1.05rem; color:var(--primary); margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+                    <i class="ph-bold ph-sim-card"></i> CEK NOMOR & KUOTA
+                </div>
+                <div class="input-group">
+                    <label>NOMOR XL/AXIS</label>
+                    <input type="tel" id="nomor-khusus-cek" autocomplete="off" placeholder="Contoh: 0819..." style="font-size:1.1rem; text-align:center; font-weight:900;">
+                </div>
+                <button type="button" class="btn" onclick="prosesCekKuotaAxie()" style="margin-top: 10px; background: linear-gradient(135deg, #ec4899, #be185d);">
+                    <i class="ph-bold ph-magnifying-glass"></i> CEK SEKARANG
+                </button>
+            </div>
+        `;
+    }
+
+    // Fungsi Tambahan untuk Tombol Copy Text
+    function salinTeksKuotaAxie() {
+        if(window.tempTeksSalinKuota) {
+            navigator.clipboard.writeText(window.tempTeksSalinKuota)
+                .then(() => alert("Berhasil! Rincian kuota telah disalin."))
+                .catch(() => alert("Gagal menyalin teks."));
+        }
+    }
+
+    // Fungsi Tambahan: Eksekusi Cek Kuota & Render UI ala Web Resmi
+    async function prosesCekKuotaAxie() {
+        let input = document.getElementById('nomor-khusus-cek');
+        // ... (dan seterusnya ke bawah tetap utuh) ...
+
     async function prosesCekKuotaAxie() {
         let input = document.getElementById('nomor-khusus-cek');
         let nomor = input ? input.value.trim().replace(/\s/g, '') : '';
