@@ -2072,7 +2072,7 @@
             if (pkg.packages && pkg.packages.length > 0) {
                 pkg.packages.forEach((p) => {
                     let namaPaket = p.name || p.package_name || p.paket || 'Paket Utama';
-                    let expText = p.exp_date || p.expired || '-';
+                    let expText = p.expiry || p.exp_date || p.expired || p.expiry_date || p.expiration_date || p.end_date || p.active_until || p.valid_until || p.masa_aktif || p.masaAktif || '-';
                     
                     htmlInfo += `
                         <div class="box-3d" style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:14px; margin-bottom:15px; overflow:hidden; padding:0;">
@@ -2165,7 +2165,7 @@
                     bnf.forEach(b => {
                         rawText += ` - ${b.name || 'Benefit'}: ${b.remaining || '0'} dari ${b.total || '0'}\n`;
                     });
-                    rawText += ` (Exp: ${p.exp_date || p.expired || '-'})\n\n`;
+                    rawText += ` (Exp: ${p.exp_date || p.expired || p.expiry_date || p.expiration_date || p.end_date || p.active_until || p.valid_until || p.masa_aktif || p.masaAktif || subs.exp_date || subs.active_until || subs.valid_until || '-'})\n\n`;
                 });
             }
             window.tempTeksSalinKuota = rawText;
