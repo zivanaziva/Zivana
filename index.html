@@ -2390,61 +2390,106 @@
         }
     }
 
-    // Cek stok /api/stock-akrab
-    // Format response yang digunakan API: { "axa65": 7, "axa50": 1, "axa89": 1 }
+    // Cek stok + detail paket /api/akrab/list dan stok real-time /api/stock-akrab
+    // /api/akrab/list menyediakan deskripsi kuota + harga, sedangkan
+    // /api/stock-akrab menyediakan jumlah slot real-time.
     async function cekStokAxie() {
         tampilkanPanelAxie('result');
         try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
-        const wadah = document.getElementById('hasil-trx-online');
+
+        const wadahHasil = document.getElementById('hasil-trx-online');
         const btn = document.getElementById('btn-cek-stok');
-        if (!wadah) return;
+        if (!wadahHasil) return;
         if (btn) btn.disabled = true;
-        wadah.style.display = 'block';
-        wadah.innerHTML = '<div style="text-align:center;padding:25px;font-weight:800;color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br><br>Mengecek slot stok real-time...</div>';
+        wadahHasil.style.display = 'block';
+        wadahHasil.innerHTML = '<div style="text-align:center;padding:25px;font-weight:800;color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br><br>Memuat detail paket & stok real-time...</div>';
 
         try {
-            const res = await fetchAxieAPI('/api/stock-akrab');
-            // Endpoint mengembalikan object paket -> jumlah slot. Jangan membaca res.data.
-            const stok = (res && res.data && typeof res.data === 'object') ? res.data : res;
-            if (!stok || typeof stok !== 'object' || Array.isArray(stok)) {
-                throw new Error('Format response stok tidak sesuai dokumentasi API.');
+            // Data katalog: nama paket, detail kuota/area, harga, dan stok bawaan katalog.
+            const katalog = await fetchAxieAPI('/api/akrab/list');
+            // Data stok real-time: { axa65: 7, axa50: 1, ... }
+            const stokRes = await fetchAxieAPI('/api/stock-akrab');
+            const stokObj = (stokRes && stokRes.data && typeof stokRes.data === 'object') ? stokRes.data : stokRes;
+
+            if (!katalog || !katalog.paket || typeof katalog.paket !== 'object') {
+                throw new Error('Data katalog /api/akrab/list tidak sesuai format dokumentasi.');
             }
 
-            const entries = Object.entries(stok).filter(([k,v]) => /^axa\d+$/i.test(k) && !isNaN(Number(v)));
-            if (!entries.length) {
-                wadah.innerHTML = `<div class="box-3d" style="background:var(--input-bg);border:2px solid var(--color-danger);padding:18px;text-align:center;font-weight:800;color:var(--color-danger);">Data stok kosong / format tidak sesuai.<br><small style="color:var(--text-muted);">Response: ${escapeAxieHTML(JSON.stringify(res))}</small></div>`;
+            const paketEntries = Object.entries(katalog.paket);
+            if (!paketEntries.length) {
+                wadahHasil.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-weight:800;">Belum ada data paket.</div>';
                 return;
             }
 
-            let total = 0;
-            let cards = '';
-            entries.forEach(([kode, nilai]) => {
-                const jumlah = Number(nilai);
-                total += jumlah;
-                const tersedia = jumlah > 0;
-                const border = tersedia ? 'var(--color-success)' : 'var(--color-danger)';
-                const bg = tersedia ? 'rgba(16,185,129,.10)' : 'rgba(239,68,68,.08)';
-                const label = tersedia ? 'TERSEDIA' : 'KOSONG';
-                cards += `
-                  <div style="background:${bg};border:1px solid ${border};border-radius:14px;padding:15px;text-align:center;">
-                    <div style="font-size:.68rem;color:var(--text-muted);font-weight:900;margin-bottom:6px;">PAKET</div>
-                    <div style="font-size:1.05rem;font-weight:1000;color:var(--text-main);letter-spacing:.5px;">${escapeAxieHTML(kode.toUpperCase())}</div>
-                    <div style="font-size:1.7rem;font-weight:1000;color:${border};line-height:1.15;margin:7px 0;">${jumlah}</div>
-                    <div style="display:inline-block;background:${border};color:#fff;padding:4px 9px;border-radius:7px;font-size:.62rem;font-weight:900;">${label}</div>
-                  </div>`;
+            let totalSlot = 0;
+            let cardsHTML = `
+                <div style="text-align:center;margin-bottom:18px;margin-top:5px;">
+                    <div style="font-weight:900;font-size:1.1rem;color:var(--text-main);">Informasi Stok Akrab</div>
+                    <div style="font-size:.75rem;color:var(--text-muted);font-weight:700;">Detail kuota, harga & ketersediaan slot real-time.</div>
+                </div>`;
+
+            paketEntries.forEach(([kode, item]) => {
+                item = item || {};
+                const key = String(kode).toLowerCase();
+                const stockReal = stokObj && typeof stokObj === 'object' && !Array.isArray(stokObj) && stokObj[key] !== undefined
+                    ? Number(stokObj[key])
+                    : (stokObj && typeof stokObj === 'object' && !Array.isArray(stokObj) && stokObj[kode] !== undefined ? Number(stokObj[kode]) : Number(item.stock || 0));
+                const stock = Number.isFinite(stockReal) ? stockReal : 0;
+                totalSlot += Math.max(0, stock);
+
+                const namaPaket = String(kode).toUpperCase();
+                const hargaRaw = item.harga ?? item.harga_int ?? 0;
+                let harga;
+                if (typeof hargaRaw === 'number') harga = `Rp ${hargaRaw.toLocaleString('id-ID')}`;
+                else {
+                    const hargaNum = Number(String(hargaRaw).replace(/[^0-9.-]/g, ''));
+                    harga = Number.isFinite(hargaNum) && hargaNum > 0 ? `Rp ${hargaNum.toLocaleString('id-ID')}` : String(hargaRaw || '-');
+                }
+
+                // Detail kuota dari field deskripsi sesuai response katalog API.
+                let deskripsiHTML = '';
+                if (item.deskripsi) {
+                    String(item.deskripsi).split(/\\n|\n|\r\n/).forEach(line => {
+                        if (line.trim()) {
+                            deskripsiHTML += `<div style="font-size:.78rem;font-weight:700;color:var(--text-main);margin-bottom:6px;">${escapeAxieHTML(line.trim())}</div>`;
+                        }
+                    });
+                }
+                if (!deskripsiHTML) {
+                    // Beberapa response bisa menyimpan detail area sebagai array/object.
+                    const area = item.area || item.areas || item.detail || item.kuota;
+                    if (Array.isArray(area)) {
+                        area.forEach((v,i) => deskripsiHTML += `<div style="font-size:.78rem;font-weight:700;color:var(--text-main);margin-bottom:6px;">Area ${i+1}: ${escapeAxieHTML(v)}</div>`);
+                    } else if (area && typeof area === 'object') {
+                        Object.entries(area).forEach(([k,v]) => deskripsiHTML += `<div style="font-size:.78rem;font-weight:700;color:var(--text-main);margin-bottom:6px;">${escapeAxieHTML(k)}: ${escapeAxieHTML(v)}</div>`);
+                    }
+                }
+                if (!deskripsiHTML) deskripsiHTML = '<div style="font-size:.75rem;color:var(--text-muted);text-align:center;">Detail kuota tidak tersedia dari API.</div>';
+
+                const tersedia = stock > 0;
+                const statusBadge = tersedia
+                    ? `<span style="background:rgba(16,185,129,.12);color:var(--color-success);border:1px solid var(--color-success);padding:5px 15px;border-radius:20px;font-size:.72rem;font-weight:900;"><i class="ph-bold ph-check"></i> Tersedia (${stock})</span>`
+                    : `<span style="background:rgba(220,38,38,.10);color:var(--color-danger);border:1px solid var(--color-danger);padding:5px 15px;border-radius:20px;font-size:.72rem;font-weight:900;"><i class="ph-bold ph-x"></i> Kosong</span>`;
+
+                cardsHTML += `
+                <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--input-border);border-radius:18px;padding:16px;margin-bottom:24px;text-align:center;position:relative;">
+                    <div style="display:inline-block;background:linear-gradient(135deg,#2563eb,var(--primary));color:#fff;font-weight:900;font-size:.85rem;padding:7px 25px;border-radius:20px;margin-top:-30px;margin-bottom:14px;box-shadow:0 4px 12px rgba(37,99,235,.3);text-transform:uppercase;">${escapeAxieHTML(namaPaket)}</div>
+                    <div style="text-align:left;background:rgba(0,0,0,.03);padding:12px 16px;border-radius:12px;margin-bottom:14px;border:1px solid var(--panel-border);">
+                        ${deskripsiHTML}
+                    </div>
+                    <hr style="border:0;border-top:1px dashed var(--input-border);margin:12px 0;">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                        ${statusBadge}
+                        <div style="background:linear-gradient(135deg,#2563eb,var(--primary));color:#fff;font-weight:900;font-size:.85rem;padding:7px 21px;border-radius:20px;box-shadow:0 4px 10px rgba(37,99,235,.25);display:inline-flex;align-items:center;gap:6px;"><i class="ph-fill ph-currency-circle-dollar"></i> ${escapeAxieHTML(harga)}</div>
+                    </div>
+                </div>`;
             });
 
-            wadah.innerHTML = `
-              <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--primary);padding:15px;">
-                <div style="font-weight:1000;font-size:1rem;color:var(--primary);text-align:center;margin-bottom:5px;">
-                  <i class="ph-fill ph-package"></i> CEK SLOT STOK REAL-TIME
-                </div>
-                <div style="font-size:.68rem;color:var(--text-muted);font-weight:800;text-align:center;margin-bottom:14px;">Endpoint: <code>/api/stock-akrab</code></div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">${cards}</div>
-                <div style="margin-top:12px;padding:10px;border-radius:10px;background:rgba(0,0,0,.04);text-align:center;font-size:.7rem;font-weight:900;color:var(--text-main);">TOTAL SLOT TERSEDIA: <span style="color:var(--primary);font-size:.9rem;">${total}</span></div>
-              </div>`;
+            cardsHTML += `<div style="margin-top:4px;margin-bottom:12px;padding:11px;border-radius:12px;background:var(--input-bg);border:1px solid var(--input-border);text-align:center;font-size:.72rem;font-weight:900;color:var(--text-main);">TOTAL SLOT TERSEDIA: <span style="color:var(--primary);font-size:.95rem;">${totalSlot}</span></div>`;
+            wadahHasil.innerHTML = cardsHTML;
         } catch (err) {
-            wadah.innerHTML = `<div class="box-3d" style="background:var(--input-bg);border:2px solid var(--color-danger);padding:18px;text-align:center;color:var(--color-danger);font-weight:900;">Gagal mengambil stok<br><small style="color:var(--text-muted);font-weight:700;">${escapeAxieHTML(err.message || 'Terjadi kesalahan')}</small></div>`;
+            console.error('Cek stok Axie:', err);
+            wadahHasil.innerHTML = `<div class="box-3d" style="background:var(--input-bg);border:2px solid var(--color-danger);padding:18px;text-align:center;color:var(--color-danger);font-weight:900;">Gagal memuat detail stok<br><small style="color:var(--text-muted);font-weight:700;">${escapeAxieHTML(err.message || 'Terjadi kesalahan')}</small></div>`;
         } finally {
             if (btn) btn.disabled = false;
         }
