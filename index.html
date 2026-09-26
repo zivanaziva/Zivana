@@ -90,6 +90,59 @@
     .menu-item:active .menu-icon { transform: scale(0.92); filter: brightness(0.9); }
     .menu-text { font-size: 0.7rem; font-weight: 800; color: var(--text-main); text-align: center; line-height: 1.2; }
 
+    /* Grid endpoint API pada menu TRX Online */
+    .api-grid-axie {
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:9px;
+      margin:10px 0 14px;
+    }
+    .api-grid-btn {
+      min-height:82px;
+      border-radius:15px;
+      padding:10px 7px;
+      border:1px solid var(--input-border);
+      background:var(--input-bg);
+      color:var(--text-main);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      cursor:pointer;
+      font-family:inherit;
+      box-shadow:none;
+      transition:transform .18s ease, filter .18s ease, border-color .18s ease;
+    }
+    .api-grid-btn:active { transform:scale(.96); filter:brightness(.95); }
+    .api-grid-btn i { font-size:1.35rem; }
+    .api-grid-btn span { font-size:.69rem; font-weight:900; line-height:1.1; text-align:center; }
+    .api-grid-btn small { font-size:.54rem; font-weight:800; opacity:.78; word-break:break-all; text-align:center; }
+    .api-blue { color:#2563eb; border-color:#2563eb; background:rgba(37,99,235,.08); }
+    .api-cyan { color:#0891b2; border-color:#0891b2; background:rgba(8,145,178,.08); }
+    .api-green { color:#059669; border-color:#059669; background:rgba(5,150,105,.08); }
+    .api-orange { color:#ea580c; border-color:#ea580c; background:rgba(234,88,12,.08); }
+    .api-purple { color:#8b5cf6; border-color:#8b5cf6; background:rgba(139,92,246,.08); }
+    .api-pink { color:#ec4899; border-color:#ec4899; background:rgba(236,72,153,.08); }
+    .api-emerald { color:#10b981; border-color:#10b981; background:rgba(16,185,129,.08); }
+    .api-slate { color:var(--text-muted); border-color:var(--input-border); }
+    .api-doc-note {
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed var(--input-border);
+      background:var(--input-bg);
+      color:var(--text-muted);
+      font-size:.64rem;
+      line-height:1.45;
+      margin-bottom:15px;
+    }
+    .api-doc-note i { color:var(--primary); font-size:1rem; margin-top:1px; flex:0 0 auto; }
+    .api-doc-note b { color:var(--text-main); font-size:.68rem; }
+    .api-doc-note code { font-family:monospace; color:var(--primary); font-weight:800; }
+
     .box-3d { background: var(--panel-bg); border-radius: 16px; border: var(--panel-border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 16px; margin-bottom: 12px; transition: all 0.4s ease; backdrop-filter: blur(8px); }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
@@ -255,13 +308,38 @@
             <span id="saldo-axie" style="font-size: 0.8rem; background: var(--input-bg); padding: 4px 8px; border-radius: 8px; font-weight: 900; color: var(--primary);">Cek Saldo...</span>
         </div>
         
-        <!-- MENU LENGKAP AXIE STORE -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom: 20px; margin-top: 10px;">
-            <button type="button" class="btn" id="btn-cek-stok" onclick="cekStokAxie()" style="font-size:0.7rem; background:rgba(59,130,246,0.1); color:var(--color-blue); border:1px solid var(--color-blue); box-shadow:none; padding:10px;"><i class="ph-bold ph-package"></i> CEK STOK</button>
-            <button type="button" class="btn" onclick="riwayatAxie()" style="font-size:0.7rem; background:rgba(139,92,246,0.1); color:#8b5cf6; border:1px solid #8b5cf6; box-shadow:none; padding:10px;"><i class="ph-bold ph-clock-counter-clockwise"></i> RIWAYAT TRX</button>
-            <button type="button" class="btn" onclick="cekKuotaAxie()" style="font-size:0.7rem; background:rgba(236,72,153,0.1); color:#ec4899; border:1px solid #ec4899; box-shadow:none; padding:10px;"><i class="ph-bold ph-sim-card"></i> CEK NOMOR / KUOTA</button>
-            <button type="button" class="btn" onclick="topupAxie()" style="font-size:0.7rem; background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); box-shadow:none; padding:10px;"><i class="ph-bold ph-qr-code"></i> TOPUP / QRIS</button>
-            <button type="button" class="btn" onclick="muatKatalogAxie()" style="font-size:0.7rem; background:rgba(245,158,11,0.1); color:var(--color-warning); border:1px solid var(--color-warning); box-shadow:none; padding:10px;"><i class="ph-bold ph-arrows-clockwise"></i> REFRESH PAKET</button>
+        <!-- GRID LENGKAP DOKUMENTASI API AXIE STORE -->
+        <div class="api-grid-axie">
+            <button type="button" class="api-grid-btn api-blue" id="btn-cek-stok" onclick="cekStokAxie()">
+                <i class="ph-bold ph-package"></i><span>CEK SLOT STOK</span><small>/api/stock-akrab</small>
+            </button>
+            <button type="button" class="api-grid-btn api-cyan" onclick="muatKatalogAxie()">
+                <i class="ph-bold ph-list-bullets"></i><span>KATALOG PAKET</span><small>/api/akrab/list</small>
+            </button>
+            <button type="button" class="api-grid-btn api-green" onclick="fokusOrderAxie()">
+                <i class="ph-bold ph-shopping-cart"></i><span>BUAT ORDER</span><small>/api/akrab/order</small>
+            </button>
+            <button type="button" class="api-grid-btn api-orange" onclick="cekCallbackAxie()">
+                <i class="ph-bold ph-arrows-clockwise"></i><span>STATUS ORDER</span><small>/api/akrab/order/callback</small>
+            </button>
+            <button type="button" class="api-grid-btn api-purple" onclick="riwayatAxie()">
+                <i class="ph-bold ph-clock-counter-clockwise"></i><span>RIWAYAT TRX</span><small>/api/history</small>
+            </button>
+            <button type="button" class="api-grid-btn api-pink" onclick="cekKuotaAxie()">
+                <i class="ph-bold ph-sim-card"></i><span>CEK NOMOR / KUOTA</span><small>/sidompul</small>
+            </button>
+            <button type="button" class="api-grid-btn api-emerald" onclick="topupAxie()">
+                <i class="ph-bold ph-qr-code"></i><span>TOPUP / QRIS</span><small>/api/topupv2</small>
+            </button>
+            <button type="button" class="api-grid-btn api-slate" onclick="cekSaldoAxie()">
+                <i class="ph-bold ph-wallet"></i><span>CEK SALDO</span><small>/api/saldo</small>
+            </button>
+        </div>
+
+        <div class="api-doc-note">
+            <i class="ph-fill ph-info"></i>
+            <div><b>DOKUMENTASI API</b><br>
+            Endpoint yang ditampilkan mengikuti dokumentasi pada screenshot: stock-akrab, katalog, order, callback, history, sidompul, dan topupv2. Endpoint <code>/api/saldo</code> tetap dipertahankan karena sudah digunakan oleh halaman ini.</div>
         </div>
         
         <hr style="border:0; border-top:1px dashed var(--input-border); margin:15px 0;">
@@ -1853,84 +1931,6 @@
 
 
 
-        // Fungsi Tambahan: Cek Stok Akrab dengan Tampilan Kartu Elegan
-    async function cekStokAxie() {
-        tampilkanPanelAxie('result');
-        let btn = document.getElementById('btn-cek-stok');
-        let wadahHasil = document.getElementById('hasil-trx-online');
-        
-        if(btn) { btn.innerHTML = 'MENGECEK...'; btn.disabled = true; }
-        
-        // Memanggil data katalog lengkap (memuat deskripsi area & stok)
-        let res = await fetchAxieAPI('/api/akrab/list');
-        
-        if(btn) { btn.innerHTML = '<i class="ph-bold ph-package"></i> CEK STOK'; btn.disabled = false; }
-        if(!wadahHasil) return;
-        
-        wadahHasil.style.display = 'block';
-        
-        if (res && res.paket) {
-            let cardsHTML = `
-            <div style="text-align:center; margin-bottom:20px; margin-top:10px;">
-                <div style="font-weight:900; font-size:1.1rem; color:var(--text-main);">Informasi Stok Akrab</div>
-                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">Ketersediaan slot stok paket akrab real-time.</div>
-            </div>`;
-            
-            Object.keys(res.paket).forEach(kode => {
-                let item = res.paket[kode];
-                let namaPaket = kode.toUpperCase();
-                let harga = item.harga || ('Rp ' + parseInt(item.harga_int || 0).toLocaleString('id-ID'));
-                let stock = item.stock || 0;
-                
-                // Menyusun baris deskripsi Area
-                let deskripsiHTML = '';
-                if (item.deskripsi) {
-                    let lines = item.deskripsi.split('\n');
-                    lines.forEach(line => {
-                        if(line.trim()) {
-                            deskripsiHTML += `<div style="font-size:0.78rem; font-weight:700; color:var(--text-main); margin-bottom:5px;">${line.trim()}</div>`;
-                        }
-                    });
-                }
-                
-                // Badge Status Stok
-                let statusBadge = stock > 0 
-                    ? `<span style="background:rgba(16,185,129,0.12); color:var(--color-success); border:1px solid var(--color-success); padding:4px 16px; border-radius:20px; font-size:0.75rem; font-weight:800;"><i class="ph-bold ph-check"></i> Tersedia (${stock})</span>`
-                    : `<span style="background:rgba(220,38,38,0.12); color:var(--color-danger); border:1px solid var(--color-danger); padding:4px 16px; border-radius:20px; font-size:0.75rem; font-weight:800;"><i class="ph-bold ph-x"></i> Kosong</span>`;
-
-                // Kartu Paket
-                cardsHTML += `
-                <div class="box-3d" style="background:var(--input-bg); border:2px solid var(--input-border); border-radius:18px; padding:16px; margin-bottom:25px; text-align:center; position:relative;">
-                    
-                    <!-- Badge Nama Paket (Melayang di atas) -->
-                    <div style="display:inline-block; background:linear-gradient(135deg, #2563eb, var(--primary)); color:#fff; font-weight:900; font-size:0.85rem; padding:6px 24px; border-radius:20px; margin-top:-30px; margin-bottom:14px; box-shadow:0 4px 12px rgba(37,99,235,0.3); text-transform:uppercase;">
-                        ${namaPaket}
-                    </div>
-                    
-                    <!-- List Deskripsi Kuota Per Area -->
-                    <div style="text-align:left; background:rgba(0,0,0,0.03); padding:12px 16px; border-radius:12px; margin-bottom:14px; border:1px solid var(--panel-border);">
-                        ${deskripsiHTML || '<div style="font-size:0.75rem; color:var(--text-muted); text-align:center;">Tidak ada detail deskripsi.</div>'}
-                    </div>
-                    
-                    <hr style="border:0; border-top:1px dashed var(--input-border); margin:12px 0;">
-                    
-                    <!-- Badge Status & Harga -->
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                        ${statusBadge}
-                        <div style="background:linear-gradient(135deg, #2563eb, var(--primary)); color:#fff; font-weight:900; font-size:0.85rem; padding:6px 20px; border-radius:20px; box-shadow:0 4px 10px rgba(37,99,235,0.25); display:inline-flex; align-items:center; gap:6px;">
-                            <i class="ph-fill ph-currency-dollar"></i> ${harga}
-                        </div>
-                    </div>
-                </div>`;
-            });
-            
-            wadahHasil.innerHTML = cardsHTML;
-        } else {
-            wadahHasil.innerHTML = '<div style="text-align:center; color:var(--color-danger); font-weight:800; padding:15px;">Gagal memuat rincian stok paket.</div>';
-        }
-    }
-
-
     // Fungsi 4: Cek Riwayat Transaksi (/api/history)
     async function riwayatAxie() {
         tampilkanPanelAxie('result');
@@ -2271,6 +2271,85 @@
         `;
     }
 
+
+    // Fokus ke form order tanpa membuat request tambahan.
+    function fokusOrderAxie() {
+        tampilkanPanelAxie('order');
+        const el = document.getElementById('online-nomor');
+        if (el) {
+            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 110, behavior: 'smooth' });
+            setTimeout(() => el.focus(), 350);
+        }
+    }
+
+    // Endpoint /api/stock-akrab dari dokumentasi: cek ketersediaan slot real-time.
+    // Karena format response endpoint ini tidak ditentukan di file, hasil ditampilkan
+    // sebagai response mentah agar tidak mengarang struktur field API.
+    async function cekStokAxie() {
+        tampilkanPanelAxie('result');
+        const wadah = document.getElementById('hasil-trx-online');
+        const btn = document.getElementById('btn-cek-stok');
+        if (!wadah) return;
+        if (btn) btn.disabled = true;
+        wadah.style.display = 'block';
+        wadah.innerHTML = '<div style="text-align:center;padding:25px;font-weight:800;color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br><br>Mengecek slot stok real-time...</div>';
+
+        const res = await fetchAxieAPI('/api/stock-akrab');
+        if (btn) btn.disabled = false;
+
+        const payload = res && res.data !== undefined ? res.data : res;
+        wadah.innerHTML = `
+          <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--input-border);padding:15px;">
+            <div style="font-weight:900;font-size:1rem;color:var(--primary);margin-bottom:10px;text-align:center;">
+              <i class="ph-fill ph-package"></i> CEK SLOT STOK REAL-TIME
+            </div>
+            <div style="font-size:.7rem;color:var(--text-muted);font-weight:800;text-align:center;margin-bottom:12px;">
+              Endpoint: <code>/api/stock-akrab</code>
+            </div>
+            <pre style="font-size:.72rem;white-space:pre-wrap;word-break:break-word;margin:0;padding:12px;border-radius:10px;background:rgba(0,0,0,.04);color:var(--text-main);border:1px solid var(--panel-border);font-family:monospace;">${JSON.stringify(payload, null, 2)}</pre>
+          </div>`;
+    }
+
+    // Endpoint /api/akrab/order/callback.
+    // Dokumentasi yang terlihat hanya mencantumkan endpoint dan fungsi polling status,
+    // sehingga input ID dibuat eksplisit dan response ditampilkan mentah.
+    async function cekCallbackAxie() {
+        tampilkanPanelAxie('result');
+        const wadah = document.getElementById('hasil-trx-online');
+        if (!wadah) return;
+        wadah.style.display = 'block';
+        wadah.innerHTML = `
+          <div class="box-3d" style="background:var(--panel-bg);border:2px solid var(--input-border);padding:18px;">
+            <div style="font-weight:900;font-size:1rem;color:var(--primary);margin-bottom:12px;">
+              <i class="ph-bold ph-arrows-clockwise"></i> POLLING STATUS ORDER
+            </div>
+            <div class="input-group">
+              <label>TASK / ORDER ID</label>
+              <input type="text" id="callback-order-id" autocomplete="off" placeholder="Masukkan ID order...">
+            </div>
+            <button type="button" class="btn" onclick="prosesCallbackAxie()" style="margin-top:5px;background:linear-gradient(135deg,#ea580c,#c2410c);">
+              <i class="ph-bold ph-magnifying-glass"></i> CEK STATUS
+            </button>
+          </div>`;
+    }
+
+    async function prosesCallbackAxie() {
+        const input = document.getElementById('callback-order-id');
+        const id = input ? input.value.trim() : '';
+        const wadah = document.getElementById('hasil-trx-online');
+        if (!id || !wadah) return;
+        wadah.innerHTML = '<div style="text-align:center;padding:25px;font-weight:800;color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br><br>Mengecek status order...</div>';
+
+        // Endpoint callback pada dokumentasi ditampilkan tanpa parameter pada screenshot.
+        // ID dikirim sebagai parameter id; response mentah dipertahankan agar format API asli tidak diubah.
+        const res = await fetchAxieAPI(`/api/akrab/order/callback?id=${encodeURIComponent(id)}`);
+        const payload = res && res.data !== undefined ? res.data : res;
+        wadah.innerHTML = `
+          <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--input-border);padding:15px;">
+            <div style="font-weight:900;font-size:1rem;color:var(--primary);margin-bottom:10px;text-align:center;">STATUS ORDER</div>
+            <pre style="font-size:.72rem;white-space:pre-wrap;word-break:break-word;margin:0;padding:12px;border-radius:10px;background:rgba(0,0,0,.04);color:var(--text-main);border:1px solid var(--panel-border);font-family:monospace;">${JSON.stringify(payload, null, 2)}</pre>
+          </div>`;
+    }
 
     // Fungsi 3: Eksekusi Transaksi Order
     async function prosesTrxOnline() {
