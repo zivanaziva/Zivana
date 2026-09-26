@@ -1931,52 +1931,160 @@
 
 
 
+    // ==========================================
+    // UTILITAS DATA API AXIE
+    // ==========================================
+    function escapeAxieHTML(value) {
+        return String(value ?? '-').replace(/[&<>"']/g, function(ch) {
+            return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[ch];
+        });
+    }
+
+    function nilaiFieldAxie(obj, keys, fallback='-') {
+        if (!obj || typeof obj !== 'object') return fallback;
+        const wanted = keys.map(k => String(k).toLowerCase());
+        for (const key of Object.keys(obj)) {
+            if (wanted.includes(String(key).toLowerCase())) {
+                const value = obj[key];
+                if (value !== undefined && value !== null && String(value).trim() !== '') return value;
+            }
+        }
+        return fallback;
+    }
+
+    function arrayDataAxie(res) {
+        if (!res) return [];
+        let data = res.data ?? res.list ?? res.results ?? res.history ?? res.transactions ?? res;
+        if (Array.isArray(data)) return data;
+        if (data && typeof data === 'object') {
+            // Jika object berisi array di dalamnya, ambil array tersebut.
+            for (const key of Object.keys(data)) {
+                if (Array.isArray(data[key])) return data[key];
+            }
+            // Jika object adalah map ID -> transaksi, ubah menjadi array.
+            return Object.values(data);
+        }
+        return [];
+    }
+
     // Fungsi 4: Cek Riwayat Transaksi (/api/history)
+    // Format mengikuti dokumentasi API Axie Store:
+    // {
+    //   "status":"SUCCESS",
+    //   "is_admin":false,
+    //   "count":1,
+    //   "items":[{
+    //      "id":"...","user_id":...,"username":"...","nomor":"...",
+    //      "paket":"axa65","harga":74999,"nomor_pengelola":"6285xxxx3578",
+    //      "created_at":1790154694
+    //   }]
+    // }
     async function riwayatAxie() {
         tampilkanPanelAxie('result');
         try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
-        let wadahHasil = document.getElementById('hasil-trx-online');
-        if(!wadahHasil) return;
-        wadahHasil.style.display = 'block';
-        wadahHasil.innerHTML = '<div style="text-align:center; padding:20px; font-weight:800; color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br>Menarik data riwayat...</div>';
-        
-        let res = await fetchAxieAPI('/api/history?limit=15'); // Mengambil 15 data terakhir
-        
-        let historyData = res.data || res.list || res;
-        if(historyData && typeof historyData === 'object' && !Array.isArray(historyData)) {
-            historyData = Object.values(historyData); // Konversi ke array jika formatnya object
-        }
 
-        if(historyData && Array.isArray(historyData)) {
-            let html = '<div style="font-weight:900; font-size:1.1rem; margin-bottom:15px; color:var(--text-main); text-align:center;">Riwayat Transaksi Axie</div>';
-            
-            if(historyData.length === 0) {
-                html += '<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; font-weight:700;">Belum ada riwayat transaksi.</div>';
-            } else {
-                historyData.forEach(trx => {
-                    let st = String(trx.status || '').toLowerCase();
-                    let color = st.includes('sukses') || st.includes('success') ? 'var(--color-success)' : (st.includes('gagal') || st.includes('fail') ? 'var(--color-danger)' : 'var(--color-warning)');
-                    
-                    html += `
-                    <div class="box-3d" style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:12px; padding:12px; margin-bottom:12px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <span style="font-weight:900; font-size:0.85rem; text-transform:uppercase; color:var(--text-main);">${trx.paket || trx.code || '-'}</span>
-                            <span style="font-size:0.7rem; color:#fff; background:${color}; padding:4px 10px; border-radius:8px; font-weight:900; text-transform:uppercase;">${trx.status || 'PENDING'}</span>
-                        </div>
-                        <div style="font-size:0.95rem; font-weight:900; color:var(--primary); margin-bottom:4px; letter-spacing:1px;">${trx.nomor || trx.tujuan || '-'}</div>
-                        <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:flex; justify-content:space-between; margin-bottom:6px;">
-                            <span>${trx.tanggal || trx.created_at || trx.date || '-'}</span>
-                            <span>ID: ${trx.id || '-'}</span>
-                        </div>
-                        <div style="font-size:0.75rem; background:rgba(0,0,0,0.03); padding:8px; border-radius:8px; border:1px solid var(--panel-border); color:var(--text-main); word-wrap:break-word;">
-                            <span style="font-weight:800;">Ket/SN:</span> ${trx.sn || trx.keterangan || trx.message || '-'}
-                        </div>
+        const wadahHasil = document.getElementById('hasil-trx-online');
+        if (!wadahHasil) return;
+        wadahHasil.style.display = 'block';
+        wadahHasil.innerHTML = '<div style="text-align:center;padding:25px;font-weight:800;color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br><br>Menarik data riwayat...</div>';
+
+        try {
+            // Dokumentasi API menggunakan GET /api/history?limit=5
+            const res = await fetchAxieAPI('/api/history?limit=5');
+
+            // Format resmi dokumentasi: data transaksi berada di res.items
+            const items = Array.isArray(res?.items) ? res.items : [];
+
+            if (!items.length) {
+                const pesan = res?.status ? `Status API: ${res.status}` : 'Server tidak mengembalikan items.';
+                wadahHasil.innerHTML = `
+                    <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--input-border);padding:18px;text-align:center;">
+                        <div style="font-weight:900;color:var(--text-main);margin-bottom:8px;">BELUM ADA RIWAYAT</div>
+                        <div style="font-size:.72rem;color:var(--text-muted);">${escapeAxieHTML(pesan)}</div>
                     </div>`;
-                });
+                return;
             }
+
+            const formatTanggal = (createdAt) => {
+                if (createdAt === null || createdAt === undefined || createdAt === '') return '-';
+                const n = Number(createdAt);
+                if (!Number.isNaN(n)) {
+                    const ms = n < 100000000000 ? n * 1000 : n;
+                    const d = new Date(ms);
+                    if (!Number.isNaN(d.getTime())) {
+                        return d.toLocaleString('id-ID', {
+                            day:'2-digit', month:'2-digit', year:'numeric',
+                            hour:'2-digit', minute:'2-digit'
+                        });
+                    }
+                }
+                return String(createdAt);
+            };
+
+            const formatRupiah = (harga) => {
+                if (harga === null || harga === undefined || harga === '') return '-';
+                const n = Number(String(harga).replace(/[^0-9.-]/g, ''));
+                return Number.isFinite(n) ? `Rp ${n.toLocaleString('id-ID')}` : String(harga);
+            };
+
+            let html = `
+                <div style="font-weight:900;font-size:1.1rem;margin-bottom:6px;color:var(--text-main);text-align:center;">Riwayat Transaksi Axie</div>
+                <div style="font-size:.65rem;color:var(--text-muted);text-align:center;margin-bottom:14px;font-weight:700;">
+                    Menampilkan ${items.length} transaksi dari API /api/history
+                </div>`;
+
+            items.forEach((trx) => {
+                const statusAPI = String(res?.status || 'SUCCESS').toUpperCase();
+                const statusColor = statusAPI === 'SUCCESS' ? 'var(--color-success)' : 'var(--color-warning)';
+                const id = trx?.id ?? '-';
+                const username = trx?.username ?? '-';
+                const userId = trx?.user_id ?? '-';
+                const nomor = trx?.nomor ?? '-';
+                const paket = trx?.paket ?? '-';
+                const harga = trx?.harga ?? '-';
+                const pengelola = trx?.nomor_pengelola ?? '-';
+                const created = formatTanggal(trx?.created_at);
+
+                html += `
+                <div class="box-3d" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:14px;padding:14px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;">
+                        <span style="font-weight:900;font-size:.9rem;text-transform:uppercase;color:var(--text-main);">${escapeAxieHTML(paket)}</span>
+                        <span style="font-size:.68rem;color:#fff;background:${statusColor};padding:5px 10px;border-radius:8px;font-weight:900;white-space:nowrap;">${escapeAxieHTML(statusAPI)}</span>
+                    </div>
+
+                    <div style="font-size:1rem;font-weight:900;color:var(--primary);margin-bottom:8px;letter-spacing:.4px;">${escapeAxieHTML(nomor)}</div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px;">
+                        <div style="background:rgba(0,0,0,.035);border:1px solid var(--panel-border);padding:8px;border-radius:9px;">
+                            <div style="font-size:.58rem;color:var(--text-muted);font-weight:800;">PAKET</div>
+                            <div style="font-size:.76rem;font-weight:900;color:var(--text-main);">${escapeAxieHTML(paket)}</div>
+                        </div>
+                        <div style="background:rgba(0,0,0,.035);border:1px solid var(--panel-border);padding:8px;border-radius:9px;">
+                            <div style="font-size:.58rem;color:var(--text-muted);font-weight:800;">HARGA</div>
+                            <div style="font-size:.76rem;font-weight:900;color:var(--primary);">${escapeAxieHTML(formatRupiah(harga))}</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);display:flex;justify-content:space-between;gap:8px;margin-bottom:7px;">
+                        <span>ID: ${escapeAxieHTML(id)}</span>
+                        <span>User: ${escapeAxieHTML(username)}</span>
+                    </div>
+
+                    <div style="font-size:.72rem;background:rgba(0,0,0,.03);padding:9px;border-radius:8px;border:1px solid var(--panel-border);color:var(--text-main);word-break:break-word;line-height:1.6;">
+                        <div><b>User ID:</b> ${escapeAxieHTML(userId)}</div>
+                        <div><b>No. Pengelola:</b> ${escapeAxieHTML(pengelola)}</div>
+                        <div><b>Dibuat:</b> ${escapeAxieHTML(created)}</div>
+                    </div>
+                </div>`;
+            });
+
             wadahHasil.innerHTML = html;
-        } else {
-            wadahHasil.innerHTML = `<div style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:15px; border-radius:12px; font-weight:800; font-size:0.8rem; word-wrap:break-word;">Gagal memuat riwayat.<br><br>Data Mentah: ${JSON.stringify(res)}</div>`;
+        } catch (error) {
+            console.error('Riwayat Axie:', error);
+            wadahHasil.innerHTML = `
+                <div style="background:rgba(220,38,38,.1);color:var(--color-danger);border:1px solid var(--color-danger);padding:15px;border-radius:12px;font-weight:800;font-size:.8rem;">
+                    Gagal memuat riwayat.<br><br>${escapeAxieHTML(error?.message || 'Terjadi kesalahan.')}
+                </div>`;
         }
     }
    
