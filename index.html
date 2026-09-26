@@ -2390,11 +2390,11 @@
         }
     }
 
-    // Endpoint /api/stock-akrab dari dokumentasi: cek ketersediaan slot real-time.
-    // Karena format response endpoint ini tidak ditentukan di file, hasil ditampilkan
-    // sebagai response mentah agar tidak mengarang struktur field API.
+    // Cek stok /api/stock-akrab
+    // Format response yang digunakan API: { "axa65": 7, "axa50": 1, "axa89": 1 }
     async function cekStokAxie() {
         tampilkanPanelAxie('result');
+        try { history.pushState({ axieSubmenu: true }, '', '#trx-online-submenu'); } catch(e) {}
         const wadah = document.getElementById('hasil-trx-online');
         const btn = document.getElementById('btn-cek-stok');
         if (!wadah) return;
@@ -2402,20 +2402,52 @@
         wadah.style.display = 'block';
         wadah.innerHTML = '<div style="text-align:center;padding:25px;font-weight:800;color:var(--text-muted);"><i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i><br><br>Mengecek slot stok real-time...</div>';
 
-        const res = await fetchAxieAPI('/api/stock-akrab');
-        if (btn) btn.disabled = false;
+        try {
+            const res = await fetchAxieAPI('/api/stock-akrab');
+            // Endpoint mengembalikan object paket -> jumlah slot. Jangan membaca res.data.
+            const stok = (res && res.data && typeof res.data === 'object') ? res.data : res;
+            if (!stok || typeof stok !== 'object' || Array.isArray(stok)) {
+                throw new Error('Format response stok tidak sesuai dokumentasi API.');
+            }
 
-        const payload = res && res.data !== undefined ? res.data : res;
-        wadah.innerHTML = `
-          <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--input-border);padding:15px;">
-            <div style="font-weight:900;font-size:1rem;color:var(--primary);margin-bottom:10px;text-align:center;">
-              <i class="ph-fill ph-package"></i> CEK SLOT STOK REAL-TIME
-            </div>
-            <div style="font-size:.7rem;color:var(--text-muted);font-weight:800;text-align:center;margin-bottom:12px;">
-              Endpoint: <code>/api/stock-akrab</code>
-            </div>
-            <pre style="font-size:.72rem;white-space:pre-wrap;word-break:break-word;margin:0;padding:12px;border-radius:10px;background:rgba(0,0,0,.04);color:var(--text-main);border:1px solid var(--panel-border);font-family:monospace;">${JSON.stringify(payload, null, 2)}</pre>
-          </div>`;
+            const entries = Object.entries(stok).filter(([k,v]) => /^axa\d+$/i.test(k) && !isNaN(Number(v)));
+            if (!entries.length) {
+                wadah.innerHTML = `<div class="box-3d" style="background:var(--input-bg);border:2px solid var(--color-danger);padding:18px;text-align:center;font-weight:800;color:var(--color-danger);">Data stok kosong / format tidak sesuai.<br><small style="color:var(--text-muted);">Response: ${escapeAxieHTML(JSON.stringify(res))}</small></div>`;
+                return;
+            }
+
+            let total = 0;
+            let cards = '';
+            entries.forEach(([kode, nilai]) => {
+                const jumlah = Number(nilai);
+                total += jumlah;
+                const tersedia = jumlah > 0;
+                const border = tersedia ? 'var(--color-success)' : 'var(--color-danger)';
+                const bg = tersedia ? 'rgba(16,185,129,.10)' : 'rgba(239,68,68,.08)';
+                const label = tersedia ? 'TERSEDIA' : 'KOSONG';
+                cards += `
+                  <div style="background:${bg};border:1px solid ${border};border-radius:14px;padding:15px;text-align:center;">
+                    <div style="font-size:.68rem;color:var(--text-muted);font-weight:900;margin-bottom:6px;">PAKET</div>
+                    <div style="font-size:1.05rem;font-weight:1000;color:var(--text-main);letter-spacing:.5px;">${escapeAxieHTML(kode.toUpperCase())}</div>
+                    <div style="font-size:1.7rem;font-weight:1000;color:${border};line-height:1.15;margin:7px 0;">${jumlah}</div>
+                    <div style="display:inline-block;background:${border};color:#fff;padding:4px 9px;border-radius:7px;font-size:.62rem;font-weight:900;">${label}</div>
+                  </div>`;
+            });
+
+            wadah.innerHTML = `
+              <div class="box-3d" style="background:var(--input-bg);border:2px solid var(--primary);padding:15px;">
+                <div style="font-weight:1000;font-size:1rem;color:var(--primary);text-align:center;margin-bottom:5px;">
+                  <i class="ph-fill ph-package"></i> CEK SLOT STOK REAL-TIME
+                </div>
+                <div style="font-size:.68rem;color:var(--text-muted);font-weight:800;text-align:center;margin-bottom:14px;">Endpoint: <code>/api/stock-akrab</code></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">${cards}</div>
+                <div style="margin-top:12px;padding:10px;border-radius:10px;background:rgba(0,0,0,.04);text-align:center;font-size:.7rem;font-weight:900;color:var(--text-main);">TOTAL SLOT TERSEDIA: <span style="color:var(--primary);font-size:.9rem;">${total}</span></div>
+              </div>`;
+        } catch (err) {
+            wadah.innerHTML = `<div class="box-3d" style="background:var(--input-bg);border:2px solid var(--color-danger);padding:18px;text-align:center;color:var(--color-danger);font-weight:900;">Gagal mengambil stok<br><small style="color:var(--text-muted);font-weight:700;">${escapeAxieHTML(err.message || 'Terjadi kesalahan')}</small></div>`;
+        } finally {
+            if (btn) btn.disabled = false;
+        }
     }
 
     // Endpoint /api/akrab/order/callback.
