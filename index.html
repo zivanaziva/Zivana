@@ -387,6 +387,72 @@
     @media (prefers-reduced-motion: reduce) {
       .menu-icon::before, .menu-icon::after { animation: none; }
     }
+
+    /* ===== BORDER BERKEDIP + TEKS BERJALAN ===== */
+    .menu-icon {
+      animation: iconBorderBlink 1.8s ease-in-out infinite;
+      position: relative;
+    }
+    .glass-panel:first-child {
+      animation: mainBorderBlink 2.2s ease-in-out infinite;
+    }
+    .dash-marquee {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      margin-top: 8px !important;
+      padding: 2px 0;
+      box-sizing: border-box;
+      color: var(--text-main);
+      font-size: 0.78rem !important;
+      font-weight: 800 !important;
+    }
+    .dash-marquee-track {
+      display: inline-flex;
+      width: max-content;
+      will-change: transform;
+      animation: wistaraMarquee 14s linear infinite;
+    }
+    .dash-marquee-track span {
+      display: inline-block;
+      padding-right: 70px;
+    }
+    @keyframes iconBorderBlink {
+      0%, 100% {
+        border-color: var(--input-border);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 0%, transparent), 0 4px 8px rgba(0,0,0,.06);
+        filter: brightness(1);
+      }
+      45% {
+        border-color: color-mix(in srgb, var(--primary) 70%, white);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent), 0 0 16px color-mix(in srgb, var(--primary) 62%, transparent), 0 4px 10px rgba(0,0,0,.08);
+        filter: brightness(1.16);
+      }
+      60% {
+        border-color: var(--input-border);
+        box-shadow: 0 0 0 0 transparent, 0 4px 8px rgba(0,0,0,.06);
+        filter: brightness(1);
+      }
+    }
+    @keyframes mainBorderBlink {
+      0%, 100% {
+        border-color: color-mix(in srgb, var(--primary) 60%, transparent);
+        box-shadow: 0 8px 20px rgba(0,0,0,.08), 0 0 0 0 transparent;
+      }
+      50% {
+        border-color: color-mix(in srgb, var(--primary) 95%, white);
+        box-shadow: 0 8px 20px rgba(0,0,0,.08), 0 0 18px color-mix(in srgb, var(--primary) 35%, transparent);
+      }
+    }
+    @keyframes wistaraMarquee {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .menu-icon, .glass-panel:first-child, .dash-marquee-track { animation: none !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -396,7 +462,7 @@
     <div id="tab-beranda" class="section active">
       <div class="glass-panel" style="padding: 25px 20px; border-radius: 24px; margin-bottom: 20px; text-align: center;">
         <h2 style="font-weight: 900; margin: 0; font-size: 1.8rem;" class="text-gradient"><i class="ph-fill ph-storefront" style="margin-right:4px;"></i> <span id="dash-toko-nama">WISTARA-STORE</span></h2>
-        <p id="dash-toko-desc" style="margin: 4px 0 0; font-size: 0.85rem; color: var(--text-main); font-weight: 800;">SISTEM KASIR DIGITAL</p>
+        <div id="dash-toko-desc" class="dash-marquee" aria-label="Informasi toko berjalan"><div class="dash-marquee-track"><span>SISTEM KASIR DIGITAL BUAT PRIBADI BUKAN UNTUK PUBLIK</span><span>SISTEM KASIR DIGITAL BUAT PRIBADI BUKAN UNTUK PUBLIK</span></div></div>
       </div>
 
       <div class="glass-panel card">
