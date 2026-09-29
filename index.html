@@ -107,7 +107,12 @@
     .keuangan-doc b { color:var(--text-main); }
     .keuangan-list-item { border:2px solid var(--input-border); border-radius:15px; padding:13px; margin-bottom:10px; background:var(--input-bg); box-shadow:0 4px 10px rgba(0,0,0,.05); }
     .keuangan-list-item .nominal { font-size:.9rem; font-weight:900; }
-    @media(max-width:390px){ .keuangan-balance-grid{grid-template-columns:1fr 1fr;} }
+    .keu-bukti-preview { margin-top:9px; border-radius:12px; overflow:hidden; border:1px solid var(--input-border); background:var(--panel-bg); cursor:zoom-in; }
+    .keu-bukti-preview img { display:block; width:100%; height:320px; object-fit:cover; object-position:center; }
+    .keu-image-modal { display:none; position:fixed; inset:0; z-index:3000; background:rgba(0,0,0,.94); align-items:center; justify-content:center; padding:12px; box-sizing:border-box; }
+    .keu-image-modal img { max-width:96vw; max-height:92vh; width:auto; height:auto; object-fit:contain; border-radius:8px; display:block; }
+    .keu-image-close { position:absolute; top:14px; right:14px; width:42px; height:42px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:rgba(0,0,0,.55); color:#fff; font-size:1.4rem; cursor:pointer; }
+    @media(max-width:390px){ .keuangan-balance-grid{grid-template-columns:1fr 1fr;} .keu-bukti-preview img{height:280px;} }
 
     /* Grid endpoint API pada menu TRX Online */
     .api-grid-axie {
@@ -464,6 +469,11 @@
     </div>
 
     <!-- MODAL EDIT KEUANGAN -->
+    <div id="modalPreviewDokumentasiKeuangan" class="keu-image-modal" onclick="tutupPreviewDokumentasi(event)">
+      <button type="button" class="keu-image-close" onclick="tutupPreviewDokumentasi(event)"><i class="ph-bold ph-x"></i></button>
+      <img id="previewDokumentasiKeuanganFull" src="" alt="Dokumentasi keuangan">
+    </div>
+
     <div id="modalEditKeuangan" class="modal-overlay">
       <div class="modal-box">
         <h3 style="color:var(--primary);margin-bottom:12px;font-weight:900;"><i class="ph-bold ph-pencil-simple"></i> EDIT CATATAN KEUANGAN</h3>
@@ -912,116 +922,74 @@
     var modeFormKeuangan = '', dompetCache = [];
     function formatRupiahKeuangan(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
     function escapeHtmlKeu(v){return String(v||'').replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
-    function isiSelectDompet(id){ var s=document.getElementById(id); if(!s)return; s.innerHTML=dompetCache.length?dompetCache.map(function(d){return '<option value="'+d.id+'">'+escapeHtmlKeu(d.nama)+'</option>';}).join(''):'<option value="">Belum ada dompet</option>'; }
-    function muatDompet(){return db.collection('dompet').orderBy('createdAt','asc').get().then(function(snap){dompetCache=[];snap.forEach(function(doc){dompetCache.push({id:doc.id,...doc.data()});});isiSelectDompet('keu-sumber');isiSelectDompet('edit-keu-sumber');});}
+    function getHiddenDefaultDompetIds(){try{return JSON.parse(localStorage.getItem('keuHiddenDefaultWalletIds')||'[]');}catch(e){return [];}}
+    function setHiddenDefaultDompetIds(ids){try{localStorage.setItem('keuHiddenDefaultWalletIds',JSON.stringify(ids));}catch(e){}}
+    function isiSelectDompet(id){
+      var s=document.getElementById(id); if(!s)return;
+      var hidden=getHiddenDefaultDompetIds();
+      var list=dompetCache.filter(function(d){return hidden.indexOf(d.id)===-1;});
+      s.innerHTML=list.length?list.map(function(d){return '<option value="'+d.id+'">'+escapeHtmlKeu(d.nama)+'</option>';}).join(''):'<option value="">Belum ada dompet</option>';
+    }
+    function bersihkanDefaultDompetLama(list){
+      var hidden=getHiddenDefaultDompetIds();
+      if(hidden.length)return hidden;
+      // Menyembunyikan hanya dompet bawaan lama yang masih kosong dan belum pernah dipakai.
+      // Tidak menghapus data Firebase; dompet baru dengan nama yang sama setelah migrasi tetap bisa dibuat.
+      var kandidat=list.filter(function(d){return ['DANA BISNIS','DANA','BANK BRI'].indexOf(String(d.nama||'').trim().toUpperCase())!==-1;});
+      if(!kandidat.length)return [];
+      return Promise.all(kandidat.map(function(d){
+        return db.collection('keuangan').where('sumber','==',d.id).limit(1).get().then(function(q){return q.empty?d.id:null;}).catch(function(){return null;});
+      })).then(function(ids){var hasil=ids.filter(Boolean);setHiddenDefaultDompetIds(hasil);return hasil;});
+    }
+    function muatDompet(){
+      return db.collection('dompet').orderBy('createdAt','asc').get().then(function(snap){
+        var semua=[];snap.forEach(function(doc){semua.push({id:doc.id,...doc.data()});});
+        return bersihkanDefaultDompetLama(semua).then(function(){
+          var hidden=getHiddenDefaultDompetIds();
+          dompetCache=semua.filter(function(d){return hidden.indexOf(d.id)===-1;});
+          isiSelectDompet('keu-sumber');isiSelectDompet('edit-keu-sumber');
+        });
+      });
+    }
+    function bukaPreviewDokumentasi(el){
+      var src=el&&el.getAttribute('src'); if(!src)return;
+      var modal=document.getElementById('modalPreviewDokumentasiKeuangan'),img=document.getElementById('previewDokumentasiKeuanganFull');
+      if(!modal||!img)return; img.src=src; modal.style.display='flex'; document.body.style.overflow='hidden';
+    }
+    function tutupPreviewDokumentasi(e){
+      if(e && e.target && e.target.id==='previewDokumentasiKeuanganFull')return;
+      var modal=document.getElementById('modalPreviewDokumentasiKeuangan'),img=document.getElementById('previewDokumentasiKeuanganFull');
+      if(modal)modal.style.display='none'; if(img)img.src=''; document.body.style.overflow='';
+    }
     function bukaFormKeuangan(mode){
       modeFormKeuangan=mode;
       var panel=document.getElementById('panel-form-keuangan'), judul=document.getElementById('judul-form-keuangan'), pengirim=document.getElementById('wrap-pengirim-keuangan'), ket=document.getElementById('wrap-keterangan-keuangan'), namaBaru=document.getElementById('wrap-nama-dompet-baru'), pilih=document.getElementById('keu-sumber'), labelDompet=document.getElementById('label-dompet-keuangan'), tanggal=document.getElementById('wrap-tanggal-keuangan');
-      document.getElementById('keu-nominal').value='';
-      document.getElementById('keu-keterangan').value='';
-      document.getElementById('keu-pengirim').value='';
-      document.getElementById('keu-tanggal').value=new Date().toLocaleDateString('en-CA');
-      document.getElementById('keu-nama-dompet').value='';
-      document.getElementById('keu-dokumentasi').value='';
-      document.getElementById('preview-keu-dokumentasi').innerHTML='';
-      namaBaru.style.display=mode==='saldo'?'block':'none';
-      pilih.style.display=mode==='saldo'?'none':'block';
-      labelDompet.style.display=mode==='saldo'?'none':'block';
-      ket.style.display=mode==='saldo'?'none':'block';
-      tanggal.style.display=mode==='saldo'?'none':'block';
-      pengirim.style.display=mode==='masuk'?'block':'none';
-      if(mode==='saldo'){
-        judul.innerHTML='<i class="ph-fill ph-wallet"></i> BUAT SALDO AWAL';
-      } else if(mode==='keluar'){
-        judul.innerHTML='<i class="ph-fill ph-money"></i> CATAT UANG KELUAR';
-        document.getElementById('label-keterangan-keuangan').innerText='KEPERLUAN';
-      } else {
-        judul.innerHTML='<i class="ph-fill ph-money-in"></i> CATAT UANG MASUK';
-        document.getElementById('label-keterangan-keuangan').innerText='KETERANGAN / PEMBAYARAN';
-      }
-      muatDompet(); panel.style.display='block'; panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+      panel.style.display='block'; document.getElementById('keu-nominal').value=''; document.getElementById('keu-keterangan').value=''; document.getElementById('keu-pengirim').value=''; document.getElementById('keu-dokumentasi').value=''; document.getElementById('preview-keu-dokumentasi').innerHTML='';
+      namaBaru.style.display=mode==='saldo'?'block':'none'; pilih.parentElement.style.display=mode==='saldo'?'none':''; ket.style.display=mode==='saldo'?'none':''; pengirim.style.display=mode==='masuk'?'block':'none'; tanggal.style.display=mode==='saldo'?'none':'';
+      if(mode==='saldo'){judul.innerHTML='<i class="ph-fill ph-wallet"></i> BUAT SALDO AWAL';}else if(mode==='keluar'){judul.innerHTML='<i class="ph-fill ph-money"></i> CATAT UANG KELUAR';labelDompet.innerText='DOMPET PENGELUARAN';}else{judul.innerHTML='<i class="ph-fill ph-money-in"></i> CATAT UANG MASUK';labelDompet.innerText='DOMPET PENERIMA';}
+      muatDompet(); panel.scrollIntoView({behavior:'smooth',block:'nearest'});
     }
     function tutupFormKeuangan(){document.getElementById('panel-form-keuangan').style.display='none';}
-    function fileToDataUrl(file,maxW){return new Promise(function(resolve,reject){if(!file)return resolve('');if(file.size>4*1024*1024)return reject(new Error('File terlalu besar. Maksimal 4 MB.'));var rd=new FileReader();rd.onload=function(){if(!file.type.startsWith('image/'))return resolve(rd.result);var img=new Image();img.onload=function(){var scale=Math.min(1,maxW/img.width),c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.72));};img.onerror=reject;img.src=rd.result;};rd.onerror=reject;rd.readAsDataURL(file);});}
-    function previewDokumentasiKeuangan(input,mode){var file=input.files&&input.files[0], box=document.getElementById(mode==='edit'?'preview-edit-keu-dokumentasi':'preview-keu-dokumentasi');if(!box)return;box.innerHTML=file?'<div style="font-size:.7rem;font-weight:800;color:var(--text-muted);"><i class="ph-bold ph-paperclip"></i> '+escapeHtmlKeu(file.name)+'</div>':'';}
+    function previewDokumentasiKeuangan(input,mode){var file=input.files&&input.files[0],box=document.getElementById(mode==='edit'?'preview-edit-keu-dokumentasi':'preview-keu-dokumentasi');if(!box)return;box.innerHTML=file?'<div style="font-size:.7rem;font-weight:800;color:var(--text-muted);"><i class="ph-bold ph-paperclip"></i> '+escapeHtmlKeu(file.name)+'</div>':'';}
+    function fileToDataUrl(file,maxWidth){return new Promise(function(resolve,reject){if(!file)return resolve('');var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement('canvas'),scale=Math.min(1,maxWidth/img.width);c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.82));};img.onerror=reject;img.src=r.result;};r.onerror=reject;r.readAsDataURL(file);});}
     async function simpanKeuangan(){
-      var nominal=parseFloat((document.getElementById('keu-nominal').value||'').replace(/[^0-9]/g,''))||0;
-      if(!nominal)return alert('Nominal belum diisi.');
-      var sumber=document.getElementById('keu-sumber').value,namaBaru=document.getElementById('keu-nama-dompet').value.trim();
-      if(modeFormKeuangan==='saldo'&&!namaBaru)return alert('Nama dompet belum diisi. Contoh: SEABANK, GOPAY, CASH, BRI.');
-      if(modeFormKeuangan!=='saldo'&&!sumber)return alert('Belum ada dompet. Buat Saldo Awal terlebih dahulu.');
+      var nominal=parseFloat(document.getElementById('keu-nominal').value.replace(/[^0-9]/g,''))||0,sumber=document.getElementById('keu-sumber').value,namaBaru=document.getElementById('keu-nama-dompet').value.trim();
+      if(!nominal)return alert('Nominal belum diisi.'); if(modeFormKeuangan==='saldo'&&!namaBaru)return alert('Nama dompet belum diisi. Contoh: SEABANK, GOPAY, CASH, BRI.'); if(modeFormKeuangan!=='saldo'&&!sumber)return alert('Belum ada dompet. Buat Saldo Awal terlebih dahulu.');
       var jenis=modeFormKeuangan==='keluar'?'KELUAR':(modeFormKeuangan==='masuk'?'MASUK':'SALDO_AWAL');
-      try{
-        var bukti=await fileToDataUrl(document.getElementById('keu-dokumentasi').files[0],1000),dompetId=sumber;
-        var ket=document.getElementById('keu-keterangan').value.trim(),pengirim=document.getElementById('keu-pengirim').value.trim(),tanggal=document.getElementById('keu-tanggal').value;
-        if(modeFormKeuangan==='saldo'){
-          var ref=await db.collection('dompet').add({nama:namaBaru.toUpperCase(),createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-          dompetId=ref.id;
-          await db.collection('keuangan').add({jenis:'SALDO_AWAL',sumber:dompetId,nominal:nominal,keterangan:'SALDO AWAL',pengirim:'',tanggal:getTglJam().tanggal,dokumentasi:bukti,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-        } else {
-          if(!ket)return alert('Keperluan/keterangan belum diisi.');
-          await db.collection('keuangan').add({jenis:jenis,sumber:dompetId,nominal:nominal,keterangan:ket,pengirim:pengirim,tanggal:tanggal?formatTgl(tanggal):getTglJam().tanggal,dokumentasi:bukti,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-        }
+      try{var bukti=await fileToDataUrl(document.getElementById('keu-dokumentasi').files[0],1400),dompetId=sumber,ket=document.getElementById('keu-keterangan').value.trim(),pengirim=document.getElementById('keu-pengirim').value.trim(),tanggal=document.getElementById('keu-tanggal').value;
+        if(modeFormKeuangan==='saldo'){var ref=await db.collection('dompet').add({nama:namaBaru.toUpperCase(),createdAt:firebase.firestore.FieldValue.serverTimestamp()});dompetId=ref.id;await db.collection('keuangan').add({jenis:'SALDO_AWAL',sumber:dompetId,nominal:nominal,keterangan:'SALDO AWAL',pengirim:'',tanggal:getTglJam().tanggal,dokumentasi:bukti,timestamp:firebase.firestore.FieldValue.serverTimestamp()});}
+        else {if(!ket)return alert('Keperluan/keterangan belum diisi.');await db.collection('keuangan').add({jenis:jenis,sumber:dompetId,nominal:nominal,keterangan:ket,pengirim:pengirim,tanggal:tanggal?formatTgl(tanggal):getTglJam().tanggal,dokumentasi:bukti,timestamp:firebase.firestore.FieldValue.serverTimestamp()});}
         tutupFormKeuangan();muatKeuangan();
       }catch(e){alert('Gagal menyimpan: '+e.message);}
     }
     function bukaEditDompet(dompetId){
-      var d=dompetCache.find(function(x){return x.id===dompetId;});
-      if(!d)return;
-      document.getElementById('edit-keu-id').value='';
-      document.getElementById('edit-keu-jenis').value='DOMPET';
-      document.getElementById('edit-keu-sumber').value=dompetId;
-      document.getElementById('edit-keu-nominal').value='';
-      document.getElementById('edit-keu-keterangan').value=d.nama||'';
-      document.getElementById('edit-keu-pengirim').value='';
-      document.getElementById('edit-keu-tanggal').value='';
-      document.getElementById('edit-keu-dokumentasi').value='';
-      document.getElementById('preview-edit-keu-dokumentasi').innerHTML='';
-      document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT NAMA DOMPET';
-      document.getElementById('modalEditKeuangan').dataset.mode='dompet';
-      document.getElementById('edit-keu-sumber').parentElement.style.display='none';
-      document.getElementById('edit-keu-nominal').parentElement.style.display='none';
-      document.getElementById('edit-keu-keterangan').parentElement.querySelector('label').innerText='NAMA DOMPET';
-      document.getElementById('edit-keu-pengirim').parentElement.style.display='none';
-      document.getElementById('edit-keu-tanggal').parentElement.style.display='none';
-      document.getElementById('edit-keu-dokumentasi').parentElement.style.display='none';
-      document.getElementById('modalEditKeuangan').style.display='flex';
+      var d=dompetCache.find(function(x){return x.id===dompetId;}); if(!d)return;
+      document.getElementById('edit-keu-id').value='';document.getElementById('edit-keu-jenis').value='DOMPET';document.getElementById('edit-keu-sumber').value=dompetId;document.getElementById('edit-keu-nominal').value='';document.getElementById('edit-keu-keterangan').value=d.nama||'';document.getElementById('edit-keu-pengirim').value='';document.getElementById('edit-keu-tanggal').value='';document.getElementById('edit-keu-dokumentasi').value='';document.getElementById('preview-edit-keu-dokumentasi').innerHTML='';document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT NAMA DOMPET';document.getElementById('modalEditKeuangan').dataset.mode='dompet';document.getElementById('edit-keu-sumber').parentElement.style.display='none';document.getElementById('edit-keu-nominal').parentElement.style.display='none';document.getElementById('edit-keu-keterangan').parentElement.querySelector('label').innerText='NAMA DOMPET';document.getElementById('edit-keu-pengirim').parentElement.style.display='none';document.getElementById('edit-keu-tanggal').parentElement.style.display='none';document.getElementById('edit-keu-dokumentasi').parentElement.style.display='none';document.getElementById('modalEditKeuangan').style.display='flex';
     }
-    function resetModalEditKeuangan(){
-      var modal=document.getElementById('modalEditKeuangan');
-      modal.dataset.mode='transaksi';
-      document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT CATATAN KEUANGAN';
-      ['edit-keu-sumber','edit-keu-nominal','edit-keu-keterangan','edit-keu-pengirim','edit-keu-tanggal','edit-keu-dokumentasi'].forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement)el.parentElement.style.display='';});
-    }
-    function bukaEditKeuangan(id){
-      resetModalEditKeuangan();
-      db.collection('keuangan').doc(id).get().then(function(doc){
-        if(!doc.exists)return;
-        var x=doc.data();
-        document.getElementById('edit-keu-id').value=id;
-        document.getElementById('edit-keu-jenis').value=x.jenis||'MASUK';
-        muatDompet().then(function(){document.getElementById('edit-keu-sumber').value=x.sumber||'';});
-        document.getElementById('edit-keu-nominal').value=Number(x.nominal||0).toLocaleString('id-ID');
-        document.getElementById('edit-keu-keterangan').value=x.keterangan||'';
-        document.getElementById('edit-keu-pengirim').value=x.pengirim||'';
-        var p=(x.tanggal||'').split('-');document.getElementById('edit-keu-tanggal').value=p.length===3?p[2]+'-'+p[1]+'-'+p[0]:'';
-        document.getElementById('edit-keu-dokumentasi').value='';
-        document.getElementById('preview-edit-keu-dokumentasi').innerHTML=x.dokumentasi?'<img src="'+x.dokumentasi+'" style="max-width:100%;max-height:120px;border-radius:10px;border:1px solid var(--input-border);">':'';
-        document.getElementById('modalEditKeuangan').style.display='flex';
-      });
-    }
-    async function simpanEditKeuangan(){
-      var modal=document.getElementById('modalEditKeuangan');
-      if(modal.dataset.mode==='dompet'){
-        var dompetId=document.getElementById('edit-keu-sumber').value;
-        var nama=document.getElementById('edit-keu-keterangan').value.trim().toUpperCase();
-        if(!dompetId||!nama)return alert('Nama dompet belum diisi.');
-        try{await db.collection('dompet').doc(dompetId).update({nama:nama});tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah dompet: '+e.message);}return;
-      }
-      var id=document.getElementById('edit-keu-id').value,nom=parseFloat(document.getElementById('edit-keu-nominal').value.replace(/[^0-9]/g,''))||0;if(!nom)return alert('Nominal belum diisi.');
-      try{var data={sumber:document.getElementById('edit-keu-sumber').value,nominal:nom,keterangan:document.getElementById('edit-keu-keterangan').value.trim(),pengirim:document.getElementById('edit-keu-pengirim').value.trim(),tanggal:formatTgl(document.getElementById('edit-keu-tanggal').value),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};var f=document.getElementById('edit-keu-dokumentasi').files[0];if(f)data.dokumentasi=await fileToDataUrl(f,1000);await db.collection('keuangan').doc(id).update(data);tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah: '+e.message);}
-    }
-    function muatKeuangan(){var list=document.getElementById('list-keuangan');if(!list)return;Promise.all([db.collection('dompet').orderBy('createdAt','asc').get(),db.collection('keuangan').orderBy('timestamp','desc').limit(500).get()]).then(function(res){dompetCache=[];res[0].forEach(function(doc){dompetCache.push({id:doc.id,...doc.data()});});var saldo={};dompetCache.forEach(function(d){saldo[d.id]=0;});var html='';res[1].forEach(function(doc){var x=doc.data()||{},nom=Number(x.nominal||0),src=x.sumber,sign=x.jenis==='KELUAR'?-1:1;if(saldo[src]!==undefined)saldo[src]+=sign*nom;var d=dompetCache.find(function(z){return z.id===src;}),nama=d?d.nama:'DOMPET DIHAPUS';var masuk=x.jenis!=='KELUAR',warna=masuk?'var(--color-success)':'var(--color-danger)',label=x.jenis==='SALDO_AWAL'?'SALDO AWAL':x.jenis;html+='<div class="keuangan-list-item"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><div><div style="font-weight:900;font-size:.82rem;">'+label+' • '+escapeHtmlKeu(nama)+'</div><div style="font-size:.7rem;color:var(--text-muted);margin-top:3px;">'+(x.tanggal||'-')+(x.pengirim?' • '+escapeHtmlKeu(x.pengirim):'')+'</div></div><div class="nominal" style="color:'+warna+';">'+(masuk?'+':'-')+formatRupiahKeuangan(nom)+'</div></div><div style="font-size:.75rem;font-weight:800;margin-top:8px;">'+escapeHtmlKeu(x.keterangan||'-')+'</div>'+(x.dokumentasi?'<div style="margin-top:9px;"><img src="'+x.dokumentasi+'" style="width:100%;max-height:180px;object-fit:contain;border-radius:10px;border:1px solid var(--input-border);background:var(--panel-bg);"></div>':'')+'<div style="display:flex;gap:6px;margin-top:9px;"><button type="button" onclick="bukaEditKeuangan(\''+doc.id+'\')" style="background:var(--input-bg);color:var(--primary);border:1px solid var(--primary);padding:6px 9px;border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i> EDIT</button><button type="button" onclick="hapusKeuangan(\''+doc.id+'\')" style="background:rgba(220,38,38,.08);color:var(--color-danger);border:1px solid var(--color-danger);padding:6px 9px;border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>';});document.getElementById('keuangan-wallets').innerHTML=dompetCache.map(function(d){return '<div class="keuangan-balance" style="position:relative;"><small>'+escapeHtmlKeu(d.nama)+'</small><strong>'+formatRupiahKeuangan(saldo[d.id]||0)+'</strong><button type="button" onclick="bukaEditDompet(\''+d.id+'\')" style="margin-top:7px;background:var(--input-bg);color:var(--primary);border:1px solid var(--primary);padding:5px 9px;border-radius:8px;font-size:.68rem;font-weight:900;"><i class="ph-bold ph-pencil-simple"></i> EDIT</button></div>';}).join('');document.getElementById('saldo-keu-total').innerText=formatRupiahKeuangan(dompetCache.reduce(function(a,d){return a+(saldo[d.id]||0);},0));list.innerHTML=html||'<p style="text-align:center;color:var(--text-muted);font-size:.85rem;">Belum ada catatan keuangan.</p>';isiSelectDompet('keu-sumber');isiSelectDompet('edit-keu-sumber');}).catch(function(err){list.innerHTML='<p style="text-align:center;color:var(--color-danger);font-weight:800;">Gagal memuat data keuangan.</p>';console.error(err);});}
+    function resetModalEditKeuangan(){var modal=document.getElementById('modalEditKeuangan');modal.dataset.mode='transaksi';document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT CATATAN KEUANGAN';['edit-keu-sumber','edit-keu-nominal','edit-keu-keterangan','edit-keu-pengirim','edit-keu-tanggal','edit-keu-dokumentasi'].forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement)el.parentElement.style.display='';});}
+    function bukaEditKeuangan(id){resetModalEditKeuangan();db.collection('keuangan').doc(id).get().then(function(doc){if(!doc.exists)return;var x=doc.data();document.getElementById('edit-keu-id').value=id;document.getElementById('edit-keu-jenis').value=x.jenis||'MASUK';muatDompet().then(function(){document.getElementById('edit-keu-sumber').value=x.sumber||'';});document.getElementById('edit-keu-nominal').value=Number(x.nominal||0).toLocaleString('id-ID');document.getElementById('edit-keu-keterangan').value=x.keterangan||'';document.getElementById('edit-keu-pengirim').value=x.pengirim||'';var p=(x.tanggal||'').split('-');document.getElementById('edit-keu-tanggal').value=p.length===3?p[2]+'-'+p[1]+'-'+p[0]:'';document.getElementById('edit-keu-dokumentasi').value='';document.getElementById('preview-edit-keu-dokumentasi').innerHTML=x.dokumentasi?'<div class="keu-bukti-preview" style="margin-top:0;cursor:zoom-in;"><img src="'+x.dokumentasi+'" alt="Dokumentasi" onclick="bukaPreviewDokumentasi(this)"></div>':'';document.getElementById('modalEditKeuangan').style.display='flex';});}
+    async function simpanEditKeuangan(){var modal=document.getElementById('modalEditKeuangan');if(modal.dataset.mode==='dompet'){var dompetId=document.getElementById('edit-keu-sumber').value,nama=document.getElementById('edit-keu-keterangan').value.trim().toUpperCase();if(!dompetId||!nama)return alert('Nama dompet belum diisi.');try{await db.collection('dompet').doc(dompetId).update({nama:nama});tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah dompet: '+e.message);}return;}var id=document.getElementById('edit-keu-id').value,nom=parseFloat(document.getElementById('edit-keu-nominal').value.replace(/[^0-9]/g,''))||0;if(!nom)return alert('Nominal belum diisi.');try{var data={sumber:document.getElementById('edit-keu-sumber').value,nominal:nom,keterangan:document.getElementById('edit-keu-keterangan').value.trim(),pengirim:document.getElementById('edit-keu-pengirim').value.trim(),tanggal:formatTgl(document.getElementById('edit-keu-tanggal').value),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};var f=document.getElementById('edit-keu-dokumentasi').files[0];if(f)data.dokumentasi=await fileToDataUrl(f,1400);await db.collection('keuangan').doc(id).update(data);tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah: '+e.message);}}
+    function muatKeuangan(){var list=document.getElementById('list-keuangan');if(!list)return;Promise.all([db.collection('dompet').orderBy('createdAt','asc').get(),db.collection('keuangan').orderBy('timestamp','desc').limit(500).get()]).then(function(res){var semua=[];res[0].forEach(function(doc){semua.push({id:doc.id,...doc.data()});});return bersihkanDefaultDompetLama(semua).then(function(){var hidden=getHiddenDefaultDompetIds();dompetCache=semua.filter(function(d){return hidden.indexOf(d.id)===-1;});var saldo={};dompetCache.forEach(function(d){saldo[d.id]=0;});var html='';res[1].forEach(function(doc){var x=doc.data()||{},nom=Number(x.nominal||0),src=x.sumber,sign=x.jenis==='KELUAR'?-1:1;if(saldo[src]!==undefined)saldo[src]+=sign*nom;var d=dompetCache.find(function(z){return z.id===src;}),nama=d?d.nama:'DOMPET DIHAPUS';var masuk=x.jenis!=='KELUAR',warna=masuk?'var(--color-success)':'var(--color-danger)',label=x.jenis==='SALDO_AWAL'?'SALDO AWAL':x.jenis;html+='<div class="keuangan-list-item"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><div><div style="font-weight:900;font-size:.82rem;">'+label+' • '+escapeHtmlKeu(nama)+'</div><div style="font-size:.7rem;color:var(--text-muted);margin-top:3px;">'+(x.tanggal||'-')+(x.pengirim?' • '+escapeHtmlKeu(x.pengirim):'')+'</div></div><div class="nominal" style="color:'+warna+';">'+(masuk?'+':'-')+formatRupiahKeuangan(nom)+'</div></div><div style="font-size:.75rem;font-weight:800;margin-top:8px;">'+escapeHtmlKeu(x.keterangan||'-')+'</div>'+(x.dokumentasi?'<div class="keu-bukti-preview"><img src="'+x.dokumentasi+'" alt="Dokumentasi" onclick="bukaPreviewDokumentasi(this)"></div>':'')+'<div style="display:flex;gap:6px;margin-top:9px;"><button type="button" onclick="bukaEditKeuangan(\''+doc.id+'\')" style="background:var(--input-bg);color:var(--primary);border:1px solid var(--primary);padding:6px 9px;border-radius:8px;"><i class="ph-bold ph-pencil-simple"></i> EDIT</button><button type="button" onclick="hapusKeuangan(\''+doc.id+'\')" style="background:rgba(220,38,38,.08);color:var(--color-danger);border:1px solid var(--color-danger);padding:6px 9px;border-radius:8px;"><i class="ph-bold ph-trash"></i></button></div></div>';});document.getElementById('keuangan-wallets').innerHTML=dompetCache.map(function(d){return '<div class="keuangan-balance" style="position:relative;"><small>'+escapeHtmlKeu(d.nama)+'</small><strong>'+formatRupiahKeuangan(saldo[d.id]||0)+'</strong><button type="button" onclick="bukaEditDompet(\''+d.id+'\')" style="margin-top:7px;background:var(--input-bg);color:var(--primary);border:1px solid var(--primary);padding:5px 9px;border-radius:8px;font-size:.68rem;font-weight:900;"><i class="ph-bold ph-pencil-simple"></i> EDIT</button></div>';}).join('');document.getElementById('saldo-keu-total').innerText=formatRupiahKeuangan(dompetCache.reduce(function(a,d){return a+(saldo[d.id]||0);},0));list.innerHTML=html||'<p style="text-align:center;color:var(--text-muted);font-size:.85rem;">Belum ada catatan keuangan.</p>';isiSelectDompet('keu-sumber');isiSelectDompet('edit-keu-sumber');});}).catch(function(err){list.innerHTML='<p style="text-align:center;color:var(--color-danger);font-weight:800;">Gagal memuat data keuangan.</p>';console.error(err);});}
     function hapusKeuangan(id){if(confirm('Hapus catatan keuangan ini?'))db.collection('keuangan').doc(id).delete().then(muatKeuangan);}
 
     function switchTab(tabId, element) {
