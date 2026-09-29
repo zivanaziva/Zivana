@@ -253,6 +253,38 @@
 
 
 
+    /* ===== PERAPIAN MENU ICON: tidak ada garis yang turun/menabrak nama ===== */
+    .menu-item::before {
+      display: none !important;
+      content: none !important;
+    }
+    .menu-item {
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+      overflow: visible !important;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .menu-icon {
+      flex: 0 0 58px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 9px;
+    }
+    .menu-text {
+      display: block;
+      width: 100%;
+      min-height: 17px;
+      margin: 0;
+      padding: 0 2px;
+      text-align: center;
+      line-height: 1.15;
+      position: relative;
+      z-index: 3;
+    }
+
     /* ===== DASHBOARD MENU: CLEAN + SEGMENTED FUTURISTIC ICON BORDER ===== */
     .menu-grid {
       gap: 15px 13px;
