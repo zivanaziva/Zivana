@@ -65,6 +65,54 @@
 
     .glass-panel { background: var(--panel-bg); border: var(--panel-border); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); border-radius: 20px; transition: all 0.4s ease; backdrop-filter: blur(8px); }
     .card { padding: 22px; margin-bottom: 20px; }
+
+    /* ===== CYBERPUNK FRAME / ANGULAR BORDER ===== */
+    .cyber-frame {
+      position: relative;
+      overflow: visible !important;
+      border: 2px solid transparent !important;
+      background:
+        linear-gradient(var(--panel-bg), var(--panel-bg)) padding-box,
+        linear-gradient(105deg, #ff1020 0%, #ff1020 14%, #06d9ff 35%, #06d9ff 65%, #ff1020 86%, #ff1020 100%) border-box !important;
+      box-shadow: 0 0 14px rgba(0, 210, 255, .20), 0 0 22px rgba(255, 20, 40, .10), inset 0 0 22px rgba(0, 180, 255, .035) !important;
+      border-radius: 22px !important;
+    }
+    .cyber-frame::before, .cyber-frame::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cyber-frame::before {
+      inset: 7px;
+      border: 1px solid rgba(0, 220, 255, .72);
+      clip-path: polygon(0 0, 17% 0, 20% 6px, 80% 6px, 83% 0, 100% 0, 100% 17%, calc(100% - 6px) 20%, calc(100% - 6px) 80%, 100% 83%, 100% 100%, 83% 100%, 80% calc(100% - 6px), 20% calc(100% - 6px), 17% 100%, 0 100%, 0 83%, 6px 80%, 6px 20%, 0 17%);
+      opacity: .9;
+    }
+    .cyber-frame::after {
+      inset: -2px;
+      background: linear-gradient(90deg, transparent 0 7%, #ff1428 7% 18%, transparent 18% 82%, #ff1428 82% 93%, transparent 93%);
+      height: 4px;
+      top: -3px;
+      bottom: auto;
+      filter: drop-shadow(0 0 5px #ff1428);
+      opacity: .9;
+    }
+    .cyber-frame > * { position: relative; z-index: 1; }
+    .cyber-frame .card-title {
+      border-bottom-color: #09d8ff !important;
+      text-shadow: 0 0 8px rgba(0, 216, 255, .25);
+    }
+    .cyber-frame .menu-icon {
+      border-color: #09d8ff !important;
+      box-shadow: 0 0 8px rgba(0, 216, 255, .18), inset 0 0 10px rgba(0, 216, 255, .06) !important;
+    }
+    .cyber-frame .menu-icon i {
+      filter: drop-shadow(0 0 5px currentColor);
+    }
+    [data-theme="dark"] .cyber-frame {
+      background: linear-gradient(rgba(10,10,10,.96), rgba(10,10,10,.96)) padding-box, linear-gradient(105deg,#ff1020,#ff1020 14%,#06d9ff 35%,#06d9ff 65%,#ff1020 86%,#ff1020) border-box !important;
+    }
     .card-title { font-size: 1.1rem; font-weight: 900; margin-bottom: 18px; color: var(--primary); border-bottom: 2px solid var(--input-border); padding-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
     
     .input-group { margin-bottom: 16px; }
@@ -188,14 +236,6 @@
     .theme-btn { flex: 1; padding: 12px 2px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 0.70rem; transition: 0.2s; }
     .theme-btn:active { transform: scale(0.95); }
     .input-profil { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--input-border); background: var(--panel-bg); color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
-  
-    /* ===== CYBERPUNK / ROBOT THEMES ===== */
-    :root[data-theme="robot-red"] { --bg-image: linear-gradient(135deg,#020406 0%,#10070a 55%,#25070b 100%); --bg-color:#020406; --panel-bg:rgba(8,10,14,var(--panel-opacity)); --panel-border:2px solid rgba(239,68,68,.65); --text-main:#f8fafc; --text-muted:#fca5a5; --primary:#ef233c; --primary-grad:linear-gradient(135deg,#450a0a,#ff1744); --input-bg:rgba(20,12,16,var(--panel-opacity)); --input-border:#ef233c; --nav-bg:rgba(3,6,10,var(--panel-opacity)); --menu-icon-bg:rgba(239,35,60,.12); --table-header:rgba(239,35,60,.15); --table-border:#b91c1c; --color-success:#22c55e; --color-warning:#f59e0b; --color-danger:#ff1744; --color-blue:#38bdf8; }
-    :root[data-theme="bumble-bee"] { --bg-image:linear-gradient(135deg,#050505 0%,#16130a 55%,#2a2100 100%); --bg-color:#050505; --panel-bg:rgba(14,14,10,var(--panel-opacity)); --panel-border:2px solid rgba(250,204,21,.7); --text-main:#fffbea; --text-muted:#fde68a; --primary:#facc15; --primary-grad:linear-gradient(135deg,#a16207,#facc15); --input-bg:rgba(24,20,8,var(--panel-opacity)); --input-border:#eab308; --nav-bg:rgba(5,5,5,var(--panel-opacity)); --menu-icon-bg:rgba(250,204,21,.12); --table-header:rgba(250,204,21,.15); --table-border:#ca8a04; --color-success:#22c55e; --color-warning:#f59e0b; --color-danger:#ef4444; --color-blue:#38bdf8; }
-    :root[data-theme="cyber-2077"] { --bg-image:linear-gradient(135deg,#07000f 0%,#12001d 48%,#001b2e 100%); --bg-color:#07000f; --panel-bg:rgba(14,7,24,var(--panel-opacity)); --panel-border:2px solid rgba(217,70,239,.7); --text-main:#f5f3ff; --text-muted:#67e8f9; --primary:#22d3ee; --primary-grad:linear-gradient(135deg,#0891b2,#d946ef); --input-bg:rgba(20,10,30,var(--panel-opacity)); --input-border:#22d3ee; --nav-bg:rgba(5,3,14,var(--panel-opacity)); --menu-icon-bg:rgba(34,211,238,.12); --table-header:rgba(217,70,239,.15); --table-border:#a855f7; --color-success:#34d399; --color-warning:#facc15; --color-danger:#fb7185; --color-blue:#38bdf8; }
-    :root[data-theme="mech-steel"] { --bg-image:linear-gradient(135deg,#090b0f 0%,#18212b 55%,#0b1117 100%); --bg-color:#090b0f; --panel-bg:rgba(20,27,34,var(--panel-opacity)); --panel-border:2px solid rgba(148,163,184,.65); --text-main:#f1f5f9; --text-muted:#cbd5e1; --primary:#94a3b8; --primary-grad:linear-gradient(135deg,#334155,#cbd5e1); --input-bg:rgba(15,23,42,var(--panel-opacity)); --input-border:#64748b; --nav-bg:rgba(8,12,17,var(--panel-opacity)); --menu-icon-bg:rgba(148,163,184,.12); --table-header:rgba(148,163,184,.15); --table-border:#64748b; --color-success:#4ade80; --color-warning:#fbbf24; --color-danger:#f87171; --color-blue:#60a5fa; }
-    :root[data-theme="toxic-mech"] { --bg-image:linear-gradient(135deg,#020804 0%,#071a0b 52%,#111900 100%); --bg-color:#020804; --panel-bg:rgba(6,18,10,var(--panel-opacity)); --panel-border:2px solid rgba(163,230,53,.7); --text-main:#f7fee7; --text-muted:#bef264; --primary:#a3e635; --primary-grad:linear-gradient(135deg,#365314,#bef264); --input-bg:rgba(10,24,12,var(--panel-opacity)); --input-border:#84cc16; --nav-bg:rgba(2,8,4,var(--panel-opacity)); --menu-icon-bg:rgba(163,230,53,.12); --table-header:rgba(163,230,53,.15); --table-border:#65a30d; --color-success:#22c55e; --color-warning:#facc15; --color-danger:#ef4444; --color-blue:#22d3ee; }
-    :root[data-theme="neon-samurai"] { --bg-image:linear-gradient(135deg,#05000a 0%,#160510 55%,#07121b 100%); --bg-color:#05000a; --panel-bg:rgba(15,8,18,var(--panel-opacity)); --panel-border:2px solid rgba(239,68,68,.65); --text-main:#f8fafc; --text-muted:#a5f3fc; --primary:#06b6d4; --primary-grad:linear-gradient(135deg,#0e7490,#ef4444); --input-bg:rgba(15,10,18,var(--panel-opacity)); --input-border:#06b6d4; --nav-bg:rgba(4,3,9,var(--panel-opacity)); --menu-icon-bg:rgba(6,182,212,.12); --table-header:rgba(239,68,68,.15); --table-border:#dc2626; --color-success:#22c55e; --color-warning:#f59e0b; --color-danger:#ef4444; --color-blue:#22d3ee; }
   </style>
 </head>
 <body>
@@ -203,12 +243,12 @@
   <div class="container">
     <!-- TAB BERANDA -->
     <div id="tab-beranda" class="section active">
-      <div class="glass-panel" style="padding: 25px 20px; border-radius: 24px; margin-bottom: 20px; text-align: center;">
+      <div class="glass-panel cyber-frame" style="padding: 25px 20px; border-radius: 24px; margin-bottom: 20px; text-align: center;">
         <h2 style="font-weight: 900; margin: 0; font-size: 1.8rem;" class="text-gradient"><i class="ph-fill ph-storefront" style="margin-right:4px;"></i> <span id="dash-toko-nama">WISTARA-STORE</span></h2>
         <p id="dash-toko-desc" style="margin: 4px 0 0; font-size: 0.85rem; color: var(--text-main); font-weight: 800;">SISTEM KASIR DIGITAL</p>
       </div>
 
-      <div class="glass-panel card">
+      <div class="glass-panel card cyber-frame">
         <div class="card-title"><i class="ph-fill ph-squares-four"></i> MENU DASHBOARD</div>
         <div class="menu-grid">
           <div class="menu-item" onclick="switchTab('tab-input', null)"><div class="menu-icon"><i class="ph-fill ph-lightning"></i></div><div class="menu-text">Input Trx</div></div>
@@ -549,7 +589,7 @@
           </div>
           
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
-            <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-palette"></i> 30 PILIHAN TEMA APLIKASI</label>
+            <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-palette"></i> 24 PILIHAN TEMA APLIKASI</label>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 18px; max-height: 250px; overflow-y: auto;">
               <button type="button" class="theme-btn" style="background: rgba(255,255,255,0.9); color: #1d4ed8; border: 2px solid #1d4ed8;" onclick="setTheme('light')">PROFESIONAL</button>
               <button type="button" class="theme-btn" style="background: rgba(10,10,10,0.9); color: #dc2626; border: 2px solid #dc2626;" onclick="setTheme('dark')">RED DARK</button>
@@ -575,14 +615,6 @@
               <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); color: #0284c7; border: 2px solid #0ea5e9;" onclick="setTheme('grad-sky')">CLEAR SKY</button>
               <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #7c2d12, #1e3a8a); color: #fdba74; border: 2px solid #f97316;" onclick="setTheme('grad-dusk')">DUSK ORANGE</button>
               <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #f0fdf4, #dbeafe); color: #16a34a; border: 2px solid #22c55e;" onclick="setTheme('grad-mint')">MINT FRESH</button>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:-10px 0 18px;">
-              <button type="button" class="theme-btn" style="background:#090306;color:#ff1744;border:2px solid #ff1744;box-shadow:0 0 10px rgba(255,23,68,.35);" onclick="setTheme('robot-red')">🤖 ROBOT RED</button>
-              <button type="button" class="theme-btn" style="background:#090909;color:#facc15;border:2px solid #facc15;box-shadow:0 0 10px rgba(250,204,21,.3);" onclick="setTheme('bumble-bee')">🐝 BUMBLE BEE</button>
-              <button type="button" class="theme-btn" style="background:#10051a;color:#22d3ee;border:2px solid #d946ef;box-shadow:0 0 10px rgba(34,211,238,.3);" onclick="setTheme('cyber-2077')">⚡ CYBER 2077</button>
-              <button type="button" class="theme-btn" style="background:#111820;color:#cbd5e1;border:2px solid #94a3b8;box-shadow:0 0 10px rgba(148,163,184,.25);" onclick="setTheme('mech-steel')">🦾 MECH STEEL</button>
-              <button type="button" class="theme-btn" style="background:#061008;color:#a3e635;border:2px solid #84cc16;box-shadow:0 0 10px rgba(163,230,53,.3);" onclick="setTheme('toxic-mech')">☣ TOXIC MECH</button>
-              <button type="button" class="theme-btn" style="background:#08030a;color:#22d3ee;border:2px solid #ef4444;box-shadow:0 0 10px rgba(239,68,68,.3);" onclick="setTheme('neon-samurai')">⚔ NEON SAMURAI</button>
             </div>
             
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 8px;"><i class="ph-fill ph-sliders"></i> TRANSPARANSI PANEL</label>
