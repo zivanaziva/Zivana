@@ -28,6 +28,50 @@
   <style>
     :root { --panel-opacity: 1; }
     /* --- 1-8: SOLID & BASIC --- */
+
+    /* === 6 TEMA ROBOT / CYBERPUNK TAMBAHAN === */
+    :root[data-theme="robot-red"] {
+      --bg-image: linear-gradient(135deg,#030303 0%,#180406 55%,#050505 100%);
+      --bg-color:#030303; --panel-bg:rgba(8,8,8,var(--panel-opacity));
+      --panel-border:1px solid rgba(239,68,68,.55); --text-main:#f8fafc; --text-muted:#cbd5e1;
+      --primary:#ef4444; --primary-dark:#b91c1c; --primary-grad:linear-gradient(135deg,#ef4444,#06b6d4);
+      --input-bg:rgba(15,15,15,.92); --input-border:#ef4444; --color-success:#22c55e; --color-warning:#f59e0b; --color-danger:#f87171; --color-blue:#38bdf8;
+    }
+    :root[data-theme="bumble-bee"] {
+      --bg-image:linear-gradient(135deg,#090909 0%,#1a1600 55%,#050505 100%);
+      --bg-color:#090909; --panel-bg:rgba(15,15,10,var(--panel-opacity));
+      --panel-border:1px solid rgba(250,204,21,.55); --text-main:#fffbea; --text-muted:#d6d3b1;
+      --primary:#facc15; --primary-dark:#ca8a04; --primary-grad:linear-gradient(135deg,#facc15,#f59e0b);
+      --input-bg:rgba(18,18,10,.94); --input-border:#facc15; --color-success:#22c55e; --color-warning:#f59e0b; --color-danger:#ef4444; --color-blue:#38bdf8;
+    }
+    :root[data-theme="cyber-2077"] {
+      --bg-image:linear-gradient(135deg,#08000d 0%,#13001c 50%,#00141a 100%);
+      --bg-color:#08000d; --panel-bg:rgba(12,4,20,var(--panel-opacity));
+      --panel-border:1px solid rgba(217,70,239,.6); --text-main:#f5f3ff; --text-muted:#c4b5fd;
+      --primary:#22d3ee; --primary-dark:#0891b2; --primary-grad:linear-gradient(135deg,#22d3ee,#d946ef);
+      --input-bg:rgba(14,7,22,.94); --input-border:#22d3ee; --color-success:#34d399; --color-warning:#fbbf24; --color-danger:#fb7185; --color-blue:#60a5fa;
+    }
+    :root[data-theme="mech-steel"] {
+      --bg-image:linear-gradient(135deg,#090d12 0%,#1a2028 55%,#07090c 100%);
+      --bg-color:#090d12; --panel-bg:rgba(20,25,31,var(--panel-opacity));
+      --panel-border:1px solid rgba(148,163,184,.58); --text-main:#f1f5f9; --text-muted:#cbd5e1;
+      --primary:#94a3b8; --primary-dark:#64748b; --primary-grad:linear-gradient(135deg,#cbd5e1,#64748b);
+      --input-bg:rgba(15,20,26,.94); --input-border:#94a3b8; --color-success:#22c55e; --color-warning:#f59e0b; --color-danger:#ef4444; --color-blue:#38bdf8;
+    }
+    :root[data-theme="toxic-mech"] {
+      --bg-image:linear-gradient(135deg,#020702 0%,#071a08 55%,#010301 100%);
+      --bg-color:#020702; --panel-bg:rgba(5,16,7,var(--panel-opacity));
+      --panel-border:1px solid rgba(132,204,22,.58); --text-main:#ecfccb; --text-muted:#bef264;
+      --primary:#84cc16; --primary-dark:#4d7c0f; --primary-grad:linear-gradient(135deg,#a3e635,#16a34a);
+      --input-bg:rgba(6,18,8,.94); --input-border:#84cc16; --color-success:#22c55e; --color-warning:#eab308; --color-danger:#ef4444; --color-blue:#38bdf8;
+    }
+    :root[data-theme="neon-samurai"] {
+      --bg-image:linear-gradient(135deg,#07070d 0%,#130813 55%,#05070b 100%);
+      --bg-color:#07070d; --panel-bg:rgba(15,10,18,var(--panel-opacity));
+      --panel-border:1px solid rgba(244,63,94,.58); --text-main:#f8fafc; --text-muted:#cbd5e1;
+      --primary:#f43f5e; --primary-dark:#be123c; --primary-grad:linear-gradient(135deg,#f43f5e,#22d3ee);
+      --input-bg:rgba(14,10,18,.94); --input-border:#f43f5e; --color-success:#22c55e; --color-warning:#fbbf24; --color-danger:#fb7185; --color-blue:#22d3ee;
+    }
     :root[data-theme="light"] { --bg-image: url('https://i.ibb.co/HD1wFw6g/e2b1296c2b2819d2e3595135a07b5fc9.jpg'); --bg-color: #f8fafc; --panel-bg: rgba(255, 255, 255, var(--panel-opacity)); --panel-border: 2px solid rgba(191, 219, 254, var(--panel-opacity)); --text-main: #0f172a; --text-muted: #64748b; --primary: #1d4ed8; --primary-grad: linear-gradient(135deg, #1e3a8a, #3b82f6); --input-bg: rgba(241, 245, 249, var(--panel-opacity)); --input-border: #93c5fd; --nav-bg: rgba(255, 255, 255, var(--panel-opacity)); --menu-icon-bg: rgba(239, 246, 255, 0.8); --table-header: rgba(239, 246, 255, 0.8); --table-border: #93c5fd; --color-success: #059669; --color-warning: #ea580c; --color-danger: #e11d48; --color-blue: #2563eb; }
     :root[data-theme="dark"] { --bg-image: none; --bg-color: #0a0a0a; --panel-bg: rgba(15, 15, 15, var(--panel-opacity)); --panel-border: 1px solid rgba(220, 38, 38, 0.6); --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #dc2626; --primary-grad: linear-gradient(135deg, #7f1d1d, #ef4444); --input-bg: rgba(30, 30, 30, var(--panel-opacity)); --input-border: #dc2626; --nav-bg: rgba(10, 10, 10, var(--panel-opacity)); --menu-icon-bg: rgba(220, 38, 38, 0.1); --table-header: rgba(220, 38, 38, 0.15); --table-border: #991b1b; --color-success: #10b981; --color-warning: #f59e0b; --color-danger: #ef4444; --color-blue: #3b82f6; }
     :root[data-theme="forest"] { --bg-image: none; --bg-color: #1c1917; --panel-bg: rgba(41, 37, 36, var(--panel-opacity)); --panel-border: 1px solid rgba(21, 128, 61, 0.5); --text-main: #fafaf9; --text-muted: #a8a29e; --primary: #22c55e; --primary-grad: linear-gradient(135deg, #14532d, #16a34a); --input-bg: rgba(28, 25, 23, var(--panel-opacity)); --input-border: #15803d; --nav-bg: rgba(41, 37, 36, var(--panel-opacity)); --menu-icon-bg: rgba(34, 197, 94, 0.1); --table-header: rgba(34, 197, 94, 0.15); --table-border: #16a34a; --color-success: #22c55e; --color-warning: #f59e0b; --color-danger: #ef4444; --color-blue: #3b82f6; }
@@ -65,54 +109,6 @@
 
     .glass-panel { background: var(--panel-bg); border: var(--panel-border); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); border-radius: 20px; transition: all 0.4s ease; backdrop-filter: blur(8px); }
     .card { padding: 22px; margin-bottom: 20px; }
-
-    /* ===== CYBERPUNK FRAME / ANGULAR BORDER ===== */
-    .cyber-frame {
-      position: relative;
-      overflow: visible !important;
-      border: 2px solid transparent !important;
-      background:
-        linear-gradient(var(--panel-bg), var(--panel-bg)) padding-box,
-        linear-gradient(105deg, #ff1020 0%, #ff1020 14%, #06d9ff 35%, #06d9ff 65%, #ff1020 86%, #ff1020 100%) border-box !important;
-      box-shadow: 0 0 14px rgba(0, 210, 255, .20), 0 0 22px rgba(255, 20, 40, .10), inset 0 0 22px rgba(0, 180, 255, .035) !important;
-      border-radius: 22px !important;
-    }
-    .cyber-frame::before, .cyber-frame::after {
-      content: '';
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .cyber-frame::before {
-      inset: 7px;
-      border: 1px solid rgba(0, 220, 255, .72);
-      clip-path: polygon(0 0, 17% 0, 20% 6px, 80% 6px, 83% 0, 100% 0, 100% 17%, calc(100% - 6px) 20%, calc(100% - 6px) 80%, 100% 83%, 100% 100%, 83% 100%, 80% calc(100% - 6px), 20% calc(100% - 6px), 17% 100%, 0 100%, 0 83%, 6px 80%, 6px 20%, 0 17%);
-      opacity: .9;
-    }
-    .cyber-frame::after {
-      inset: -2px;
-      background: linear-gradient(90deg, transparent 0 7%, #ff1428 7% 18%, transparent 18% 82%, #ff1428 82% 93%, transparent 93%);
-      height: 4px;
-      top: -3px;
-      bottom: auto;
-      filter: drop-shadow(0 0 5px #ff1428);
-      opacity: .9;
-    }
-    .cyber-frame > * { position: relative; z-index: 1; }
-    .cyber-frame .card-title {
-      border-bottom-color: #09d8ff !important;
-      text-shadow: 0 0 8px rgba(0, 216, 255, .25);
-    }
-    .cyber-frame .menu-icon {
-      border-color: #09d8ff !important;
-      box-shadow: 0 0 8px rgba(0, 216, 255, .18), inset 0 0 10px rgba(0, 216, 255, .06) !important;
-    }
-    .cyber-frame .menu-icon i {
-      filter: drop-shadow(0 0 5px currentColor);
-    }
-    [data-theme="dark"] .cyber-frame {
-      background: linear-gradient(rgba(10,10,10,.96), rgba(10,10,10,.96)) padding-box, linear-gradient(105deg,#ff1020,#ff1020 14%,#06d9ff 35%,#06d9ff 65%,#ff1020 86%,#ff1020) border-box !important;
-    }
     .card-title { font-size: 1.1rem; font-weight: 900; margin-bottom: 18px; color: var(--primary); border-bottom: 2px solid var(--input-border); padding-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
     
     .input-group { margin-bottom: 16px; }
@@ -236,19 +232,38 @@
     .theme-btn { flex: 1; padding: 12px 2px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 0.70rem; transition: 0.2s; }
     .theme-btn:active { transform: scale(0.95); }
     .input-profil { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--input-border); background: var(--panel-bg); color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
-  </style>
+  
+    /* === BORDER FUTURISTIK ADAPTIF: WARNA SELALU MENGIKUT TEMA AKTIF === */
+    .glass-panel, .card, .menu-item {
+      position: relative;
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 22%, transparent),
+                  0 0 16px color-mix(in srgb, var(--primary) 10%, transparent);
+    }
+    .glass-panel::before, .card::before, .menu-item::before {
+      content:"";
+      position:absolute; inset:7px; pointer-events:none; z-index:0;
+      border:1px solid color-mix(in srgb, var(--primary) 38%, transparent);
+      clip-path: polygon(0 0, 17% 0, 18% 5%, 82% 5%, 83% 0, 100% 0, 100% 17%, 95% 18%, 95% 82%, 100% 83%, 100% 100%, 83% 100%, 82% 95%, 18% 95%, 17% 100%, 0 100%, 0 83%, 5% 82%, 5% 18%, 0 17%);
+    }
+    .glass-panel > *, .card > *, .menu-item > * { position:relative; z-index:1; }
+    .menu-item { border:2px solid var(--primary) !important; }
+    .menu-icon { border-color:var(--primary) !important; box-shadow:0 0 12px color-mix(in srgb,var(--primary) 22%,transparent); }
+    .card-title { border-bottom-color:var(--primary) !important; }
+
+</style>
 </head>
 <body>
 
   <div class="container">
     <!-- TAB BERANDA -->
     <div id="tab-beranda" class="section active">
-      <div class="glass-panel cyber-frame" style="padding: 25px 20px; border-radius: 24px; margin-bottom: 20px; text-align: center;">
+      <div class="glass-panel" style="padding: 25px 20px; border-radius: 24px; margin-bottom: 20px; text-align: center;">
         <h2 style="font-weight: 900; margin: 0; font-size: 1.8rem;" class="text-gradient"><i class="ph-fill ph-storefront" style="margin-right:4px;"></i> <span id="dash-toko-nama">WISTARA-STORE</span></h2>
         <p id="dash-toko-desc" style="margin: 4px 0 0; font-size: 0.85rem; color: var(--text-main); font-weight: 800;">SISTEM KASIR DIGITAL</p>
       </div>
 
-      <div class="glass-panel card cyber-frame">
+      <div class="glass-panel card">
         <div class="card-title"><i class="ph-fill ph-squares-four"></i> MENU DASHBOARD</div>
         <div class="menu-grid">
           <div class="menu-item" onclick="switchTab('tab-input', null)"><div class="menu-icon"><i class="ph-fill ph-lightning"></i></div><div class="menu-text">Input Trx</div></div>
@@ -589,7 +604,7 @@
           </div>
           
           <div class="box-3d" style="text-align: left; padding: 16px; margin: 0; background: var(--input-bg); border-color: var(--input-border);">
-            <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-palette"></i> 24 PILIHAN TEMA APLIKASI</label>
+            <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;"><i class="ph-fill ph-palette"></i> 30 PILIHAN TEMA APLIKASI</label>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 18px; max-height: 250px; overflow-y: auto;">
               <button type="button" class="theme-btn" style="background: rgba(255,255,255,0.9); color: #1d4ed8; border: 2px solid #1d4ed8;" onclick="setTheme('light')">PROFESIONAL</button>
               <button type="button" class="theme-btn" style="background: rgba(10,10,10,0.9); color: #dc2626; border: 2px solid #dc2626;" onclick="setTheme('dark')">RED DARK</button>
@@ -615,6 +630,12 @@
               <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); color: #0284c7; border: 2px solid #0ea5e9;" onclick="setTheme('grad-sky')">CLEAR SKY</button>
               <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #7c2d12, #1e3a8a); color: #fdba74; border: 2px solid #f97316;" onclick="setTheme('grad-dusk')">DUSK ORANGE</button>
               <button type="button" class="theme-btn" style="background: linear-gradient(135deg, #f0fdf4, #dbeafe); color: #16a34a; border: 2px solid #22c55e;" onclick="setTheme('grad-mint')">MINT FRESH</button>
+               <button type="button" class="theme-btn" style="background:rgba(8,8,8,.95);color:#ef4444;border:2px solid #ef4444;" onclick="setTheme('robot-red')">ROBOT RED</button>
+               <button type="button" class="theme-btn" style="background:rgba(18,18,8,.95);color:#facc15;border:2px solid #facc15;" onclick="setTheme('bumble-bee')">BUMBLE BEE</button>
+               <button type="button" class="theme-btn" style="background:linear-gradient(135deg,#08000d,#00141a);color:#22d3ee;border:2px solid #d946ef;" onclick="setTheme('cyber-2077')">CYBER 2077</button>
+               <button type="button" class="theme-btn" style="background:linear-gradient(135deg,#090d12,#1a2028);color:#cbd5e1;border:2px solid #94a3b8;" onclick="setTheme('mech-steel')">MECH STEEL</button>
+               <button type="button" class="theme-btn" style="background:linear-gradient(135deg,#020702,#071a08);color:#a3e635;border:2px solid #84cc16;" onclick="setTheme('toxic-mech')">TOXIC MECH</button>
+               <button type="button" class="theme-btn" style="background:linear-gradient(135deg,#07070d,#130813);color:#f43f5e;border:2px solid #22d3ee;" onclick="setTheme('neon-samurai')">NEON SAMURAI</button>
             </div>
             
             <label style="font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 8px;"><i class="ph-fill ph-sliders"></i> TRANSPARANSI PANEL</label>
@@ -1032,12 +1053,74 @@
     }
     function bukaEditDompet(dompetId){
       var d=dompetCache.find(function(x){return x.id===dompetId;}); if(!d)return;
-      document.getElementById('edit-keu-id').value='';document.getElementById('edit-keu-jenis').value='DOMPET';document.getElementById('edit-keu-sumber').value=dompetId;document.getElementById('edit-keu-nominal').value='';document.getElementById('edit-keu-keterangan').value=d.nama||'';document.getElementById('edit-keu-pengirim').value='';document.getElementById('edit-keu-tanggal').value='';document.getElementById('edit-keu-dokumentasi').value='';document.getElementById('preview-edit-keu-dokumentasi').innerHTML='';document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT NAMA DOMPET';document.getElementById('modalEditKeuangan').dataset.mode='dompet';document.getElementById('edit-keu-sumber').parentElement.style.display='none';document.getElementById('edit-keu-nominal').parentElement.style.display='none';document.getElementById('edit-keu-keterangan').parentElement.querySelector('label').innerText='NAMA DOMPET';document.getElementById('edit-keu-pengirim').parentElement.style.display='none';document.getElementById('edit-keu-tanggal').parentElement.style.display='none';document.getElementById('edit-keu-dokumentasi').parentElement.style.display='none';document.getElementById('modalEditKeuangan').style.display='flex';
+      resetModalEditKeuangan();
+      var modal=document.getElementById('modalEditKeuangan');
+      modal.dataset.mode='dompet';
+      modal.dataset.saldoId='';
+      document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT DOMPET';
+      document.getElementById('edit-keu-id').value='';
+      document.getElementById('edit-keu-jenis').value='SALDO_AWAL';
+      document.getElementById('edit-keu-sumber').value=dompetId;
+      document.getElementById('edit-keu-sumber').parentElement.style.display='none';
+      document.getElementById('edit-keu-keterangan').parentElement.querySelector('label').innerText='NAMA DOMPET';
+      document.getElementById('edit-keu-keterangan').value=d.nama||'';
+      document.getElementById('edit-keu-pengirim').parentElement.style.display='none';
+      document.getElementById('edit-keu-tanggal').parentElement.style.display='none';
+      document.getElementById('edit-keu-nominal').parentElement.style.display='';
+      document.getElementById('edit-keu-dokumentasi').parentElement.style.display='';
+      document.getElementById('edit-keu-nominal').value='';
+      document.getElementById('edit-keu-dokumentasi').value='';
+      document.getElementById('preview-edit-keu-dokumentasi').innerHTML='';
+      db.collection('keuangan').get().then(function(snap){
+        var saldoDoc=null;
+        snap.forEach(function(doc){
+          var x=doc.data()||{};
+          if(!saldoDoc && x.jenis==='SALDO_AWAL' && x.sumber===dompetId) saldoDoc={id:doc.id,data:x};
+        });
+        if(saldoDoc){
+          modal.dataset.saldoId=saldoDoc.id;
+          document.getElementById('edit-keu-id').value=saldoDoc.id;
+          document.getElementById('edit-keu-nominal').value=Number(saldoDoc.data.nominal||0).toLocaleString('id-ID');
+          document.getElementById('preview-edit-keu-dokumentasi').innerHTML=saldoDoc.data.dokumentasi?'<div class="keu-bukti-preview" style="margin-top:0;cursor:zoom-in;"><img src="'+saldoDoc.data.dokumentasi+'" alt="Dokumentasi" onclick="bukaPreviewDokumentasi(this)"></div>':'';
+        }
+        modal.style.display='flex';
+      }).catch(function(e){
+        console.error(e);
+        modal.style.display='flex';
+      });
     }
-    function resetModalEditKeuangan(){var modal=document.getElementById('modalEditKeuangan');modal.dataset.mode='transaksi';document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT CATATAN KEUANGAN';['edit-keu-sumber','edit-keu-nominal','edit-keu-keterangan','edit-keu-pengirim','edit-keu-tanggal','edit-keu-dokumentasi'].forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement)el.parentElement.style.display='';});}
+    function resetModalEditKeuangan(){var modal=document.getElementById('modalEditKeuangan');modal.dataset.mode='transaksi';modal.dataset.saldoId='';document.querySelector('#modalEditKeuangan h3').innerHTML='<i class="ph-bold ph-pencil-simple"></i> EDIT CATATAN KEUANGAN';['edit-keu-sumber','edit-keu-nominal','edit-keu-keterangan','edit-keu-pengirim','edit-keu-tanggal','edit-keu-dokumentasi'].forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement)el.parentElement.style.display='';});document.getElementById('edit-keu-keterangan').parentElement.querySelector('label').innerText='KETERANGAN / KEPERLUAN';}
     function bukaEditKeuangan(id){resetModalEditKeuangan();db.collection('keuangan').doc(id).get().then(function(doc){if(!doc.exists)return;var x=doc.data();document.getElementById('edit-keu-id').value=id;document.getElementById('edit-keu-jenis').value=x.jenis||'MASUK';muatDompet().then(function(){document.getElementById('edit-keu-sumber').value=x.sumber||'';});document.getElementById('edit-keu-nominal').value=Number(x.nominal||0).toLocaleString('id-ID');document.getElementById('edit-keu-keterangan').value=x.keterangan||'';document.getElementById('edit-keu-pengirim').value=x.pengirim||'';var p=(x.tanggal||'').split('-');document.getElementById('edit-keu-tanggal').value=p.length===3?p[2]+'-'+p[1]+'-'+p[0]:'';document.getElementById('edit-keu-dokumentasi').value='';document.getElementById('preview-edit-keu-dokumentasi').innerHTML=x.dokumentasi?'<div class="keu-bukti-preview" style="margin-top:0;cursor:zoom-in;"><img src="'+x.dokumentasi+'" alt="Dokumentasi" onclick="bukaPreviewDokumentasi(this)"></div>':'';document.getElementById('modalEditKeuangan').style.display='flex';});}
-    async function simpanEditKeuangan(){var modal=document.getElementById('modalEditKeuangan');if(modal.dataset.mode==='dompet'){var dompetId=document.getElementById('edit-keu-sumber').value,nama=document.getElementById('edit-keu-keterangan').value.trim().toUpperCase();if(!dompetId||!nama)return alert('Nama dompet belum diisi.');try{await db.collection('dompet').doc(dompetId).update({nama:nama});tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah dompet: '+e.message);}return;}var id=document.getElementById('edit-keu-id').value,nom=parseFloat(document.getElementById('edit-keu-nominal').value.replace(/[^0-9]/g,''))||0;if(!nom)return alert('Nominal belum diisi.');try{var data={sumber:document.getElementById('edit-keu-sumber').value,nominal:nom,keterangan:document.getElementById('edit-keu-keterangan').value.trim(),pengirim:document.getElementById('edit-keu-pengirim').value.trim(),tanggal:formatTgl(document.getElementById('edit-keu-tanggal').value),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};var f=document.getElementById('edit-keu-dokumentasi').files[0];if(f)data.dokumentasi=await fileToDataUrl(f,1400);await db.collection('keuangan').doc(id).update(data);tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah: '+e.message);}}
-    function muatKeuangan(){
+    async function simpanEditKeuangan(){
+      var modal=document.getElementById('modalEditKeuangan');
+      if(modal.dataset.mode==='dompet'){
+        var dompetId=document.getElementById('edit-keu-sumber').value;
+        var nama=document.getElementById('edit-keu-keterangan').value.trim().toUpperCase();
+        var nomDompet=parseFloat(document.getElementById('edit-keu-nominal').value.replace(/[^0-9]/g,''))||0;
+        if(!dompetId||!nama)return alert('Nama dompet belum diisi.');
+        if(!nomDompet)return alert('Nominal saldo awal belum diisi.');
+        try{
+          var fDompet=document.getElementById('edit-keu-dokumentasi').files[0];
+          var updateSaldo={nominal:nomDompet,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+          if(fDompet)updateSaldo.dokumentasi=await fileToDataUrl(fDompet,1400);
+          await db.collection('dompet').doc(dompetId).update({nama:nama});
+          var saldoId=modal.dataset.saldoId||document.getElementById('edit-keu-id').value;
+          if(saldoId){
+            await db.collection('keuangan').doc(saldoId).update(updateSaldo);
+          }else{
+            updateSaldo.jenis='SALDO_AWAL';updateSaldo.sumber=dompetId;updateSaldo.keterangan='SALDO AWAL';updateSaldo.pengirim='';updateSaldo.tanggal=getTglJam().tanggal;updateSaldo.timestamp=firebase.firestore.FieldValue.serverTimestamp();
+            await db.collection('keuangan').add(updateSaldo);
+          }
+          tutupModal('modalEditKeuangan');muatKeuangan();
+        }catch(e){alert('Gagal mengubah dompet: '+e.message);}
+        return;
+      }
+      var id=document.getElementById('edit-keu-id').value,nom=parseFloat(document.getElementById('edit-keu-nominal').value.replace(/[^0-9]/g,''))||0;
+      if(!nom)return alert('Nominal belum diisi.');
+      try{var data={sumber:document.getElementById('edit-keu-sumber').value,nominal:nom,keterangan:document.getElementById('edit-keu-keterangan').value.trim(),pengirim:document.getElementById('edit-keu-pengirim').value.trim(),tanggal:formatTgl(document.getElementById('edit-keu-tanggal').value),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};var f=document.getElementById('edit-keu-dokumentasi').files[0];if(f)data.dokumentasi=await fileToDataUrl(f,1400);await db.collection('keuangan').doc(id).update(data);tutupModal('modalEditKeuangan');muatKeuangan();}catch(e){alert('Gagal mengubah: '+e.message);}
+    }
+    
+function muatKeuangan(){
       var list=document.getElementById('list-keuangan');
       if(!list)return;
       list.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:.85rem;">Memuat data keuangan...</p>';
