@@ -251,6 +251,110 @@
     .menu-icon { border-color:var(--primary) !important; box-shadow:0 0 12px color-mix(in srgb,var(--primary) 22%,transparent); }
     .card-title { border-bottom-color:var(--primary) !important; }
 
+
+
+    /* ===== DASHBOARD MENU: CLEAN + SEGMENTED FUTURISTIC ICON BORDER ===== */
+    .menu-grid {
+      gap: 15px 13px;
+      margin: 16px 0 6px;
+    }
+    /* Hilangkan kotak pembatas di luar setiap menu */
+    .menu-item {
+      position: relative;
+      min-width: 0;
+      padding: 0;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+    /* Icon tetap punya pelindung tegas, tanpa kotak besar di belakangnya */
+    .menu-icon {
+      position: relative;
+      isolation: isolate;
+      width: 58px;
+      height: 58px;
+      margin-bottom: 8px;
+      border: 2px solid var(--primary);
+      border-radius: 18px;
+      background: var(--menu-icon-bg);
+      color: var(--primary);
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--text-main) 18%, transparent),
+        0 0 10px color-mix(in srgb, var(--primary) 30%, transparent),
+        inset 0 0 12px color-mix(in srgb, var(--primary) 10%, transparent);
+      overflow: visible;
+    }
+    /* Empat aksen sudut terputus: warna utama + warna terang tema */
+    .menu-icon::before {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border-radius: 21px;
+      padding: 2px;
+      background:
+        conic-gradient(from 0deg,
+          var(--primary) 0deg 30deg,
+          transparent 30deg 60deg,
+          var(--text-main) 60deg 90deg,
+          transparent 90deg 120deg,
+          var(--primary) 120deg 150deg,
+          transparent 150deg 210deg,
+          var(--text-main) 210deg 240deg,
+          transparent 240deg 270deg,
+          var(--primary) 270deg 300deg,
+          transparent 300deg 360deg);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: -1;
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--primary) 42%, transparent));
+      animation: menuBorderPulse 3.2s ease-in-out infinite;
+    }
+    /* Kilau kecil agar border terasa hidup */
+    .menu-icon::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 19px;
+      border: 1px solid transparent;
+      border-top-color: color-mix(in srgb, var(--text-main) 75%, transparent);
+      border-bottom-color: color-mix(in srgb, var(--primary) 85%, transparent);
+      opacity: .55;
+      pointer-events: none;
+      transform: rotate(180deg);
+      animation: menuBorderShine 4.5s linear infinite;
+    }
+    .menu-item:hover .menu-icon,
+    .menu-item:focus-visible .menu-icon {
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--text-main) 30%, transparent),
+        0 0 16px color-mix(in srgb, var(--primary) 50%, transparent),
+        inset 0 0 14px color-mix(in srgb, var(--primary) 15%, transparent);
+    }
+    .menu-item:active .menu-icon {
+      transform: scale(.94);
+      filter: brightness(1.08);
+    }
+    .menu-text {
+      position: relative;
+      z-index: 2;
+    }
+    @keyframes menuBorderPulse {
+      0%, 100% { opacity: .72; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.025); }
+    }
+    @keyframes menuBorderShine {
+      0% { opacity: .25; transform: rotate(180deg); }
+      50% { opacity: .8; }
+      100% { opacity: .25; transform: rotate(540deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .menu-icon::before, .menu-icon::after { animation: none; }
+    }
 </style>
 </head>
 <body>
