@@ -285,12 +285,12 @@
       z-index: 3;
     }
 
-    /* ===== DASHBOARD MENU: CLEAN + SEGMENTED FUTURISTIC ICON BORDER ===== */
+    /* ===== DASHBOARD MENU: SOLID • CLEAN • FRIENDLY ===== */
     .menu-grid {
       gap: 15px 13px;
       margin: 16px 0 6px;
     }
-    /* Hilangkan kotak pembatas di luar setiap menu */
+
     .menu-item {
       position: relative;
       min-width: 0;
@@ -300,93 +300,129 @@
       box-shadow: none !important;
       outline: none !important;
     }
-    /* Icon tetap punya pelindung tegas, tanpa kotak besar di belakangnya */
+
+    /* Ikon dibuat solid dan membulat — tanpa garis futuristik/robot */
     .menu-icon {
       position: relative;
       isolation: isolate;
       width: 58px;
       height: 58px;
       margin-bottom: 8px;
-      border: 2px solid var(--primary);
-      border-radius: 18px;
-      background: var(--menu-icon-bg);
-      color: var(--primary);
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--text-main) 18%, transparent),
-        0 0 10px color-mix(in srgb, var(--primary) 30%, transparent),
-        inset 0 0 12px color-mix(in srgb, var(--primary) 10%, transparent);
-      overflow: visible;
+      border: 0 !important;
+      border-radius: 17px;
+      background: var(--primary) !important;
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px color-mix(in srgb, var(--primary) 28%, transparent);
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      overflow: hidden;
+      animation: none !important;
     }
-    /* Empat aksen sudut terputus: warna utama + warna terang tema */
+
+    /* Sedikit efek permukaan, bukan efek robot */
     .menu-icon::before {
       content: "";
       position: absolute;
-      inset: -5px;
-      border-radius: 21px;
-      padding: 2px;
-      background:
-        conic-gradient(from 0deg,
-          var(--primary) 0deg 30deg,
-          transparent 30deg 60deg,
-          var(--text-main) 60deg 90deg,
-          transparent 90deg 120deg,
-          var(--primary) 120deg 150deg,
-          transparent 150deg 210deg,
-          var(--text-main) 210deg 240deg,
-          transparent 240deg 270deg,
-          var(--primary) 270deg 300deg,
-          transparent 300deg 360deg);
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        145deg,
+        color-mix(in srgb, #fff 18%, transparent),
+        transparent 45%,
+        color-mix(in srgb, #000 10%, transparent)
+      );
       pointer-events: none;
       z-index: -1;
-      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--primary) 42%, transparent));
-      animation: menuBorderPulse 3.2s ease-in-out infinite;
     }
-    /* Kilau kecil agar border terasa hidup */
+
     .menu-icon::after {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: 19px;
-      border: 1px solid transparent;
-      border-top-color: color-mix(in srgb, var(--text-main) 75%, transparent);
-      border-bottom-color: color-mix(in srgb, var(--primary) 85%, transparent);
-      opacity: .55;
-      pointer-events: none;
-      transform: rotate(180deg);
-      animation: menuBorderShine 4.5s linear infinite;
+      display: none !important;
+      content: none !important;
     }
+
+    .menu-icon i {
+      position: relative;
+      z-index: 2;
+      font-size: 1.75rem;
+      color: #fff !important;
+      line-height: 1;
+      filter: none;
+    }
+
     .menu-item:hover .menu-icon,
     .menu-item:focus-visible .menu-icon {
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--text-main) 30%, transparent),
-        0 0 16px color-mix(in srgb, var(--primary) 50%, transparent),
-        inset 0 0 14px color-mix(in srgb, var(--primary) 15%, transparent);
+      box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 38%, transparent);
+      filter: brightness(1.04);
     }
+
     .menu-item:active .menu-icon {
-      transform: scale(.94);
-      filter: brightness(1.08);
+      transform: scale(.93);
+      filter: brightness(.94);
     }
+
     .menu-text {
       position: relative;
       z-index: 2;
+      font-weight: 800;
     }
-    @keyframes menuBorderPulse {
-      0%, 100% { opacity: .72; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.025); }
+
+    /* Hilangkan kedipan/putaran pada ikon */
+    @keyframes iconBorderBlink {
+      0%, 100% { opacity: 1; }
     }
-    @keyframes menuBorderShine {
-      0% { opacity: .25; transform: rotate(180deg); }
-      50% { opacity: .8; }
-      100% { opacity: .25; transform: rotate(540deg); }
-    }
+
     @media (prefers-reduced-motion: reduce) {
-      .menu-icon::before, .menu-icon::after { animation: none; }
+      .menu-icon, .menu-icon::before { animation: none !important; }
     }
+
+    /* ===== BORDER PANEL TETAP HALUS ===== */
+    .glass-panel:first-child {
+      animation: mainBorderBlink 4.5s ease-in-out infinite;
+    }
+
+    .dash-marquee {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      margin-top: 8px !important;
+      padding: 2px 0;
+      box-sizing: border-box;
+      color: var(--text-main);
+      font-size: 0.78rem !important;
+      font-weight: 800 !important;
+    }
+
+    .dash-marquee-track {
+      display: inline-flex;
+      width: max-content;
+      will-change: transform;
+      animation: wistaraMarquee 14s linear infinite;
+    }
+
+    .dash-marquee-track span {
+      display: inline-block;
+      padding-right: 70px;
+    }
+
+    @keyframes mainBorderBlink {
+      0%, 100% {
+        border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+        box-shadow: 0 8px 20px rgba(0,0,0,.08), 0 0 0 0 transparent;
+      }
+      50% {
+        border-color: color-mix(in srgb, var(--primary) 75%, white);
+        box-shadow: 0 8px 20px rgba(0,0,0,.08), 0 0 12px color-mix(in srgb, var(--primary) 20%, transparent);
+      }
+    }
+
+    @keyframes wistaraMarquee {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
 
     /* ===== BORDER BERKEDIP + TEKS BERJALAN ===== */
     .menu-icon {
