@@ -991,10 +991,9 @@
           <div id="textNota"></div>
         </div>
       </div>
-      <div class="modal-btns" style="padding: 14px; margin-top: 0; border-top: 2px solid var(--input-border); background: var(--input-bg); flex-wrap: wrap;">
+      <div class="modal-btns" style="padding: 14px; margin-top: 0; border-top: 2px solid var(--input-border); background: var(--input-bg);">
         <button type="button" class="btn-wa" onclick="kirimKeWA()"><i class="ph-fill ph-whatsapp-logo" style="font-size:1.2rem;"></i> BAGIKAN FOTO</button>
-        <button type="button" class="btn" style="flex:1; min-width:150px; background:var(--input-bg); color:var(--color-success); border:2px solid var(--color-success); box-shadow:none;" onclick="kirimNotaTextAktif()"><i class="ph-fill ph-whatsapp-logo"></i> KIRIM NOTA TEXT</button>
-        <button type="button" class="btn-close" style="flex:1; min-width:150px;" onclick="tutupModal('modalNota')">TUTUP</button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalNota')">TUTUP</button>
       </div>
     </div>
   </div>
@@ -1095,6 +1094,24 @@
     </div>
   </div>
 
+  <!-- MODAL KHUSUS PEMBAYARAN BON: dipisahkan dari nota transaksi agar isi nota tidak tertukar -->
+  <div id="modalSuksesBayarBon" class="modal-overlay">
+    <div class="modal-box" style="text-align:center; max-width:350px;">
+      <i class="ph-fill ph-check-circle" style="font-size:4.5rem; color:var(--color-success); margin-bottom:16px;"></i>
+      <h3 style="color:var(--color-success); margin-top:0; font-weight:900;">PEMBAYARAN BON BERHASIL!</h3>
+      <p style="color:var(--text-main); font-size:.88rem; margin-bottom:22px; font-weight:700;">Pilih format nota pembayaran:</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button type="button" class="btn" style="background:linear-gradient(135deg,var(--color-success),#047857);" onclick="kirimWaTeksBayarBon()">
+          <i class="ph-fill ph-whatsapp-logo" style="font-size:1.3rem;"></i> KIRIM NOTA BAYAR BON
+        </button>
+        <button type="button" class="btn" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); box-shadow:none;" onclick="bukaNotaGambarBayarBon()">
+          <i class="ph-fill ph-receipt"></i> BUKA NOTA BAYAR BON
+        </button>
+        <button type="button" class="btn-close" style="width:100%; margin-top:5px;" onclick="tutupModal('modalSuksesBayarBon')">TUTUP</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modalBuatCelengan" class="modal-overlay">
     <div class="modal-box" style="max-height: 85vh; overflow-y: auto;">
       <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 900;"><i class="ph-bold ph-target"></i> BUAT CELENGAN</h3>
@@ -1188,39 +1205,7 @@
 
     var statusEfek = localStorage.getItem('wistara_efek') || 'off';
     var globalNota = "", dataCacheHariIni = [], dataCacheKeseluruhan = [], stokCache = [], bonCache = [], celenganCache = [], krediturCache = [], serverCache = [];
-    var modeAktif = 'hariini', myChart = null, tempFotoProfilBase64 = "", tempNotaWA = "", tempNotaGambar = "", tempNotaLamaText = "", notaAktifText = "";
-
-    function simpanNotaAktif(teks) {
-      notaAktifText = String(teks || "");
-      if (!notaAktifText.trim()) return;
-      try { localStorage.setItem('wistara_nota_aktif', notaAktifText); } catch(e) {}
-    }
-    function ambilNotaAktif() {
-      if (notaAktifText && notaAktifText.trim()) return notaAktifText;
-      try { return localStorage.getItem('wistara_nota_aktif') || ''; } catch(e) { return ''; }
-    }
-    function kirimNotaTextAktif() {
-      var teks = ambilNotaAktif();
-      if (!teks.trim()) { alert('❌ Nota belum tersedia!'); return; }
-      var url = 'https://wa.me/?text=' + encodeURIComponent(teks.replace(/\r\n/g, '\n').replace(/\r/g, '\n'));
-      var w = window.open(url, '_blank');
-      if (!w) {
-        try { sessionStorage.setItem('wistara_restore_nota', '1'); } catch(e) {}
-        window.location.href = url;
-      }
-    }
-    function pulihkanNotaTerakhir() {
-      var restore = false;
-      try { restore = sessionStorage.getItem('wistara_restore_nota') === '1'; } catch(e) {}
-      if (!restore) return;
-      try { sessionStorage.removeItem('wistara_restore_nota'); } catch(e) {}
-      var teks = ambilNotaAktif();
-      if (!teks.trim()) return;
-      setTimeout(function(){
-        document.getElementById('textNota').innerHTML = formatNotaToHTML(teks);
-        document.getElementById('modalNota').style.display = 'flex';
-      }, 250);
-    }
+    var modeAktif = 'hariini', myChart = null, tempFotoProfilBase64 = "", tempNotaWA = "", tempNotaGambar = "", tempNotaBayarBonWA = "", tempNotaBayarBonGambar = "";
 
     function getTglJam() {
         let now = new Date();
@@ -1524,13 +1509,8 @@ function muatKeuangan(){
       if (bonExist) bonLama = bonExist.total || 0;
       let bonBaru = bonLama + hrg;
 
-      let teksBon = `\n──────────────────\n📒 BON LAMA  : Rp ${bonLama.toLocaleString('id-ID')}\n📈 BON BARU  : Rp ${bonBaru.toLocaleString('id-ID')}`;
-      let notaTransaksi = '```✨ TRANSAKSI SUKSES ✨\n📅 ' + tglFix + ' | ' + ts.jam + '\n──────────────────\n👤 NAMA      : ' + nm + '\n📱 NOMOR     : ' + no + '\n🏷️ CODE      : ' + cd + '\n📦 KUOTA     : ' + kub + '\n💰 HARGA     : Rp ' + hrg.toLocaleString('id-ID') + teksBon + '\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih```';
-      simpanNotaAktif(notaTransaksi);
-
       db.collection("transaksi").add({
           tanggal: tglFix, jam: ts.jam, nama: nm, nomor: no, paket: cd, kuota: kub, modal: mod, harga: hrg,
-          bonLama: bonLama, bonBaru: bonBaru, notaText: notaTransaksi,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
           db.collection("bon").doc(nm).set({ nama: nm, total: firebase.firestore.FieldValue.increment(hrg) }, {merge: true});
@@ -1538,9 +1518,11 @@ function muatKeuangan(){
           document.querySelectorAll('#tab-input input').forEach(el => el.value = '');
           btn.innerHTML = '<i class="ph-fill ph-lightning"></i> EKSEKUSI TRANSAKSI'; btn.disabled = false;
           
-          tempNotaWA = notaTransaksi;
-          tempNotaGambar = notaTransaksi;
-          simpanNotaAktif(notaTransaksi);
+          let teksBon = `\n──────────────────\n📒 BON LAMA  : Rp ${bonLama.toLocaleString('id-ID')}\n📈 BON BARU  : Rp ${bonBaru.toLocaleString('id-ID')}`;
+          
+          tempNotaWA = `\`\`\`✨ TRANSAKSI SUKSES ✨\n📅 ${tglFix} | ${ts.jam}\n──────────────────\n👤 NAMA      : ${nm}\n📱 NOMOR     : ${no}\n🏷️ CODE      : ${cd}\n📦 KUOTA     : ${kub}\n💰 HARGA     : Rp ${hrg.toLocaleString('id-ID')}${teksBon}\n──────────────────\n✅ SILAKAN DICEK\n🙏 Terima Kasih\`\`\``;
+
+          tempNotaGambar = tempNotaWA;
           document.getElementById('modalSuksesTrx').style.display = 'flex'; muatDataSemua();
       }).catch(err => { alert("Gagal menyimpan: " + err.message); btn.disabled = false; });
     }
@@ -1726,12 +1708,13 @@ function muatKeuangan(){
 ✅ SILAKAN DICEK
 🙏 Terima Kasih\`\`\``;
               
-              // Masukkan ke variabel global agar bisa dibaca oleh modal sukses
-              tempNotaWA = teksNota;
-              tempNotaGambar = teksNota;
+              // Simpan di variabel KHUSUS pembayaran bon agar tidak pernah tertukar
+              // dengan nota transaksi biasa (tempNotaWA/tempNotaGambar).
+              tempNotaBayarBonWA = teksNota;
+              tempNotaBayarBonGambar = teksNota;
               
-              // Tampilkan popup modal sukses seperti saat transaksi normal
-              document.getElementById('modalSuksesTrx').style.display = 'flex';
+              // Tampilkan modal khusus pembayaran bon.
+              document.getElementById('modalSuksesBayarBon').style.display = 'flex';
               
               // Kembalikan tombol ke semula
               btn.innerHTML = textAsli;
@@ -2121,7 +2104,7 @@ function muatKeuangan(){
         let pCode = String(item.paket || "-").replace(/'/g, "\\'");
         let pKuber = String(item.kuota || "-").replace(/'/g, "\\'");
         
-        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${displayNomor}</span></div><div style="display:flex; gap:6px;"><button type="button" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}', '${item.bonLama || 0}', '${item.bonBaru || 0}', '${encodeURIComponent(String(item.notaText || ""))}')"><i class="ph-fill ph-receipt"></i></button><button type="button" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
+        html += `<div class="box-3d" style="padding:16px; margin-bottom:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div><span style="font-weight:900; text-transform:uppercase;">${item.nama || "-"}</span><br><span style="font-size:0.85rem; color:var(--text-muted);">${displayNomor}</span></div><div style="display:flex; gap:6px;"><button type="button" style="background:var(--input-bg); color:var(--primary); border:2px solid var(--input-border); padding:6px 8px; border-radius:10px;" onclick="bukaNotaLama('${item.tanggal || "-"}', '${item.jam || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.harga || 0}')"><i class="ph-fill ph-receipt"></i></button><button type="button" style="background:rgba(59,130,246,0.1); color:var(--color-blue); border:2px solid var(--color-blue); padding:6px 8px; border-radius:10px;" onclick="bukaModalEdit('${item.id}', '${item.tanggal || "-"}', '${pNama}', '${pNomor}', '${pCode}', '${pKuber}', '${item.modal || 0}', '${item.harga || 0}')"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:2px solid var(--color-danger); padding:6px 8px; border-radius:10px;" onclick="konfirmasiHapus('${item.id}', '${pNama}')"><i class="ph-bold ph-trash"></i></button></div></div><div style="display:flex; justify-content:space-between; align-items:center; border-top:2px dashed var(--panel-border); padding-top:10px;"><span style="font-weight:900; font-size:0.85rem; background:var(--input-bg); border:1px solid var(--input-border); padding:4px 10px; border-radius:8px; text-transform:uppercase;">${item.paket || "-"}</span><div style="text-align:center;"><span style="color:var(--color-success); font-weight:900; font-size:0.75rem;">${tl}</span><br><span style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">${item.tanggal || "-"} ${item.jam || "-"}</span></div><span style="font-weight:900; color:var(--primary);">Rp ${(item.harga || 0).toLocaleString('id-ID')}</span></div></div>`;
       });
       
       // TAMBAHKAN TOMBOL SEBELUMNYA / SELANJUTNYA
@@ -2253,18 +2236,12 @@ function muatKeuangan(){
     }
     function renderKurvaBulanIni() { renderKurvaUsaha(dataCacheKeseluruhan); }
 
-    function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga, bonLama, bonBaru, notaEncoded) {
-      var teksNota = '';
-      try { teksNota = notaEncoded ? decodeURIComponent(notaEncoded) : ''; } catch(e) {}
-      if (!teksNota.trim()) {
-        var adaBon = Number(bonLama || 0) > 0 || Number(bonBaru || 0) > 0;
-        var teksBonLama = adaBon ? "\n📒 BON LAMA  : Rp " + Number(bonLama || 0).toLocaleString('id-ID') + "\n📈 BON BARU  : Rp " + Number(bonBaru || 0).toLocaleString('id-ID') : '';
-        teksNota = "```\n✨ SALINAN TRANSAKSI ✨\n📅 " + tgl + " | " + jam + "\n──────────────────\n👤 NAMA      : " + nama + "\n📱 NOMOR     : " + nomor + "\n🏷️ CODE      : " + code + "\n📦 KUOTA     : " + kuota + "\n💰 HARGA     : Rp " + Number(harga || 0).toLocaleString('id-ID') + teksBonLama + "\n──────────────────\n✅ SILAHKAN DICEK\n🙏 Terima Kasih```";
-      }
-      tempNotaLamaText = teksNota; tempNotaWA = teksNota; tempNotaGambar = teksNota;
-      simpanNotaAktif(teksNota);
-      document.getElementById('textNota').innerHTML = formatNotaToHTML(teksNota);
-      document.getElementById('modalNota').style.display = 'flex';
+    var tempNotaLamaText = ""; 
+    function bukaNotaLama(tgl, jam, nama, nomor, code, kuota, harga) { 
+      var teksNota = "```\n✨ SALINAN TRANSAKSI ✨\n📅 " + tgl + " | " + jam + "\n──────────────────\n👤 NAMA      : " + nama + "\n📱 NOMOR     : " + nomor + "\n🏷️ CODE      : " + code + "\n📦 KUOTA     : " + kuota + "\n💰 HARGA     : Rp " + Number(harga).toLocaleString('id-ID') + "```\n\n──────────────────\n✅ `SILAHKAN DI CEK`"; 
+      tempNotaLamaText = teksNota; 
+      document.getElementById('textNota').innerHTML = formatNotaToHTML(teksNota); 
+      document.getElementById('modalNota').style.display = 'flex'; 
     }
 
     function escapeHTML(value) {
@@ -2278,30 +2255,64 @@ function muatKeuangan(){
       let html = '<div style="font-size:0.75rem; line-height:1.6; font-family: \'Courier New\', Courier, monospace; font-weight: bold; color: var(--text-main);">';
       lines.forEach(l => {
         let txt = l.trim(); if (txt === '') return;
-        if (txt.includes('──────')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">';
+        if (txt.includes('──────')) html += '<hr style="border:0; border-top:2px dashed var(--input-border); margin:8px 0;">'; 
         else if (txt.indexOf(':') > -1 && !txt.includes('📅')) {
           let idx = txt.indexOf(':'), lbl = txt.substring(0, idx).trim(), val = txt.substring(idx + 1).trim();
-          html += `<div style="display:flex; padding:4px 0;"><div style="width:40%; color:var(--text-muted);">${escapeHTML(lbl)}</div><div style="width:5%;">:</div><div style="width:55%; text-transform:uppercase;">${escapeHTML(val)}</div></div>`;
-        } else html += `<div style="text-align:center; margin:4px 0; text-transform:uppercase;">${escapeHTML(txt)}</div>`;
-      });
-      return html + '</div>';
+          html += `<div style="display:flex; padding:4px 0;"><div style="width:40%; color:var(--text-muted);">${lbl}</div><div style="width:5%;">:</div><div style="width:55%; text-transform:uppercase;">${val}</div></div>`;
+        } else {
+          html += `<div style="text-align:center; margin:4px 0; text-transform:uppercase;">${escapeHTML(txt)}</div>`;
+        }
+      }); return html + '</div>';
     }
 
     function bukaNotaGambarSukses() {
       tutupModal('modalSuksesTrx');
-      var teks = ambilNotaAktif() || tempNotaGambar;
-      if (!teks.trim()) { alert('❌ Nota belum tersedia!'); return; }
-      tempNotaGambar = teks; tempNotaWA = teks; simpanNotaAktif(teks);
-      document.getElementById('textNota').innerHTML = formatNotaToHTML(teks);
+      document.getElementById('nota-toko-nama').innerHTML = '<i class="ph-fill ph-receipt"></i> WISTARA-STORE';
+      document.getElementById('nota-toko-desc').textContent = 'BUKTI TRANSAKSI DIGITAL';
+      document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaGambar);
       document.getElementById('modalNota').style.display = 'flex';
     }
 
-    function kirimWaTeksSukses() {
-      var teks = ambilNotaAktif() || tempNotaWA;
-      if (!teks.trim()) { alert('❌ Nota belum tersedia!'); return; }
-      tempNotaWA = teks; tempNotaGambar = teks; simpanNotaAktif(teks);
-      kirimNotaTextAktif();
+    // ===== NOTA KHUSUS BAYAR BON =====
+    function bukaNotaGambarBayarBon() {
+      tutupModal('modalSuksesBayarBon');
+      document.getElementById('nota-toko-nama').innerHTML = '<i class="ph-fill ph-hand-coins"></i> WISTARA-STORE';
+      document.getElementById('nota-toko-desc').textContent = 'BUKTI PEMBAYARAN BON';
+      document.getElementById('textNota').innerHTML = formatNotaToHTML(tempNotaBayarBonGambar);
+      document.getElementById('modalNota').style.display = 'flex';
     }
+
+    function kirimWaTeksBayarBon() {
+      if (!tempNotaBayarBonWA || !tempNotaBayarBonWA.trim()) {
+        alert('❌ Nota pembayaran bon belum tersedia!');
+        return;
+      }
+      let pesanWA = String(tempNotaBayarBonWA).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      tutupModal('modalSuksesBayarBon');
+      window.location.href = 'https://wa.me/?text=' + encodeURIComponent(pesanWA);
+    }
+    
+    function kirimWaTeksSukses() {
+  if (!tempNotaWA || !tempNotaWA.trim()) {
+    alert("❌ Nota belum tersedia!");
+    return;
+  }
+
+  // Pastikan format monospace WhatsApp tetap menggunakan ```
+  let pesanWA = String(tempNotaWA);
+
+  // Bersihkan jika ada karakter aneh dari HTML
+  pesanWA = pesanWA.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+  // Gunakan URL WhatsApp yang benar
+  let urlWA = "https://wa.me/?text=" + encodeURIComponent(pesanWA);
+
+  // Tutup modal transaksi sukses
+  tutupModal('modalSuksesTrx');
+
+  // Buka WhatsApp
+  window.location.href = urlWA;
+}
 
         function tagihWA(nama, totalBon) {
       let pesanTagihan = `\`\`\`🧾 TAGIHAN BON 🧾
@@ -2317,26 +2328,22 @@ function muatKeuangan(){
 
     
     function kirimKeWA() {
-      var btn = document.querySelector('.btn-wa'), txt = btn ? btn.innerHTML : '';
-      simpanNotaAktif(notaAktifText || tempNotaGambar || tempNotaWA || '');
-      if (btn) { btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMBUAT FOTO...'; btn.disabled = true; }
-      html2canvas(document.getElementById('capture-wrapper'), { backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--panel-bg'), scale: 3, useCORS: true }).then(canvas => {
+      let btn = document.querySelector('.btn-wa'); let txt = btn.innerHTML; 
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MEMBUAT FOTO...'; btn.disabled = true;
+      html2canvas(document.getElementById('capture-wrapper'), { backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--panel-bg'), scale: 3 }).then(canvas => {
         canvas.toBlob(blob => {
           let f = new File([blob], 'Nota.png', { type: 'image/png' });
-          if (navigator.canShare && navigator.canShare({ files: [f] })) {
-             navigator.share({ title: 'Nota', text: 'Nota transaksi WISTARA-STORE', files: [f] }).then(() => { if(btn){btn.innerHTML = txt; btn.disabled = false;} }).catch(() => dlFoto(canvas, btn, txt));
-          } else dlFoto(canvas, btn, txt);
-        }, 'image/png');
-      }).catch(err => { if(btn){btn.innerHTML = txt; btn.disabled = false;} alert('Gagal membuat foto nota: ' + err.message); });
+          if (navigator.canShare && navigator.canShare({ files: [f] })) { 
+             navigator.share({ title: 'Nota', files: [f] }).then(() => { btn.innerHTML = txt; btn.disabled = false; }).catch(() => dlFoto(canvas, btn, txt)); 
+          } else { dlFoto(canvas, btn, txt); }
+        });
+      });
     }
-
     function dlFoto(c, b, t) { 
       let dataUrl = c.toDataURL('image/png');
       document.getElementById('area-nota-foto').innerHTML = `<img src="${dataUrl}" style="width:100%; border-radius:16px;"><p style="font-size:0.8rem; color:var(--color-warning); text-align:center; margin-top:15px;">TEKAN & TAHAN GAMBAR LALU SIMPAN.</p>`;
       b.innerHTML = '<i class="ph-fill ph-check-circle"></i> SIAP'; b.disabled = true;
     }
-
-    document.addEventListener('DOMContentLoaded', pulihkanNotaTerakhir);
 
     function formatNomorHP(el) {
       let val = el.value.replace(/[^0-9+\s]/g, '');
