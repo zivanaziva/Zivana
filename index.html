@@ -220,6 +220,17 @@
     .btn-wa { background: linear-gradient(135deg, #10b981, #047857); color: #fff; flex: 1; border: none; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 15px rgba(16,185,129,0.3); display: flex; justify-content: center; align-items: center; gap: 6px; }
     .btn-close { background: var(--input-bg); color: var(--text-main); border: none; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; flex: 1; border: 1px solid var(--input-border); }
 
+    /* Tombol aksi bon dibuat kecil dan halus agar WA, Edit, dan Hapus tetap rapi */
+    .bon-actions button { width: 42px; height: 42px; display:flex; align-items:center; justify-content:center; transition: transform .15s ease, filter .15s ease, box-shadow .15s ease; }
+    .bon-actions button:active { transform: scale(.93); filter: brightness(.95); }
+    @media(max-width:420px) {
+      .bon-row { padding: 14px !important; }
+      .bon-row > div:first-child { font-size: .9rem !important; }
+      .bon-actions { gap: 4px !important; }
+      .bon-actions button { width: 38px; height: 38px; padding: 7px !important; }
+      .bon-row .bon-actions > div { font-size: .92rem !important; }
+    }
+
     .table-responsive { width: 100%; overflow-x: hidden; border-radius: 14px; border: var(--panel-border); background: var(--panel-bg); }
     .table-dashboard { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: center; table-layout: fixed; word-wrap: break-word; }
     .table-dashboard th { background: var(--table-header); padding: 12px 4px; color: var(--primary); font-weight: 900; border-bottom: 2px solid var(--table-border); }
@@ -1046,6 +1057,30 @@
     </div>
   </div>
 
+  <!-- MODAL EDIT BON: mengubah dokumen bon yang sama, termasuk bon yang sebelumnya diset manual -->
+  <div id="modalEditBon" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="color: var(--color-blue); margin-bottom: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px;">
+        <i class="ph-bold ph-pencil-simple"></i> EDIT BON
+      </h3>
+      <input type="hidden" id="edit-bon-id">
+      <div class="input-group">
+        <label>NAMA RESELLER</label>
+        <input type="text" id="edit-bon-nama" class="input-upper" oninput="this.value = this.value.toUpperCase()" placeholder="Nama reseller...">
+      </div>
+      <div class="input-group">
+        <label>TOTAL BON (Rp)</label>
+        <input type="text" id="edit-bon-nominal" placeholder="Contoh: 150000" oninput="formatUangK(this)">
+      </div>
+      <div class="modal-btns">
+        <button type="button" class="btn" id="btn-simpan-editbon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8); flex:1;" onclick="simpanEditBon()">
+          <i class="ph-fill ph-floppy-disk"></i> SIMPAN PERUBAHAN
+        </button>
+        <button type="button" class="btn-close" onclick="tutupModal('modalEditBon')">BATAL</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modalSuksesTrx" class="modal-overlay">
     <div class="modal-box" style="text-align: center; max-width: 350px;">
       <i class="ph-fill ph-check-circle" style="font-size: 4.5rem; color: var(--color-success); margin-bottom: 16px;"></i>
@@ -1555,17 +1590,23 @@ function muatKeuangan(){
     function renderListBon(data) {
       let container = document.getElementById('list-bon'); 
       if(!container) return;
-      let dataFilter = data.filter(d => d.total > 0);
+      let dataFilter = data.filter(d => Number(d.total || 0) > 0);
       if (dataFilter.length === 0) { container.innerHTML = '<p style="text-align:center; padding:20px; font-weight:900;">TIDAK ADA PIUTANG!</p>'; return; }
       let html = '', totalSemua = 0;
       dataFilter.forEach(item => {
-        totalSemua += item.total;
-        html += `<div class="box-3d" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
-                  <div style="font-weight:900; font-size:1rem; text-transform:uppercase;"><i class="ph-fill ph-lightning" style="color:var(--color-warning);"></i> ${item.nama}</div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <div style="font-weight:900; font-size:1.05rem; color:var(--color-danger); margin-right:4px;">Rp ${item.total.toLocaleString('id-ID')}</div>
-                    <button type="button" onclick="tagihWA('${item.nama}', '${item.total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid var(--color-success); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button>
-                    <button type="button" onclick="hapusBon('${item.id}')" style="background:rgba(220,38,38,0.1); color:var(--color-danger); border:1px solid var(--color-danger); padding:8px; border-radius:10px;"><i class="ph-bold ph-trash"></i></button>
+        let total = Number(item.total || 0);
+        totalSemua += total;
+        let nama = String(item.nama || '');
+        let namaSafe = nama.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        let idSafe = encodeURIComponent(String(item.id)).replace(/'/g,'%27');
+        let namaArg = encodeURIComponent(nama).replace(/'/g,'%27');
+        html += `<div class="box-3d bon-row" style="display:flex; justify-content:space-between; align-items:center; padding:16px; margin-bottom:12px;">
+                  <div style="font-weight:900; font-size:1rem; text-transform:uppercase; min-width:0; padding-right:8px;"><i class="ph-fill ph-lightning" style="color:var(--color-warning);"></i> ${namaSafe}</div>
+                  <div class="bon-actions" style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                    <div style="font-weight:900; font-size:1.05rem; color:var(--color-danger); margin-right:4px; white-space:nowrap;">Rp ${total.toLocaleString('id-ID')}</div>
+                    <button type="button" title="Kirim WhatsApp" onclick="tagihWA(decodeURIComponent('${namaArg}'), '${total.toLocaleString('id-ID')}')" style="background:rgba(16,185,129,0.08); color:var(--color-success); border:1px solid rgba(16,185,129,0.65); padding:8px; border-radius:10px;"><i class="ph-fill ph-whatsapp-logo"></i></button>
+                    <button type="button" title="Edit bon" onclick="bukaModalEditBon(decodeURIComponent('${idSafe}'), decodeURIComponent('${namaArg}'), ${total})" style="background:rgba(59,130,246,0.07); color:var(--color-blue); border:1px solid color-mix(in srgb, var(--color-blue) 55%, transparent); padding:8px; border-radius:10px;"><i class="ph-bold ph-pencil-simple"></i></button>
+                    <button type="button" title="Hapus bon" onclick="hapusBon(decodeURIComponent('${idSafe}'))" style="background:rgba(220,38,38,0.07); color:var(--color-danger); border:1px solid rgba(220,38,38,0.55); padding:8px; border-radius:10px;"><i class="ph-bold ph-trash"></i></button>
                   </div>
                 </div>`;
       });
@@ -1573,14 +1614,46 @@ function muatKeuangan(){
                 <div style="font-weight:900;">TOTAL PIUTANG</div><div style="color:var(--color-danger); font-weight:900;">Rp ${totalSemua.toLocaleString('id-ID')}</div></div>`;
       container.innerHTML = html;
     }
-    
+
     function hapusBon(id) { if(confirm("Yakin ingin menghapus data bon ini?")) db.collection("bon").doc(id).delete(); }
     function filterBon() { let kw = document.getElementById('cari-bon').value.toLowerCase().trim(); renderListBon(bonCache.filter(i => (i.nama||"").toLowerCase().includes(kw))); }
     function bukaModalSetBon() { document.getElementById('set-bon-nama').value=''; document.getElementById('set-bon-nominal').value=''; document.getElementById('modalSetBon').style.display='flex'; }
+
+    // Edit langsung data bon: ID dokumen tetap dipakai agar bon manual yang sudah ada tidak dibuat ulang.
+    function bukaModalEditBon(id, nama, total) {
+      document.getElementById('edit-bon-id').value = id;
+      document.getElementById('edit-bon-nama').value = nama || '';
+      document.getElementById('edit-bon-nominal').value = Number(total || 0).toLocaleString('id-ID');
+      document.getElementById('modalEditBon').style.display = 'flex';
+    }
+    function simpanEditBon() {
+      let id = document.getElementById('edit-bon-id').value;
+      let nama = document.getElementById('edit-bon-nama').value.trim();
+      let total = parseFloat(document.getElementById('edit-bon-nominal').value.replace(/[^0-9]/g, '')) || 0;
+      if (!id || !nama) return alert('Nama reseller wajib diisi.');
+      if (total < 0) return alert('Nominal tidak boleh minus.');
+
+      let btn = document.getElementById('btn-simpan-editbon');
+      let asli = btn.innerHTML;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> MENYIMPAN...';
+      btn.disabled = true;
+
+      // Hanya update dokumen yang sama; tidak menghapus/membuat dokumen baru.
+      db.collection("bon").doc(id).update({ nama: nama, total: total }).then(() => {
+        tutupModal('modalEditBon');
+      }).catch(err => {
+        alert('Gagal mengubah bon: ' + err.message);
+      }).finally(() => {
+        btn.innerHTML = asli;
+        btn.disabled = false;
+      });
+    }
+
     function simpanSetBon() {
       let nama = document.getElementById('set-bon-nama').value.trim(), total = parseFloat(document.getElementById('set-bon-nominal').value.replace(/[^0-9]/g, '')) || 0;
       if(!nama) return; db.collection("bon").doc(nama).set({ nama: nama, total: total }, {merge: true}).then(() => tutupModal('modalSetBon'));
     }
+
     
           function prosesBayar() {
       let nama = document.getElementById('nama-bayar').value.trim(), bayar = parseFloat(document.getElementById('nominal-bayar').value.replace(/[^0-9]/g, '')) || 0;
